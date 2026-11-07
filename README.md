@@ -3,7 +3,7 @@
 **A cloud-native, multi-tenant B2B Distribution Management System (DMS) engineered for small and medium-sized distributors, wholesalers, and supply chain operators.**
 
 [![Project Status: Architectural Design](https://img.shields.io/badge/Status-Architectural%20Design-blue.svg)](#project-status)
-[![Planned Stack: Go](https://img.shields.io/badge/Backend-Go%20(Golang)-00ADD8.svg?logo=go)](#planned-technology-stack)
+[![Planned Stack: Go Fiber](https://img.shields.io/badge/Backend-Go%20(Fiber)-00ADD8.svg?logo=go)](#planned-technology-stack)
 [![Planned Stack: Next.js](https://img.shields.io/badge/Frontend-Next.js%2014+-black.svg?logo=next.js)](#planned-technology-stack)
 [![Planned Stack: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1.svg?logo=postgresql)](#planned-technology-stack)
 [![Architecture: Multi--Tenant](https://img.shields.io/badge/Architecture-Multi--Tenant%20SaaS-orange.svg)](#multi-tenant-architecture)
@@ -233,8 +233,7 @@ DistribuCore Functional Modules
                                  │
                                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   DistribuCore Application Backend              │
-│                           (Go / Golang)                         │
+│              DistribuCore Application Backend (Go / Fiber)      │
 │  ┌───────────────────────────────────────────────────────────┐  │
 │  │ Middlewares: Tenant Context Extraction, AuthN/AuthZ (RBAC)│  │
 │  └─────────────────────────────┬─────────────────────────────┘  │
@@ -301,6 +300,7 @@ The planned technology stack prioritizes operational stability, type safety, low
 | **Frontend Language** | **TypeScript** | Strict typing across state boundaries, component props, and API response contracts. |
 | **Styling & UI Kit** | **Tailwind CSS** & **shadcn/ui** | Headless, accessible, customizable component architecture suitable for high-density enterprise interfaces, data tables, and input forms. |
 | **Backend Language** | **Go (Golang)** | High-throughput, low-memory footprint, clean concurrency primitives for handling parallel requests, and rapid cold-start performance. |
+| **Backend Framework** | **Fiber** (Go) | Express-inspired web framework engineered on Fasthttp, delivering zero memory allocation, sub-millisecond response latencies, and high concurrency for distribution workloads. |
 | **API Architecture** | **RESTful API (JSON)** | Clear resource-oriented endpoints, standard HTTP semantics, straightforward caching, and predictable client integration. |
 | **Primary Database** | **PostgreSQL** | Proven ACID compliance, advanced indexing, robust foreign key constraint guarantees, and native Row-Level Security (RLS) for multi-tenancy. |
 | **Data Access Layer** | **SQLC & pgx** | Type-safe Go code generated directly from idiomatic SQL queries. Eliminates reflection-heavy ORM overhead while retaining compile-time query verification. |
@@ -341,7 +341,7 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Specify OpenAPI / REST contract schemas for service boundaries ([docs/architecture/API_SPECIFICATION.md](docs/architecture/API_SPECIFICATION.md)).
 
 ### Phase 1: Core Platform & Authentication Foundation
-- [ ] Initialize repository structure (Go backend workspace & Next.js frontend workspace).
+- [ ] Initialize repository structure (Go/Fiber backend workspace & Next.js frontend workspace).
 - [ ] Set up Docker development environments (PostgreSQL, Redis).
 - [ ] Implement multi-tenant context extraction and resolution middleware.
 - [ ] Implement user authentication, password hashing, and session management.
