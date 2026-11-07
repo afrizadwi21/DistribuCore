@@ -10,7 +10,11 @@ import (
 	"time"
 
 	"github.com/afrizadwi21/distribucore/apps/api/internal/config"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/database"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/handler"
 	"github.com/afrizadwi21/distribucore/apps/api/internal/middleware"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/repository"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -24,7 +28,26 @@ func main() {
 		log.Fatalf("Failed to initialize configuration: %v", err)
 	}
 
-	// 2. Initialize Fiber Application
+	ctx := context.Background()
+
+	// 2. Initialize Database Pools (PostgreSQL & Redis)
+	pgDB, err := database.NewPostgresPool(ctx, cfg.DatabaseURL)
+	if err != nil {
+		log.Printf("[WARN] PostgreSQL not reachable at startup: %v (API will run in degraded mode)", err)
+	} else {
+		defer pgDB.Close()
+		log.Println("[INFO] Successfully connected to PostgreSQL connection pool")
+	}
+
+	redisClient, err := database.NewRedisClient(ctx, cfg.RedisURL)
+	if err != nil {
+		log.Printf("[WARN] Redis not reachable at startup: %v", err)
+	} else {
+		defer redisClient.Close()
+		log.Println("[INFO] Successfully connected to Redis")
+	}
+
+	// 3. Initialize Fiber Application
 	app := fiber.New(fiber.Config{
 		AppName:               "DistribuCore API v1.0",
 		ServerHeader:          "DistribuCore",
@@ -44,7 +67,7 @@ func main() {
 		},
 	})
 
-	// 3. Global Middleware
+	// 4. Global Middleware
 	app.Use(recover.New())
 	app.Use(logger.New(logger.Config{
 		Format: "[${time}] ${status} - ${latency} ${method} ${path}\n",
@@ -55,7 +78,7 @@ func main() {
 		AllowMethods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 	}))
 
-	// 4. Base Health Endpoints
+	// 5. Health Endpoints
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":    "healthy",
@@ -74,7 +97,19 @@ func main() {
 		})
 	})
 
-	// 5. Protected Tenant Route Group Example
+	// 6. Auth Service & Handlers Registration
+	if pgDB != nil && pgDB.Pool != nil {
+		authRepo := repository.NewAuthRepository(pgDB.Pool)
+		authSvc := service.NewAuthService(authRepo, cfg.JWTSecret, cfg.JWTExpiryHrs)
+		authHandler := handler.NewAuthHandler(authSvc)
+
+		authRoutes := api.Group("/auth")
+		authRoutes.Post("/register-tenant", authHandler.RegisterTenant)
+		authRoutes.Post("/login", authHandler.Login)
+		authRoutes.Get("/me", middleware.RequireAuth(cfg.JWTSecret), authHandler.GetMe)
+	}
+
+	// 7. Protected Tenant Context Verification Route
 	tenantRoutes := api.Group("/tenant", middleware.RequireAuth(cfg.JWTSecret))
 	tenantRoutes.Get("/context", func(c *fiber.Ctx) error {
 		tenantID, _ := middleware.GetTenantID(c)
@@ -87,7 +122,7 @@ func main() {
 		})
 	})
 
-	// 6. Start Server with Graceful Shutdown
+	// 8. Start Server with Graceful Shutdown
 	addr := fmt.Sprintf(":%s", cfg.Port)
 	go func() {
 		if err := app.Listen(addr); err != nil {
@@ -103,10 +138,10 @@ func main() {
 	<-quit
 
 	log.Println("Shutting down DistribuCore server gracefully...")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	if err := app.ShutdownWithContext(ctx); err != nil {
+	if err := app.ShutdownWithContext(shutdownCtx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
 
