@@ -338,7 +338,7 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Establish target technology stack and architectural topology.
 - [x] Design multi-tenant data isolation and security models.
 - [x] Define normalized database schema (ERD) covering core domains ([docs/architecture/DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md)).
-- [ ] Specify OpenAPI / REST contract schemas for service boundaries.
+- [x] Specify OpenAPI / REST contract schemas for service boundaries ([docs/architecture/API_SPECIFICATION.md](docs/architecture/API_SPECIFICATION.md)).
 
 ### Phase 1: Core Platform & Authentication Foundation
 - [ ] Initialize repository structure (Go backend workspace & Next.js frontend workspace).
