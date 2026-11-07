@@ -1,0 +1,38 @@
+# Binaries and build artifacts
+bin/
+dist/
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test and coverage
+*.test
+*.out
+coverage.txt
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Environment variables
+.env
+
+# Database & Cache data
+postgres_data/
+redis_data/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

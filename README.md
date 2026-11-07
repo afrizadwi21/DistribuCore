@@ -333,19 +333,19 @@ The planned technology stack prioritizes operational stability, type safety, low
 
 ## Development Roadmap
 
-### Phase 0: System Architecture & Data Modeling (Current)
+### Phase 0: System Architecture & Data Modeling (Completed)
 - [x] Define business scope, operational workflows, and functional requirements.
 - [x] Establish target technology stack and architectural topology.
 - [x] Design multi-tenant data isolation and security models.
 - [x] Define normalized database schema (ERD) covering core domains ([docs/architecture/DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md)).
 - [x] Specify OpenAPI / REST contract schemas for service boundaries ([docs/architecture/API_SPECIFICATION.md](docs/architecture/API_SPECIFICATION.md)).
 
-### Phase 1: Core Platform & Authentication Foundation
-- [ ] Initialize repository structure (Go/Fiber backend workspace & Next.js frontend workspace).
-- [ ] Set up Docker development environments (PostgreSQL, Redis).
-- [ ] Implement multi-tenant context extraction and resolution middleware.
-- [ ] Implement user authentication, password hashing, and session management.
-- [ ] Implement Role-Based Access Control (RBAC) permission evaluation engine.
+### Phase 1: Core Platform & Authentication Foundation (Current)
+- [x] Initialize repository structure (Go/Fiber backend workspace).
+- [x] Set up Docker development environments (PostgreSQL, Redis) and migration scripts.
+- [x] Implement multi-tenant context extraction and resolution middleware.
+- [x] Implement Role-Based Access Control (RBAC) permission evaluation engine.
+- [ ] Implement user authentication, password hashing, and session management handlers.
 
 ### Phase 2: Master Data & Multi-Warehouse Inventory
 - [ ] Implement Product Master service (SKU, categories, UOM conversions).
