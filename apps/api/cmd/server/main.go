@@ -112,9 +112,15 @@ func main() {
 		uomRepo := repository.NewUOMRepository(pgDB.Pool)
 		uomHandler := handler.NewUOMHandler(uomRepo)
 
+		productRepo := repository.NewProductRepository(pgDB.Pool)
+		productHandler := handler.NewProductHandler(productRepo)
+
 		catalogRoutes := api.Group("/catalog", middleware.RequireAuth(cfg.JWTSecret))
 		catalogRoutes.Post("/uom", uomHandler.Create)
 		catalogRoutes.Get("/uom", uomHandler.List)
+		catalogRoutes.Post("/products", productHandler.Create)
+		catalogRoutes.Get("/products", productHandler.List)
+		catalogRoutes.Get("/products/:id", productHandler.GetByID)
 	}
 
 	// 7. Protected Tenant Context Verification Route

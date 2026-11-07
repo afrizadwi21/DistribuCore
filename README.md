@@ -348,7 +348,7 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Implement user authentication, password hashing, and session management handlers.
 
 ### Phase 2: Master Data & Multi-Warehouse Inventory
-- [ ] Implement Product Master service (SKU, categories, UOM conversions).
+- [x] Implement Product Master service (SKU, master products, and UOM units).
 - [ ] Implement Supplier and Customer directories with credit profile models.
 - [ ] Implement multi-warehouse, zone, and bin-level location schemas.
 - [ ] Implement stock adjustment, transfer, and physical audit reconciliation logic.
