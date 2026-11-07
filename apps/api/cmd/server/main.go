@@ -107,6 +107,14 @@ func main() {
 		authRoutes.Post("/register-tenant", authHandler.RegisterTenant)
 		authRoutes.Post("/login", authHandler.Login)
 		authRoutes.Get("/me", middleware.RequireAuth(cfg.JWTSecret), authHandler.GetMe)
+
+		// 7. Master Data Catalog Handlers Registration
+		uomRepo := repository.NewUOMRepository(pgDB.Pool)
+		uomHandler := handler.NewUOMHandler(uomRepo)
+
+		catalogRoutes := api.Group("/catalog", middleware.RequireAuth(cfg.JWTSecret))
+		catalogRoutes.Post("/uom", uomHandler.Create)
+		catalogRoutes.Get("/uom", uomHandler.List)
 	}
 
 	// 7. Protected Tenant Context Verification Route
