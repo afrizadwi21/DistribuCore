@@ -23,6 +23,7 @@
 - [Core Business Workflows](#core-business-workflows)
   - [1. Procure-to-Pay (P2P) Flow](#1-procure-to-pay-p2p-flow)
   - [2. Order-to-Cash (O2C) Flow](#2-order-to-cash-o2c-flow)
+  - [3. Complete Workflow Visual Guide (Indonesian)](docs/WORKFLOW_GUIDE.md)
 - [Planned Functional Modules](#planned-functional-modules)
 - [System Architecture & Design](#system-architecture--design)
   - [High-Level Architectural Topology](#high-level-architectural-topology)
