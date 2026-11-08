@@ -347,13 +347,13 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Implement Role-Based Access Control (RBAC) permission evaluation engine.
 - [x] Implement user authentication, password hashing, and session management handlers.
 
-### Phase 2: Master Data & Multi-Warehouse Inventory
+### Phase 2: Master Data & Multi-Warehouse Inventory (Completed)
 - [x] Implement Product Master service (SKU, master products, and UOM units).
 - [x] Implement Supplier and Customer directories with credit profile models.
 - [x] Implement multi-warehouse, zone, and bin-level location schemas.
-- [ ] Implement stock adjustment, transfer, and physical audit reconciliation logic.
+- [x] Implement stock adjustment, transfer, and physical audit reconciliation logic.
 
-### Phase 3: Procurement & Receiving (P2P)
+### Phase 3: Procurement & Receiving (P2P) (Current)
 - [ ] Implement Purchase Order (PO) creation, revision, and status management.
 - [ ] Implement Goods Receiving Note (GRN) workflow with partial receipt support.
 - [ ] Implement automated on-hand inventory increment upon verified receipt.

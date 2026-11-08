@@ -355,6 +355,50 @@
           "201": { "description": "Bin rak berhasil didaftarkan" }
         }
       }
+    },
+    "/api/v1/inventory/adjustments": {
+      "post": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Penyesuaian Stok (Stock Adjustment / Opname)",
+        "description": "Menyesuaikan jumlah stok fisik (tambah/kurang) dan otomatis mencatat mutasi ke buku besar inventaris (inventory transactions).",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["warehouse_id", "bin_id", "product_id", "quantity_delta"],
+                "properties": {
+                  "warehouse_id": { "type": "string", "format": "uuid", "description": "ID Gudang" },
+                  "bin_id": { "type": "string", "format": "uuid", "description": "ID Rak/Bin" },
+                  "product_id": { "type": "string", "format": "uuid", "description": "ID Produk SKU" },
+                  "quantity_delta": { "type": "number", "example": 50, "description": "Jumlah perubahan stok (+ untuk masuk, - untuk keluar/rusak)" },
+                  "transaction_type": { "type": "string", "example": "ADJUSTMENT_CYCLE_COUNT", "description": "Jenis mutasi stok" },
+                  "notes": { "type": "string", "example": "Stok awal hasil opname fisik", "description": "Catatan penyesuaian" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Stok fisik berhasil disesuaikan dan dicatat di buku besar" }
+        }
+      }
+    },
+    "/api/v1/inventory/warehouses/{warehouseId}/balances": {
+      "get": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Lihat Saldo Stok Fisik per Gudang & Rak",
+        "description": "Mengambil saldo stok barang saat ini di setiap rak pada gudang yang dipilih.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "warehouseId", "in": "path", "required": true, "description": "UUID Gudang", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Daftar saldo stok di gudang" }
+        }
+      }
     }
   }
 }
