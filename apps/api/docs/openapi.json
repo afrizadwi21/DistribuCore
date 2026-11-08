@@ -15,7 +15,8 @@
     { "name": "Kesehatan Server", "description": "Endpoint pemantauan status server" },
     { "name": "Autentikasi & Tenant", "description": "Registrasi organisasi perusahaan, login pengguna, dan verifikasi profil" },
     { "name": "Katalog & Satuan Barang", "description": "Manajemen master produk SKU dan satuan ukuran barang (UOM)" },
-    { "name": "Mitra Bisnis", "description": "Manajemen data pelanggan dengan kontrol limit kredit dan supplier" }
+    { "name": "Mitra Bisnis", "description": "Manajemen data pelanggan dengan kontrol limit kredit dan supplier" },
+    { "name": "Manajemen Gudang & Lokasi Rak", "description": "Fasilitas multi-gudang dan penataan rak/bin penyimpanan" }
   ],
   "components": {
     "securitySchemes": {
@@ -272,6 +273,86 @@
         },
         "responses": {
           "201": { "description": "Supplier berhasil didaftarkan" }
+        }
+      }
+    },
+    "/api/v1/inventory/warehouses": {
+      "get": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Daftar Fasilitas Gudang",
+        "description": "Mengambil seluruh gudang penyimpanan yang terdaftar untuk perusahaan.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Daftar gudang aktif" }
+        }
+      },
+      "post": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Tambah Gudang Baru",
+        "description": "Mendaftarkan lokasi gudang baru (misal: Gudang Pusat, Gudang Transit).",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "name"],
+                "properties": {
+                  "code": { "type": "string", "example": "WH-PST", "description": "Kode gudang" },
+                  "name": { "type": "string", "example": "Gudang Pusat Cikarang", "description": "Nama gudang" },
+                  "address_line": { "type": "string", "example": "Kawasan Industri MM2100 Blok C-4" },
+                  "city": { "type": "string", "example": "Bekasi" },
+                  "state_province": { "type": "string", "example": "Jawa Barat" },
+                  "postal_code": { "type": "string", "example": "17530" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Gudang berhasil didaftarkan" }
+        }
+      }
+    },
+    "/api/v1/inventory/warehouses/{warehouseId}/bins": {
+      "get": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Daftar Lokasi Rak (Bin) di Gudang",
+        "description": "Mengambil seluruh daftar rak, lorong, dan bin di gudang tertentu.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "warehouseId", "in": "path", "required": true, "description": "UUID Gudang", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Daftar bin di gudang" }
+        }
+      },
+      "post": {
+        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "summary": "Tambah Rak/Bin Penyimpanan",
+        "description": "Menambahkan nomor rak/bin baru (misal: Lorong A1, Rak 2, Bin 4).",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "warehouseId", "in": "path", "required": true, "description": "UUID Gudang", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": { "type": "string", "example": "A1-R02-B04", "description": "Kode bin unik dalam gudang" },
+                  "zone": { "type": "string", "example": "Zona Berat / Semen", "description": "Zona atau area gudang" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Bin rak berhasil didaftarkan" }
         }
       }
     }

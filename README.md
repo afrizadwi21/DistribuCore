@@ -350,7 +350,7 @@ The planned technology stack prioritizes operational stability, type safety, low
 ### Phase 2: Master Data & Multi-Warehouse Inventory
 - [x] Implement Product Master service (SKU, master products, and UOM units).
 - [x] Implement Supplier and Customer directories with credit profile models.
-- [ ] Implement multi-warehouse, zone, and bin-level location schemas.
+- [x] Implement multi-warehouse, zone, and bin-level location schemas.
 - [ ] Implement stock adjustment, transfer, and physical audit reconciliation logic.
 
 ### Phase 3: Procurement & Receiving (P2P)
