@@ -1,0 +1,175 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DistribuCore REST API",
+    "description": "Multi-Tenant B2B Distribution Management System API Documentation powered by Scalar.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Server Health Check",
+        "responses": {
+          "200": { "description": "Server is healthy and responsive" }
+        }
+      }
+    },
+    "/api/v1/auth/register-tenant": {
+      "post": {
+        "summary": "Register New Tenant Organization & Admin Account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["tenant_code", "tenant_name", "email", "password"],
+                "properties": {
+                  "tenant_code": { "type": "string", "example": "DIST-001" },
+                  "tenant_name": { "type": "string", "example": "PT Distribusi Bangunan Sejahtera" },
+                  "email": { "type": "string", "example": "admin@distribusibangunan.com" },
+                  "password": { "type": "string", "example": "PasswordKuat123!" },
+                  "full_name": { "type": "string", "example": "Budi Santoso" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Tenant and administrator user successfully registered" }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Authenticate User & Issue JWT Tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["tenant_code", "email", "password"],
+                "properties": {
+                  "tenant_code": { "type": "string", "example": "DIST-001" },
+                  "email": { "type": "string", "example": "admin@distribusibangunan.com" },
+                  "password": { "type": "string", "example": "PasswordKuat123!" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful, returns access & refresh tokens" }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "summary": "Get Profile of Authenticated User",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Current user profile and roles" }
+        }
+      }
+    },
+    "/api/v1/catalog/uom": {
+      "get": {
+        "summary": "List Units of Measure (UOM) for Tenant",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of active UOMs" }
+        }
+      },
+      "post": {
+        "summary": "Create New Unit of Measure (UOM)",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "name"],
+                "properties": {
+                  "code": { "type": "string", "example": "SAK" },
+                  "name": { "type": "string", "example": "Sak 50 Kilogram" },
+                  "is_base_unit": { "type": "boolean", "example": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "UOM created successfully" }
+        }
+      }
+    },
+    "/api/v1/catalog/products": {
+      "get": {
+        "summary": "List Master Products with Pagination",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated product list" }
+        }
+      },
+      "post": {
+        "summary": "Create New Master Product SKU",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sku", "name", "base_uom_id"],
+                "properties": {
+                  "sku": { "type": "string", "example": "SMN-TR-50KG" },
+                  "name": { "type": "string", "example": "Semen Tiga Roda 50kg" },
+                  "description": { "type": "string", "example": "Semen Portland tipe 1 untuk plester dan struktur" },
+                  "base_uom_id": { "type": "string", "format": "uuid", "example": "a0000000-0000-0000-0000-000000000001" },
+                  "safety_stock_quantity": { "type": "number", "example": 100 },
+                  "reorder_point_quantity": { "type": "number", "example": 250 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Product SKU created successfully" }
+        }
+      }
+    },
+    "/api/v1/catalog/products/{id}": {
+      "get": {
+        "summary": "Get Single Product SKU by ID",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Detailed product data" }
+        }
+      }
+    }
+  }
+}

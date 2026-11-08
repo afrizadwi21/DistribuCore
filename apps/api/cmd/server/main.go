@@ -78,7 +78,7 @@ func main() {
 		AllowMethods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 	}))
 
-	// 5. Health Endpoints
+	// 5. Health & Interactive Scalar API Documentation
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":    "healthy",
@@ -86,6 +86,35 @@ func main() {
 			"env":       cfg.AppEnv,
 			"timestamp": time.Now().UTC(),
 		})
+	})
+
+	// Serve OpenAPI JSON schema
+	app.Get("/api/v1/openapi.json", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/json")
+		return c.SendFile("./docs/openapi.json")
+	})
+
+	// Interactive Scalar API Documentation UI
+	app.Get("/docs", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/html; charset=utf-8")
+		html := `<!doctype html>
+<html>
+  <head>
+    <title>DistribuCore API Reference</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="https://scalar.com/favicon.svg" />
+  </head>
+  <body>
+    <script
+      id="api-reference"
+      data-url="/api/v1/openapi.json"
+      data-configuration='{"theme":"purple","layout":"modern"}'>
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>`
+		return c.SendString(html)
 	})
 
 	api := app.Group("/api/v1")
