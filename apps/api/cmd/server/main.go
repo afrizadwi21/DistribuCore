@@ -150,6 +150,16 @@ func main() {
 		catalogRoutes.Post("/products", productHandler.Create)
 		catalogRoutes.Get("/products", productHandler.List)
 		catalogRoutes.Get("/products/:id", productHandler.GetByID)
+
+		// 8. Business Partners Handlers Registration (Customers & Suppliers)
+		partnerRepo := repository.NewPartnerRepository(pgDB.Pool)
+		partnerHandler := handler.NewPartnerHandler(partnerRepo)
+
+		partnerRoutes := api.Group("/partners", middleware.RequireAuth(cfg.JWTSecret))
+		partnerRoutes.Post("/customers", partnerHandler.CreateCustomer)
+		partnerRoutes.Get("/customers", partnerHandler.ListCustomers)
+		partnerRoutes.Post("/suppliers", partnerHandler.CreateSupplier)
+		partnerRoutes.Get("/suppliers", partnerHandler.ListSuppliers)
 	}
 
 	// 7. Protected Tenant Context Verification Route

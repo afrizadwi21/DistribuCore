@@ -170,6 +170,77 @@
           "200": { "description": "Detailed product data" }
         }
       }
+    },
+    "/api/v1/partners/customers": {
+      "get": {
+        "summary": "List Customers with Credit Limits",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of customer organizations" }
+        }
+      },
+      "post": {
+        "summary": "Register New Customer Account",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "company_name"],
+                "properties": {
+                  "code": { "type": "string", "example": "CUST-001" },
+                  "company_name": { "type": "string", "example": "Toko Bangunan Sumber Makmur" },
+                  "contact_person": { "type": "string", "example": "Haji Slamet" },
+                  "email": { "type": "string", "example": "slamet@sumbermakmur.com" },
+                  "phone": { "type": "string", "example": "081234567890" },
+                  "credit_limit_cents": { "type": "integer", "example": 5000000000 },
+                  "payment_terms_days": { "type": "integer", "example": 30 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Customer registered successfully" }
+        }
+      }
+    },
+    "/api/v1/partners/suppliers": {
+      "get": {
+        "summary": "List Suppliers / Vendors",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of registered suppliers" }
+        }
+      },
+      "post": {
+        "summary": "Register New Supplier",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "company_name"],
+                "properties": {
+                  "code": { "type": "string", "example": "SUPP-001" },
+                  "company_name": { "type": "string", "example": "PT Semen Gresik Distribusi" },
+                  "contact_person": { "type": "string", "example": "Agus Hendrawan" },
+                  "email": { "type": "string", "example": "sales@semengresik.com" },
+                  "phone": { "type": "string", "example": "0215551234" },
+                  "payment_terms_days": { "type": "integer", "example": 45 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Supplier registered successfully" }
+        }
+      }
     }
   }
 }
