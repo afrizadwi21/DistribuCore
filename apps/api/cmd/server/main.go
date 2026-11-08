@@ -160,6 +160,16 @@ func main() {
 		partnerRoutes.Get("/customers", partnerHandler.ListCustomers)
 		partnerRoutes.Post("/suppliers", partnerHandler.CreateSupplier)
 		partnerRoutes.Get("/suppliers", partnerHandler.ListSuppliers)
+
+		// 9. Warehouse & Bin Locations Handlers Registration
+		warehouseRepo := repository.NewWarehouseRepository(pgDB.Pool)
+		warehouseHandler := handler.NewWarehouseHandler(warehouseRepo)
+
+		warehouseRoutes := api.Group("/inventory", middleware.RequireAuth(cfg.JWTSecret))
+		warehouseRoutes.Post("/warehouses", warehouseHandler.CreateWarehouse)
+		warehouseRoutes.Get("/warehouses", warehouseHandler.ListWarehouses)
+		warehouseRoutes.Post("/warehouses/:warehouseId/bins", warehouseHandler.CreateBin)
+		warehouseRoutes.Get("/warehouses/:warehouseId/bins", warehouseHandler.ListBins)
 	}
 
 	// 7. Protected Tenant Context Verification Route
