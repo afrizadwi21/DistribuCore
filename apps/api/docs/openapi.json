@@ -1,37 +1,48 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DistribuCore REST API",
-    "description": "Multi-Tenant B2B Distribution Management System API Documentation powered by Scalar.",
+    "title": "DistribuCore REST API - Dokumentasi Resmi",
+    "description": "Dokumentasi interaktif DistribuCore: Sistem Manajemen Distribusi B2B Multi-Tenant untuk distributor bahan bangunan, grosir, dan logistik regional.\n\n### Panduan Penggunaan:\n1. Gunakan endpoint **Registrasi Perusahaan & Admin** untuk membuat akun baru.\n2. Lakukan **Login** untuk mendapatkan token JWT (`access_token`).\n3. Klik tombol **Authorize** di atas dan masukkan token JWT Anda untuk menguji endpoint yang terproteksi.",
     "version": "1.0.0"
   },
   "servers": [
     {
       "url": "http://localhost:8080",
-      "description": "Local Development Server"
+      "description": "Server Pengembangan Lokal"
     }
+  ],
+  "tags": [
+    { "name": "Kesehatan Server", "description": "Endpoint pemantauan status server" },
+    { "name": "Autentikasi & Tenant", "description": "Registrasi organisasi perusahaan, login pengguna, dan verifikasi profil" },
+    { "name": "Katalog & Satuan Barang", "description": "Manajemen master produk SKU dan satuan ukuran barang (UOM)" },
+    { "name": "Mitra Bisnis", "description": "Manajemen data pelanggan dengan kontrol limit kredit dan supplier" }
   ],
   "components": {
     "securitySchemes": {
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "JWT"
+        "bearerFormat": "JWT",
+        "description": "Masukkan token JWT yang didapat dari endpoint login (format: Bearer <token>)"
       }
     }
   },
   "paths": {
     "/health": {
       "get": {
-        "summary": "Server Health Check",
+        "tags": ["Kesehatan Server"],
+        "summary": "Cek Kesehatan Server",
+        "description": "Memeriksa apakah server Go Fiber aktif dan dapat melayani permintaan.",
         "responses": {
-          "200": { "description": "Server is healthy and responsive" }
+          "200": { "description": "Server berjalan normal dan sehat" }
         }
       }
     },
     "/api/v1/auth/register-tenant": {
       "post": {
-        "summary": "Register New Tenant Organization & Admin Account",
+        "tags": ["Autentikasi & Tenant"],
+        "summary": "Daftar Perusahaan (Tenant) Baru & Buat Akun Admin",
+        "description": "Membuat entitas perusahaan baru, membuat role ADMIN, dan akun administrator utama dalam satu transaksi database.",
         "requestBody": {
           "required": true,
           "content": {
@@ -40,24 +51,26 @@
                 "type": "object",
                 "required": ["tenant_code", "tenant_name", "email", "password"],
                 "properties": {
-                  "tenant_code": { "type": "string", "example": "DIST-001" },
-                  "tenant_name": { "type": "string", "example": "PT Distribusi Bangunan Sejahtera" },
-                  "email": { "type": "string", "example": "admin@distribusibangunan.com" },
-                  "password": { "type": "string", "example": "PasswordKuat123!" },
-                  "full_name": { "type": "string", "example": "Budi Santoso" }
+                  "tenant_code": { "type": "string", "example": "DIST-001", "description": "Kode unik perusahaan" },
+                  "tenant_name": { "type": "string", "example": "PT Distribusi Bangunan Sejahtera", "description": "Nama resmi perusahaan" },
+                  "email": { "type": "string", "example": "admin@distribusibangunan.com", "description": "Email login administrator" },
+                  "password": { "type": "string", "example": "PasswordKuat123!", "description": "Password minimal 8 karakter" },
+                  "full_name": { "type": "string", "example": "Budi Santoso", "description": "Nama lengkap pengguna" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Tenant and administrator user successfully registered" }
+          "201": { "description": "Perusahaan dan akun admin berhasil didaftarkan" }
         }
       }
     },
     "/api/v1/auth/login": {
       "post": {
-        "summary": "Authenticate User & Issue JWT Tokens",
+        "tags": ["Autentikasi & Tenant"],
+        "summary": "Login Pengguna & Dapatkan Token JWT",
+        "description": "Memvalidasi email dan password dalam batas tenant yang sesuai. Mengembalikan access token dan refresh token.",
         "requestBody": {
           "required": true,
           "content": {
@@ -66,38 +79,44 @@
                 "type": "object",
                 "required": ["tenant_code", "email", "password"],
                 "properties": {
-                  "tenant_code": { "type": "string", "example": "DIST-001" },
-                  "email": { "type": "string", "example": "admin@distribusibangunan.com" },
-                  "password": { "type": "string", "example": "PasswordKuat123!" }
+                  "tenant_code": { "type": "string", "example": "DIST-001", "description": "Kode perusahaan" },
+                  "email": { "type": "string", "example": "admin@distribusibangunan.com", "description": "Email akun terdaftar" },
+                  "password": { "type": "string", "example": "PasswordKuat123!", "description": "Password akun" }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Login successful, returns access & refresh tokens" }
+          "200": { "description": "Login berhasil, mengembalikan token akses" }
         }
       }
     },
     "/api/v1/auth/me": {
       "get": {
-        "summary": "Get Profile of Authenticated User",
+        "tags": ["Autentikasi & Tenant"],
+        "summary": "Lihat Profil Pengguna yang Sedang Login",
+        "description": "Mengambil data akun, tenant ID, dan role pengguna dari token JWT yang aktif.",
         "security": [{ "BearerAuth": [] }],
         "responses": {
-          "200": { "description": "Current user profile and roles" }
+          "200": { "description": "Data profil pengguna yang terotentikasi" }
         }
       }
     },
     "/api/v1/catalog/uom": {
       "get": {
-        "summary": "List Units of Measure (UOM) for Tenant",
+        "tags": ["Katalog & Satuan Barang"],
+        "summary": "Daftar Satuan Ukuran Barang (UOM)",
+        "description": "Mengambil semua daftar satuan barang yang terdaftar untuk perusahaan Anda.",
         "security": [{ "BearerAuth": [] }],
         "responses": {
-          "200": { "description": "List of active UOMs" }
+          "200": { "description": "Daftar satuan ukuran barang" }
         }
       },
       "post": {
-        "summary": "Create New Unit of Measure (UOM)",
+        "tags": ["Katalog & Satuan Barang"],
+        "summary": "Tambah Satuan Ukuran Baru",
+        "description": "Mendaftarkan satuan baru seperti PCS, DUS, SAK, atau PALET.",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -107,33 +126,37 @@
                 "type": "object",
                 "required": ["code", "name"],
                 "properties": {
-                  "code": { "type": "string", "example": "SAK" },
-                  "name": { "type": "string", "example": "Sak 50 Kilogram" },
-                  "is_base_unit": { "type": "boolean", "example": true }
+                  "code": { "type": "string", "example": "SAK", "description": "Kode singkatan satuan" },
+                  "name": { "type": "string", "example": "Sak 50 Kilogram", "description": "Nama lengkap satuan" },
+                  "is_base_unit": { "type": "boolean", "example": true, "description": "Apakah ini satuan dasar terkecil" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "UOM created successfully" }
+          "201": { "description": "Satuan berhasil dibuat" }
         }
       }
     },
     "/api/v1/catalog/products": {
       "get": {
-        "summary": "List Master Products with Pagination",
+        "tags": ["Katalog & Satuan Barang"],
+        "summary": "Daftar Master Produk dengan Paginasi",
+        "description": "Mengambil katalog barang dagangan dengan pagination dan join otomatis ke satuan dasar.",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
-          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } }
+          { "name": "page", "in": "query", "description": "Nomor halaman (default: 1)", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "description": "Jumlah data per halaman (default: 20)", "schema": { "type": "integer", "default": 20 } }
         ],
         "responses": {
-          "200": { "description": "Paginated product list" }
+          "200": { "description": "Daftar produk berhasil diambil" }
         }
       },
       "post": {
-        "summary": "Create New Master Product SKU",
+        "tags": ["Katalog & Satuan Barang"],
+        "summary": "Buat Master Produk SKU Baru",
+        "description": "Mendaftarkan barang baru lengkap dengan ambang batas stok aman dan titik pemesanan ulang.",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -143,44 +166,50 @@
                 "type": "object",
                 "required": ["sku", "name", "base_uom_id"],
                 "properties": {
-                  "sku": { "type": "string", "example": "SMN-TR-50KG" },
-                  "name": { "type": "string", "example": "Semen Tiga Roda 50kg" },
-                  "description": { "type": "string", "example": "Semen Portland tipe 1 untuk plester dan struktur" },
-                  "base_uom_id": { "type": "string", "format": "uuid", "example": "a0000000-0000-0000-0000-000000000001" },
-                  "safety_stock_quantity": { "type": "number", "example": 100 },
-                  "reorder_point_quantity": { "type": "number", "example": 250 }
+                  "sku": { "type": "string", "example": "SMN-TR-50KG", "description": "Kode SKU unik barang" },
+                  "name": { "type": "string", "example": "Semen Tiga Roda 50kg", "description": "Nama dagang barang" },
+                  "description": { "type": "string", "example": "Semen Portland tipe 1 untuk plester dan cor", "description": "Deskripsi barang" },
+                  "base_uom_id": { "type": "string", "format": "uuid", "example": "a0000000-0000-0000-0000-000000000001", "description": "ID satuan dasar dari tabel UOM" },
+                  "safety_stock_quantity": { "type": "number", "example": 100, "description": "Batas stok minimum peringatan" },
+                  "reorder_point_quantity": { "type": "number", "example": 250, "description": "Batas stok untuk order ulang ke pabrik" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Product SKU created successfully" }
+          "201": { "description": "Produk berhasil ditambahkan" }
         }
       }
     },
     "/api/v1/catalog/products/{id}": {
       "get": {
-        "summary": "Get Single Product SKU by ID",
+        "tags": ["Katalog & Satuan Barang"],
+        "summary": "Detail Satu Produk Berdasarkan ID",
+        "description": "Mengambil rincian lengkap spesifikasi produk.",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          { "name": "id", "in": "path", "required": true, "description": "UUID produk", "schema": { "type": "string", "format": "uuid" } }
         ],
         "responses": {
-          "200": { "description": "Detailed product data" }
+          "200": { "description": "Rincian data produk" }
         }
       }
     },
     "/api/v1/partners/customers": {
       "get": {
-        "summary": "List Customers with Credit Limits",
+        "tags": ["Mitra Bisnis"],
+        "summary": "Daftar Pelanggan (Customer) & Limit Kredit",
+        "description": "Mengambil seluruh pelanggan lengkap dengan informasi batas plafon kredit dan tempo pembayaran.",
         "security": [{ "BearerAuth": [] }],
         "responses": {
-          "200": { "description": "List of customer organizations" }
+          "200": { "description": "Daftar pelanggan aktif" }
         }
       },
       "post": {
-        "summary": "Register New Customer Account",
+        "tags": ["Mitra Bisnis"],
+        "summary": "Daftarkan Pelanggan Baru",
+        "description": "Menambahkan toko/kontraktor baru dengan limit kredit piutang (dalam satuan sen/rupiah).",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -190,33 +219,37 @@
                 "type": "object",
                 "required": ["code", "company_name"],
                 "properties": {
-                  "code": { "type": "string", "example": "CUST-001" },
-                  "company_name": { "type": "string", "example": "Toko Bangunan Sumber Makmur" },
-                  "contact_person": { "type": "string", "example": "Haji Slamet" },
-                  "email": { "type": "string", "example": "slamet@sumbermakmur.com" },
-                  "phone": { "type": "string", "example": "081234567890" },
-                  "credit_limit_cents": { "type": "integer", "example": 5000000000 },
-                  "payment_terms_days": { "type": "integer", "example": 30 }
+                  "code": { "type": "string", "example": "CUST-001", "description": "Kode pelanggan" },
+                  "company_name": { "type": "string", "example": "Toko Bangunan Sumber Makmur", "description": "Nama toko/kontraktor" },
+                  "contact_person": { "type": "string", "example": "Haji Slamet", "description": "Nama penanggung jawab" },
+                  "email": { "type": "string", "example": "slamet@sumbermakmur.com", "description": "Email kontak" },
+                  "phone": { "type": "string", "example": "081234567890", "description": "Nomor telepon/WhatsApp" },
+                  "credit_limit_cents": { "type": "integer", "example": 5000000000, "description": "Plafon kredit (contoh 50 juta)" },
+                  "payment_terms_days": { "type": "integer", "example": 30, "description": "Termin tempo pembayaran (hari)" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Customer registered successfully" }
+          "201": { "description": "Pelanggan berhasil didaftarkan" }
         }
       }
     },
     "/api/v1/partners/suppliers": {
       "get": {
-        "summary": "List Suppliers / Vendors",
+        "tags": ["Mitra Bisnis"],
+        "summary": "Daftar Pemasok (Supplier)",
+        "description": "Mengambil seluruh daftar vendor/pabrik rekanan distributor.",
         "security": [{ "BearerAuth": [] }],
         "responses": {
-          "200": { "description": "List of registered suppliers" }
+          "200": { "description": "Daftar supplier aktif" }
         }
       },
       "post": {
-        "summary": "Register New Supplier",
+        "tags": ["Mitra Bisnis"],
+        "summary": "Daftarkan Supplier Baru",
+        "description": "Mendaftarkan vendor/pabrik rekanan baru.",
         "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -226,19 +259,19 @@
                 "type": "object",
                 "required": ["code", "company_name"],
                 "properties": {
-                  "code": { "type": "string", "example": "SUPP-001" },
-                  "company_name": { "type": "string", "example": "PT Semen Gresik Distribusi" },
-                  "contact_person": { "type": "string", "example": "Agus Hendrawan" },
-                  "email": { "type": "string", "example": "sales@semengresik.com" },
-                  "phone": { "type": "string", "example": "0215551234" },
-                  "payment_terms_days": { "type": "integer", "example": 45 }
+                  "code": { "type": "string", "example": "SUPP-001", "description": "Kode supplier" },
+                  "company_name": { "type": "string", "example": "PT Semen Gresik Distribusi", "description": "Nama perusahaan supplier" },
+                  "contact_person": { "type": "string", "example": "Agus Hendrawan", "description": "Kontak sales pabrik" },
+                  "email": { "type": "string", "example": "sales@semengresik.com", "description": "Email supplier" },
+                  "phone": { "type": "string", "example": "0215551234", "description": "Nomor telepon kantor" },
+                  "payment_terms_days": { "type": "integer", "example": 45, "description": "Termin tempo pembayaran dari supplier" }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Supplier registered successfully" }
+          "201": { "description": "Supplier berhasil didaftarkan" }
         }
       }
     }
