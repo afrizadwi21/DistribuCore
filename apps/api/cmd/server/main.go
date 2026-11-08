@@ -170,6 +170,12 @@ func main() {
 		warehouseRoutes.Get("/warehouses", warehouseHandler.ListWarehouses)
 		warehouseRoutes.Post("/warehouses/:warehouseId/bins", warehouseHandler.CreateBin)
 		warehouseRoutes.Get("/warehouses/:warehouseId/bins", warehouseHandler.ListBins)
+
+		// 10. Inventory Stock & Balances Handlers Registration
+		inventoryRepo := repository.NewInventoryRepository(pgDB.Pool)
+		inventoryHandler := handler.NewInventoryHandler(inventoryRepo)
+		warehouseRoutes.Post("/adjustments", inventoryHandler.AdjustStock)
+		warehouseRoutes.Get("/warehouses/:warehouseId/balances", inventoryHandler.ListBalances)
 	}
 
 	// 7. Protected Tenant Context Verification Route
