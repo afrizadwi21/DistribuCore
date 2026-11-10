@@ -186,6 +186,9 @@ func main() {
 		purchasingRoutes.Get("/orders", purchaseHandler.ListPurchaseOrders)
 		purchasingRoutes.Get("/orders/:id", purchaseHandler.GetPurchaseOrderByID)
 		purchasingRoutes.Patch("/orders/:id/status", purchaseHandler.UpdatePOStatus)
+		purchasingRoutes.Post("/grn", purchaseHandler.CreateGoodsReceipt)
+		purchasingRoutes.Get("/grn", purchaseHandler.ListGoodsReceipts)
+		purchasingRoutes.Get("/grn/:id", purchaseHandler.GetGoodsReceiptByID)
 	}
 
 	// 7. Protected Tenant Context Verification Route
