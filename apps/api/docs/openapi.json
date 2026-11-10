@@ -20,7 +20,9 @@
     { "name": "06. Gudang (Warehouses)", "description": "Manajemen fasilitas fisik gudang penyimpanan barang" },
     { "name": "07. Lokasi Rak (Bins)", "description": "Tata letak rak, lorong, dan bin penyimpanan di dalam gudang" },
     { "name": "08. Inventaris & Saldo Stok", "description": "Penyesuaian stok opname dan saldo fisik on-hand per rak" },
-    { "name": "09. Sistem & Server", "description": "Pengecekan status operasional dan kesehatan server" }
+    { "name": "09. Sistem & Server", "description": "Pengecekan status operasional dan kesehatan server" },
+    { "name": "10. Pesanan Pembelian (Purchase Orders)", "description": "Pembuatan PO ke pemasok, rincian biaya, dan siklus approval order" },
+    { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" }
   ],
   "components": {
     "securitySchemes": {
@@ -402,6 +404,90 @@
         "responses": {
           "200": { "description": "Daftar saldo stok di gudang" }
         }
+      }
+    },
+    "/api/v1/purchasing/orders": {
+      "get": {
+        "tags": ["10. Pesanan Pembelian (Purchase Orders)"],
+        "summary": "Daftar Pesanan Pembelian (PO)",
+        "description": "Mengambil seluruh PO yang terbit dengan filter supplier dan status order.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "supplier_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Daftar pesanan pembelian" } }
+      },
+      "post": {
+        "tags": ["10. Pesanan Pembelian (Purchase Orders)"],
+        "summary": "Buat Purchase Order Baru",
+        "description": "Menerbitkan order pembelian baru ke supplier dengan item dan estimasi biaya.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["po_number", "supplier_id", "destination_warehouse_id", "items"],
+                "properties": {
+                  "po_number": { "type": "string", "example": "PO-2026-001" },
+                  "supplier_id": { "type": "string", "format": "uuid" },
+                  "destination_warehouse_id": { "type": "string", "format": "uuid" },
+                  "issued_date": { "type": "string", "example": "2026-11-10" },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["product_id", "uom_id", "ordered_quantity", "unit_cost_cents"],
+                      "properties": {
+                        "product_id": { "type": "string", "format": "uuid" },
+                        "uom_id": { "type": "string", "format": "uuid" },
+                        "ordered_quantity": { "type": "number", "example": 500 },
+                        "unit_cost_cents": { "type": "integer", "example": 6500000 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Purchase order berhasil diterbitkan" } }
+      }
+    },
+    "/api/v1/purchasing/orders/{id}": {
+      "get": {
+        "tags": ["10. Pesanan Pembelian (Purchase Orders)"],
+        "summary": "Detail Purchase Order & Sisa Qty Belum Diterima",
+        "description": "Melihat rincian PO dan perbandingan kuantitas yang dipesan vs sudah diterima.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Rincian purchase order" } }
+      }
+    },
+    "/api/v1/purchasing/orders/{id}/status": {
+      "patch": {
+        "tags": ["10. Pesanan Pembelian (Purchase Orders)"],
+        "summary": "Ubah Status Purchase Order (Approval)",
+        "description": "Menyetujui PO (APPROVED) agar barang dapat diterima fisik di gudang.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": { "status": { "type": "string", "example": "APPROVED" } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Status PO berhasil diperbarui" } }
       }
     }
   }
