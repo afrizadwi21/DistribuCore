@@ -489,6 +489,66 @@
         },
         "responses": { "200": { "description": "Status PO berhasil diperbarui" } }
       }
+    },
+    "/api/v1/purchasing/grn": {
+      "get": {
+        "tags": ["11. Penerimaan Barang (Goods Receipt Notes)"],
+        "summary": "Daftar Bukti Penerimaan Barang (GRN)",
+        "description": "Mengambil seluruh riwayat penerimaan barang masuk dari supplier.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "purchase_order_id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": { "200": { "description": "Daftar penerimaan barang" } }
+      },
+      "post": {
+        "tags": ["11. Penerimaan Barang (Goods Receipt Notes)"],
+        "summary": "Catat Penerimaan Barang Masuk (GRN)",
+        "description": "Mencatat fisik barang yang diterima, menambah saldo rak otomatis, dan memperbarui status PO.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["grn_number", "purchase_order_id", "items"],
+                "properties": {
+                  "grn_number": { "type": "string", "example": "GRN-2026-001" },
+                  "purchase_order_id": { "type": "string", "format": "uuid" },
+                  "warehouse_id": { "type": "string", "format": "uuid" },
+                  "supplier_delivery_note_ref": { "type": "string", "example": "SJ-SG-99812" },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["po_line_item_id", "target_bin_id", "quantity_received"],
+                      "properties": {
+                        "po_line_item_id": { "type": "string", "format": "uuid" },
+                        "target_bin_id": { "type": "string", "format": "uuid" },
+                        "quantity_received": { "type": "number", "example": 250 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Barang berhasil diterima dan saldo on-hand bertambah" } }
+      }
+    },
+    "/api/v1/purchasing/grn/{id}": {
+      "get": {
+        "tags": ["11. Penerimaan Barang (Goods Receipt Notes)"],
+        "summary": "Detail Bukti Penerimaan Barang (GRN)",
+        "description": "Mengambil rincian item, nomor rak penempatan, dan kuantitas fisik yang diterima.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Detail bukti penerimaan barang" } }
+      }
     }
   }
 }
