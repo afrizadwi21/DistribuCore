@@ -176,6 +176,16 @@ func main() {
 		inventoryHandler := handler.NewInventoryHandler(inventoryRepo)
 		warehouseRoutes.Post("/adjustments", inventoryHandler.AdjustStock)
 		warehouseRoutes.Get("/warehouses/:warehouseId/balances", inventoryHandler.ListBalances)
+
+		// 11. Procurement & Purchasing Handlers Registration
+		purchaseRepo := repository.NewPurchaseRepository(pgDB.Pool)
+		purchaseHandler := handler.NewPurchaseHandler(purchaseRepo)
+
+		purchasingRoutes := api.Group("/purchasing", middleware.RequireAuth(cfg.JWTSecret))
+		purchasingRoutes.Post("/orders", purchaseHandler.CreatePurchaseOrder)
+		purchasingRoutes.Get("/orders", purchaseHandler.ListPurchaseOrders)
+		purchasingRoutes.Get("/orders/:id", purchaseHandler.GetPurchaseOrderByID)
+		purchasingRoutes.Patch("/orders/:id/status", purchaseHandler.UpdatePOStatus)
 	}
 
 	// 7. Protected Tenant Context Verification Route
