@@ -200,6 +200,17 @@ func main() {
 		salesRoutes.Get("/orders/:id", salesHandler.GetSalesOrderByID)
 		salesRoutes.Post("/orders/:id/confirm", salesHandler.ConfirmAndReserve)
 		salesRoutes.Post("/orders/:id/cancel", salesHandler.CancelOrder)
+
+		// 13. Outbound Fulfillment & Proof of Delivery (POD) Handlers Registration
+		fulfillmentRepo := repository.NewFulfillmentRepository(pgDB.Pool)
+		fulfillmentHandler := handler.NewFulfillmentHandler(fulfillmentRepo)
+
+		fulfillmentRoutes := api.Group("/fulfillment", middleware.RequireAuth(cfg.JWTSecret))
+		fulfillmentRoutes.Post("/delivery-orders", fulfillmentHandler.CreateDeliveryOrder)
+		fulfillmentRoutes.Get("/delivery-orders", fulfillmentHandler.ListDeliveryOrders)
+		fulfillmentRoutes.Get("/delivery-orders/:id", fulfillmentHandler.GetDeliveryOrderByID)
+		fulfillmentRoutes.Post("/delivery-orders/:id/dispatch", fulfillmentHandler.DispatchOrder)
+		fulfillmentRoutes.Post("/delivery-orders/:id/pod", fulfillmentHandler.SubmitPOD)
 	}
 
 	// 7. Protected Tenant Context Verification Route
