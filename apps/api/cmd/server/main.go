@@ -189,6 +189,17 @@ func main() {
 		purchasingRoutes.Post("/grn", purchaseHandler.CreateGoodsReceipt)
 		purchasingRoutes.Get("/grn", purchaseHandler.ListGoodsReceipts)
 		purchasingRoutes.Get("/grn/:id", purchaseHandler.GetGoodsReceiptByID)
+
+		// 12. Sales Orders & Stock Reservation Handlers Registration
+		salesRepo := repository.NewSalesRepository(pgDB.Pool)
+		salesHandler := handler.NewSalesHandler(salesRepo)
+
+		salesRoutes := api.Group("/sales", middleware.RequireAuth(cfg.JWTSecret))
+		salesRoutes.Post("/orders", salesHandler.CreateSalesOrder)
+		salesRoutes.Get("/orders", salesHandler.ListSalesOrders)
+		salesRoutes.Get("/orders/:id", salesHandler.GetSalesOrderByID)
+		salesRoutes.Post("/orders/:id/confirm", salesHandler.ConfirmAndReserve)
+		salesRoutes.Post("/orders/:id/cancel", salesHandler.CancelOrder)
 	}
 
 	// 7. Protected Tenant Context Verification Route
