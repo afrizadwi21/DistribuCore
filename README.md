@@ -354,13 +354,13 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Implement multi-warehouse, zone, and bin-level location schemas.
 - [x] Implement stock adjustment, transfer, and physical audit reconciliation logic.
 
-### Phase 3: Procurement & Receiving (P2P) (Current)
-- [ ] Implement Purchase Order (PO) creation, revision, and status management.
-- [ ] Implement Goods Receiving Note (GRN) workflow with partial receipt support.
-- [ ] Implement automated on-hand inventory increment upon verified receipt.
-- [ ] Implement PO-to-GRN balance reconciliation and backorder tracking.
+### Phase 3: Procurement & Receiving (P2P) (Completed)
+- [x] Implement Purchase Order (PO) creation, revision, and status management.
+- [x] Implement Goods Receiving Note (GRN) workflow with partial receipt support.
+- [x] Implement automated on-hand inventory increment upon verified receipt.
+- [x] Implement PO-to-GRN balance reconciliation and backorder tracking.
 
-### Phase 4: Sales Orders & Stock Reservation Engine
+### Phase 4: Sales Orders & Stock Reservation Engine (Current)
 - [ ] Implement Sales Quotation creation, price tier calculations, and quote-to-order conversion.
 - [ ] Implement customer credit limit validation rules.
 - [ ] Build high-concurrency stock reservation engine with Redis locking and database persistence.
