@@ -23,7 +23,8 @@
     { "name": "09. Sistem & Server", "description": "Pengecekan status operasional dan kesehatan server" },
     { "name": "10. Pesanan Pembelian (Purchase Orders)", "description": "Pembuatan PO ke pemasok, rincian biaya, dan siklus approval order" },
     { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" },
-    { "name": "12. Penjualan & Kunci Stok (Sales Orders)", "description": "Pesanan penjualan, evaluasi limit kredit otomatis, dan penguncian stok fisik (reservation)" }
+    { "name": "12. Penjualan & Kunci Stok (Sales Orders)", "description": "Pesanan penjualan, evaluasi limit kredit otomatis, dan penguncian stok fisik (reservation)" },
+    { "name": "13. Pengiriman & Surat Jalan (Fulfillment & POD)", "description": "Penerbitan surat jalan (DO), pengiriman truk parsial, dan konfirmasi bukti terima digital (POD)" }
   ],
   "components": {
     "securitySchemes": {
@@ -641,6 +642,95 @@
         "security": [{ "BearerAuth": [] }],
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
         "responses": { "200": { "description": "Order dibatalkan dan reservasi stok dilepas" } }
+      }
+    },
+    "/api/v1/fulfillment/delivery-orders": {
+      "get": {
+        "tags": ["13. Pengiriman & Surat Jalan (Fulfillment & POD)"],
+        "summary": "Daftar Surat Jalan / Pengiriman (Delivery Orders)",
+        "description": "Mengambil seluruh surat jalan dengan filter order dan status pengiriman.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "sales_order_id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": { "200": { "description": "Daftar surat jalan" } }
+      },
+      "post": {
+        "tags": ["13. Pengiriman & Surat Jalan (Fulfillment & POD)"],
+        "summary": "Terbitkan Surat Jalan / DO Baru (Partial / Full)",
+        "description": "Menerbitkan surat jalan pengiriman dari gudang asal dengan sopir dan plat kendaraan.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["delivery_number", "sales_order_id", "origin_warehouse_id", "items"],
+                "properties": {
+                  "delivery_number": { "type": "string", "example": "DO-2026-001" },
+                  "sales_order_id": { "type": "string", "format": "uuid" },
+                  "origin_warehouse_id": { "type": "string", "format": "uuid" },
+                  "driver_name": { "type": "string", "example": "Joko Widodo" },
+                  "vehicle_registration": { "type": "string", "example": "B 9123 KDA" },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["so_line_item_id", "product_id", "source_bin_id", "quantity_to_deliver"],
+                      "properties": { "so_line_item_id": { "type": "string", "format": "uuid" }, "product_id": { "type": "string", "format": "uuid" }, "source_bin_id": { "type": "string", "format": "uuid" }, "quantity_to_deliver": { "type": "number", "example": 50 } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Surat jalan berhasil diterbitkan" } }
+      }
+    },
+    "/api/v1/fulfillment/delivery-orders/{id}": {
+      "get": {
+        "tags": ["13. Pengiriman & Surat Jalan (Fulfillment & POD)"],
+        "summary": "Detail Surat Jalan & Barang Muatan",
+        "description": "Mengambil rincian muatan surat jalan dan lokasi rak asal.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Detail surat jalan" } }
+      }
+    },
+    "/api/v1/fulfillment/delivery-orders/{id}/dispatch": {
+      "post": {
+        "tags": ["13. Pengiriman & Surat Jalan (Fulfillment & POD)"],
+        "summary": "Kirim Truk / Ekspedisi (Dispatch In-Transit)",
+        "description": "Menandai muatan telah meninggalkan gudang dan dalam perjalanan ke pelanggan.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Status pengiriman berhasil diubah menjadi DISPATCHED" } }
+      }
+    },
+    "/api/v1/fulfillment/delivery-orders/{id}/pod": {
+      "post": {
+        "tags": ["13. Pengiriman & Surat Jalan (Fulfillment & POD)"],
+        "summary": "Konfirmasi Bukti Terima Fisik (Proof of Delivery / POD)",
+        "description": "Mencatat penerima barang, otomatis memotong stok fisik resmi dari rak gudang, dan menyelesaikan alokasi reservasi.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["recipient_name"],
+                "properties": { "recipient_name": { "type": "string", "example": "Pak Slamet (Kepala Gudang)" }, "recipient_signature_url": { "type": "string" }, "delivery_photo_url": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "POD berhasil dicatat dan stok fisik resmi dipotong" } }
       }
     }
   }
