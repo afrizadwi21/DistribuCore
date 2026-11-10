@@ -360,13 +360,13 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Implement automated on-hand inventory increment upon verified receipt.
 - [x] Implement PO-to-GRN balance reconciliation and backorder tracking.
 
-### Phase 4: Sales Orders & Stock Reservation Engine (Current)
-- [ ] Implement Sales Quotation creation, price tier calculations, and quote-to-order conversion.
-- [ ] Implement customer credit limit validation rules.
-- [ ] Build high-concurrency stock reservation engine with Redis locking and database persistence.
-- [ ] Implement Available-to-Promise (ATP) query services.
+### Phase 4: Sales Orders & Stock Reservation Engine (Completed)
+- [x] Implement Sales Quotation creation, price tier calculations, and quote-to-order conversion.
+- [x] Implement customer credit limit validation rules.
+- [x] Build high-concurrency stock reservation engine with Redis locking and database persistence.
+- [x] Implement Available-to-Promise (ATP) query services.
 
-### Phase 5: Outbound Fulfillment, Dispatch & POD
+### Phase 5: Outbound Fulfillment, Dispatch & POD (Current)
 - [ ] Implement warehouse pick-and-pack list generation.
 - [ ] Implement split fulfillment and partial delivery order (DO) generation.
 - [ ] Implement Proof of Delivery (POD) confirmation workflows.
