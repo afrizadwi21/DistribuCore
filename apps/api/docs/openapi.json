@@ -12,11 +12,15 @@
     }
   ],
   "tags": [
-    { "name": "Kesehatan Server", "description": "Endpoint pemantauan status server" },
-    { "name": "Autentikasi & Tenant", "description": "Registrasi organisasi perusahaan, login pengguna, dan verifikasi profil" },
-    { "name": "Katalog & Satuan Barang", "description": "Manajemen master produk SKU dan satuan ukuran barang (UOM)" },
-    { "name": "Mitra Bisnis", "description": "Manajemen data pelanggan dengan kontrol limit kredit dan supplier" },
-    { "name": "Manajemen Gudang & Lokasi Rak", "description": "Fasilitas multi-gudang dan penataan rak/bin penyimpanan" }
+    { "name": "01. Autentikasi & Akun", "description": "Registrasi tenant baru, login pengguna, dan profil akun JWT" },
+    { "name": "02. Satuan Barang (UOM)", "description": "Master data satuan ukuran barang dan unit dasar" },
+    { "name": "03. Master Produk (Catalog)", "description": "Katalog produk SKU, spesifikasi, dan batas safety stock" },
+    { "name": "04. Pelanggan (Customers)", "description": "Direktori pelanggan toko/kontraktor dengan limit plafon kredit" },
+    { "name": "05. Pemasok (Suppliers)", "description": "Direktori vendor dan pabrik rekanan distributor" },
+    { "name": "06. Gudang (Warehouses)", "description": "Manajemen fasilitas fisik gudang penyimpanan barang" },
+    { "name": "07. Lokasi Rak (Bins)", "description": "Tata letak rak, lorong, dan bin penyimpanan di dalam gudang" },
+    { "name": "08. Inventaris & Saldo Stok", "description": "Penyesuaian stok opname dan saldo fisik on-hand per rak" },
+    { "name": "09. Sistem & Server", "description": "Pengecekan status operasional dan kesehatan server" }
   ],
   "components": {
     "securitySchemes": {
@@ -31,7 +35,7 @@
   "paths": {
     "/health": {
       "get": {
-        "tags": ["Kesehatan Server"],
+        "tags": ["09. Sistem & Server"],
         "summary": "Cek Kesehatan Server",
         "description": "Memeriksa apakah server Go Fiber aktif dan dapat melayani permintaan.",
         "responses": {
@@ -41,7 +45,7 @@
     },
     "/api/v1/auth/register-tenant": {
       "post": {
-        "tags": ["Autentikasi & Tenant"],
+        "tags": ["01. Autentikasi & Akun"],
         "summary": "Daftar Perusahaan (Tenant) Baru & Buat Akun Admin",
         "description": "Membuat entitas perusahaan baru, membuat role ADMIN, dan akun administrator utama dalam satu transaksi database.",
         "requestBody": {
@@ -69,7 +73,7 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["Autentikasi & Tenant"],
+        "tags": ["01. Autentikasi & Akun"],
         "summary": "Login Pengguna & Dapatkan Token JWT",
         "description": "Memvalidasi email dan password dalam batas tenant yang sesuai. Mengembalikan access token dan refresh token.",
         "requestBody": {
@@ -95,7 +99,7 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": ["Autentikasi & Tenant"],
+        "tags": ["01. Autentikasi & Akun"],
         "summary": "Lihat Profil Pengguna yang Sedang Login",
         "description": "Mengambil data akun, tenant ID, dan role pengguna dari token JWT yang aktif.",
         "security": [{ "BearerAuth": [] }],
@@ -106,7 +110,7 @@
     },
     "/api/v1/catalog/uom": {
       "get": {
-        "tags": ["Katalog & Satuan Barang"],
+        "tags": ["02. Satuan Barang (UOM)"],
         "summary": "Daftar Satuan Ukuran Barang (UOM)",
         "description": "Mengambil semua daftar satuan barang yang terdaftar untuk perusahaan Anda.",
         "security": [{ "BearerAuth": [] }],
@@ -115,7 +119,7 @@
         }
       },
       "post": {
-        "tags": ["Katalog & Satuan Barang"],
+        "tags": ["02. Satuan Barang (UOM)"],
         "summary": "Tambah Satuan Ukuran Baru",
         "description": "Mendaftarkan satuan baru seperti PCS, DUS, SAK, atau PALET.",
         "security": [{ "BearerAuth": [] }],
@@ -142,7 +146,7 @@
     },
     "/api/v1/catalog/products": {
       "get": {
-        "tags": ["Katalog & Satuan Barang"],
+        "tags": ["03. Master Produk (Catalog)"],
         "summary": "Daftar Master Produk dengan Paginasi",
         "description": "Mengambil katalog barang dagangan dengan pagination dan join otomatis ke satuan dasar.",
         "security": [{ "BearerAuth": [] }],
@@ -155,7 +159,7 @@
         }
       },
       "post": {
-        "tags": ["Katalog & Satuan Barang"],
+        "tags": ["03. Master Produk (Catalog)"],
         "summary": "Buat Master Produk SKU Baru",
         "description": "Mendaftarkan barang baru lengkap dengan ambang batas stok aman dan titik pemesanan ulang.",
         "security": [{ "BearerAuth": [] }],
@@ -185,7 +189,7 @@
     },
     "/api/v1/catalog/products/{id}": {
       "get": {
-        "tags": ["Katalog & Satuan Barang"],
+        "tags": ["03. Master Produk (Catalog)"],
         "summary": "Detail Satu Produk Berdasarkan ID",
         "description": "Mengambil rincian lengkap spesifikasi produk.",
         "security": [{ "BearerAuth": [] }],
@@ -199,7 +203,7 @@
     },
     "/api/v1/partners/customers": {
       "get": {
-        "tags": ["Mitra Bisnis"],
+        "tags": ["04. Pelanggan (Customers)"],
         "summary": "Daftar Pelanggan (Customer) & Limit Kredit",
         "description": "Mengambil seluruh pelanggan lengkap dengan informasi batas plafon kredit dan tempo pembayaran.",
         "security": [{ "BearerAuth": [] }],
@@ -208,7 +212,7 @@
         }
       },
       "post": {
-        "tags": ["Mitra Bisnis"],
+        "tags": ["04. Pelanggan (Customers)"],
         "summary": "Daftarkan Pelanggan Baru",
         "description": "Menambahkan toko/kontraktor baru dengan limit kredit piutang (dalam satuan sen/rupiah).",
         "security": [{ "BearerAuth": [] }],
@@ -239,7 +243,7 @@
     },
     "/api/v1/partners/suppliers": {
       "get": {
-        "tags": ["Mitra Bisnis"],
+        "tags": ["05. Pemasok (Suppliers)"],
         "summary": "Daftar Pemasok (Supplier)",
         "description": "Mengambil seluruh daftar vendor/pabrik rekanan distributor.",
         "security": [{ "BearerAuth": [] }],
@@ -248,7 +252,7 @@
         }
       },
       "post": {
-        "tags": ["Mitra Bisnis"],
+        "tags": ["05. Pemasok (Suppliers)"],
         "summary": "Daftarkan Supplier Baru",
         "description": "Mendaftarkan vendor/pabrik rekanan baru.",
         "security": [{ "BearerAuth": [] }],
@@ -278,7 +282,7 @@
     },
     "/api/v1/inventory/warehouses": {
       "get": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["06. Gudang (Warehouses)"],
         "summary": "Daftar Fasilitas Gudang",
         "description": "Mengambil seluruh gudang penyimpanan yang terdaftar untuk perusahaan.",
         "security": [{ "BearerAuth": [] }],
@@ -287,7 +291,7 @@
         }
       },
       "post": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["06. Gudang (Warehouses)"],
         "summary": "Tambah Gudang Baru",
         "description": "Mendaftarkan lokasi gudang baru (misal: Gudang Pusat, Gudang Transit).",
         "security": [{ "BearerAuth": [] }],
@@ -317,7 +321,7 @@
     },
     "/api/v1/inventory/warehouses/{warehouseId}/bins": {
       "get": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["07. Lokasi Rak (Bins)"],
         "summary": "Daftar Lokasi Rak (Bin) di Gudang",
         "description": "Mengambil seluruh daftar rak, lorong, dan bin di gudang tertentu.",
         "security": [{ "BearerAuth": [] }],
@@ -329,7 +333,7 @@
         }
       },
       "post": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["07. Lokasi Rak (Bins)"],
         "summary": "Tambah Rak/Bin Penyimpanan",
         "description": "Menambahkan nomor rak/bin baru (misal: Lorong A1, Rak 2, Bin 4).",
         "security": [{ "BearerAuth": [] }],
@@ -358,7 +362,7 @@
     },
     "/api/v1/inventory/adjustments": {
       "post": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["08. Inventaris & Saldo Stok"],
         "summary": "Penyesuaian Stok (Stock Adjustment / Opname)",
         "description": "Menyesuaikan jumlah stok fisik (tambah/kurang) dan otomatis mencatat mutasi ke buku besar inventaris (inventory transactions).",
         "security": [{ "BearerAuth": [] }],
@@ -388,7 +392,7 @@
     },
     "/api/v1/inventory/warehouses/{warehouseId}/balances": {
       "get": {
-        "tags": ["Manajemen Gudang & Lokasi Rak"],
+        "tags": ["08. Inventaris & Saldo Stok"],
         "summary": "Lihat Saldo Stok Fisik per Gudang & Rak",
         "description": "Mengambil saldo stok barang saat ini di setiap rak pada gudang yang dipilih.",
         "security": [{ "BearerAuth": [] }],
