@@ -22,7 +22,8 @@
     { "name": "08. Inventaris & Saldo Stok", "description": "Penyesuaian stok opname dan saldo fisik on-hand per rak" },
     { "name": "09. Sistem & Server", "description": "Pengecekan status operasional dan kesehatan server" },
     { "name": "10. Pesanan Pembelian (Purchase Orders)", "description": "Pembuatan PO ke pemasok, rincian biaya, dan siklus approval order" },
-    { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" }
+    { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" },
+    { "name": "12. Penjualan & Kunci Stok (Sales Orders)", "description": "Pesanan penjualan, evaluasi limit kredit otomatis, dan penguncian stok fisik (reservation)" }
   ],
   "components": {
     "securitySchemes": {
@@ -548,6 +549,98 @@
         "security": [{ "BearerAuth": [] }],
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
         "responses": { "200": { "description": "Detail bukti penerimaan barang" } }
+      }
+    },
+    "/api/v1/sales/orders": {
+      "get": {
+        "tags": ["12. Penjualan & Kunci Stok (Sales Orders)"],
+        "summary": "Daftar Pesanan Penjualan (Sales Orders)",
+        "description": "Mengambil seluruh order penjualan dengan status dan limit kredit.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "customer_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Daftar order penjualan" } }
+      },
+      "post": {
+        "tags": ["12. Penjualan & Kunci Stok (Sales Orders)"],
+        "summary": "Buat Sales Order Baru & Evaluasi Kredit",
+        "description": "Menerbitkan order baru dan otomatis mengecek sisa limit plafon kredit customer.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["order_number", "customer_id", "items"],
+                "properties": {
+                  "order_number": { "type": "string", "example": "SO-2026-001" },
+                  "customer_id": { "type": "string", "format": "uuid" },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["product_id", "uom_id", "ordered_quantity", "unit_price_cents"],
+                      "properties": {
+                        "product_id": { "type": "string", "format": "uuid" },
+                        "uom_id": { "type": "string", "format": "uuid" },
+                        "ordered_quantity": { "type": "number", "example": 100 },
+                        "unit_price_cents": { "type": "integer", "example": 7200000 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Sales order berhasil dibuat" } }
+      }
+    },
+    "/api/v1/sales/orders/{id}": {
+      "get": {
+        "tags": ["12. Penjualan & Kunci Stok (Sales Orders)"],
+        "summary": "Detail Sales Order & Status Kunci Stok",
+        "description": "Melihat rincian order, alokasi reservasi stok, dan status kredit.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Rincian order penjualan" } }
+      }
+    },
+    "/api/v1/sales/orders/{id}/confirm": {
+      "post": {
+        "tags": ["12. Penjualan & Kunci Stok (Sales Orders)"],
+        "summary": "Konfirmasi Order & Kunci Stok Fisik (Stock Reservation)",
+        "description": "Memvalidasi ketersediaan stok fisik (ATP) di gudang dan mengunci stok agar tidak terjual ganda.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["warehouse_id"],
+                "properties": { "warehouse_id": { "type": "string", "format": "uuid" } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Order dikonfirmasi dan stok fisik berhasil dikunci" } }
+      }
+    },
+    "/api/v1/sales/orders/{id}/cancel": {
+      "post": {
+        "tags": ["12. Penjualan & Kunci Stok (Sales Orders)"],
+        "summary": "Batalkan Order & Lepas Kunci Stok",
+        "description": "Membatalkan order penjualan dan otomatis melepaskan kembali stok fisik yang terkunci.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Order dibatalkan dan reservasi stok dilepas" } }
       }
     }
   }
