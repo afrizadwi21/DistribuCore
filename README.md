@@ -366,13 +366,13 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Build high-concurrency stock reservation engine with Redis locking and database persistence.
 - [x] Implement Available-to-Promise (ATP) query services.
 
-### Phase 5: Outbound Fulfillment, Dispatch & POD (Current)
-- [ ] Implement warehouse pick-and-pack list generation.
-- [ ] Implement split fulfillment and partial delivery order (DO) generation.
-- [ ] Implement Proof of Delivery (POD) confirmation workflows.
-- [ ] Implement automated release of stock reservations and deduction of physical inventory.
+### Phase 5: Outbound Fulfillment, Dispatch & POD (Completed)
+- [x] Implement warehouse pick-and-pack list generation.
+- [x] Implement split fulfillment and partial delivery order (DO) generation.
+- [x] Implement Proof of Delivery (POD) confirmation workflows.
+- [x] Implement automated release of stock reservations and deduction of physical inventory.
 
-### Phase 6: Invoicing, Payments & Accounts Receivable (O2C)
+### Phase 6: Invoicing, Payments & Accounts Receivable (O2C) (Current)
 - [ ] Implement customer invoice generation from confirmed delivery milestones.
 - [ ] Implement payment recording engine (bank transfers, checks, cash).
 - [ ] Implement payment allocation algorithms across multiple outstanding invoices.
