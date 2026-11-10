@@ -88,15 +88,17 @@ func main() {
 		})
 	})
 
-	// Serve OpenAPI JSON schema
+	// Serve OpenAPI JSON schema with no-cache headers for instant updates
 	app.Get("/api/v1/openapi.json", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/json")
+		c.Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		return c.SendFile("./docs/openapi.json")
 	})
 
 	// Interactive Scalar API Documentation UI
 	app.Get("/docs", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "text/html; charset=utf-8")
+		c.Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		html := `<!doctype html>
 <html>
   <head>
@@ -108,7 +110,7 @@ func main() {
   <body>
     <script
       id="api-reference"
-      data-url="/api/v1/openapi.json"
+      data-url="/api/v1/openapi.json?t=` + fmt.Sprintf("%d", time.Now().Unix()) + `"
       data-configuration='{"theme":"purple","layout":"modern"}'>
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
