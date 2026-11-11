@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { ShieldIcon, SunIcon, MoonIcon } from "./Icons";
 
 export function Navbar() {
@@ -88,11 +89,16 @@ export function Navbar() {
         aria-valuemin={0}
         aria-valuemax={100}
       />
-      <a href="#home" className="flex items-center gap-2.5 font-black text-xl sm:text-2xl font-heading text-[var(--tx)]">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--bl)] text-[var(--act)] shadow-sm">
-          <ShieldIcon className="w-5 h-5" />
-        </span>
-        DistribuCore
+      <a href="#home" className="flex items-center gap-3 group">
+        <Image
+          src="/Logo.png"
+          alt="DistribuCore"
+          width={176}
+          height={32}
+          className="h-8 sm:h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+          priority
+        />
+        <span className="sr-only">DistribuCore</span>
       </a>
 
       <nav className="hidden md:flex items-center gap-8 text-sm sm:text-base font-semibold text-[var(--mu)]">

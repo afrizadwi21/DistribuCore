@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { ShieldIcon } from "./Icons";
 
 export function ContactFooter() {
@@ -26,9 +27,15 @@ export function ContactFooter() {
       <footer className="border-t border-[var(--bd)] bg-[var(--card)] pt-14 pb-8 px-[5vw] transition-colors">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           <div>
-            <a href="#home" className="inline-flex items-center gap-2.5 font-black text-xl font-heading text-[var(--tx)]">
-              <span className="w-8 h-8 rounded-lg bg-[var(--bl)] text-[var(--act)] grid place-items-center shadow-sm"><ShieldIcon className="w-5 h-5" /></span>
-              DistribuCore
+            <a href="#home" className="inline-flex items-center gap-2 group">
+              <Image
+                src="/Logo.png"
+                alt="DistribuCore"
+                width={176}
+                height={32}
+                className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              />
+              <span className="sr-only">DistribuCore</span>
             </a>
             <p className="text-[var(--mu)] text-sm mt-4 max-w-[300px] leading-relaxed">Sistem manajemen distribusi B2B untuk distributor, grosir, dan pemasok bahan bangunan.</p>
           </div>

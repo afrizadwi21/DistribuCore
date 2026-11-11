@@ -23,6 +23,13 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "DistribuCore – Sistem Manajemen Distribusi B2B",
   description: "Sistem distribusi B2B multi-tenant untuk distributor dan grosir bahan bangunan: reservasi stok real-time, pengiriman parsial, dan kontrol limit kredit.",
+  icons: {
+    icon: [
+      { url: "/Favicon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/Favicon.png",
+  },
 };
 
 export default function RootLayout({
