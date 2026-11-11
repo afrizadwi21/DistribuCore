@@ -213,6 +213,17 @@ func main() {
 		fulfillmentRoutes.Get("/delivery-orders/:id", fulfillmentHandler.GetDeliveryOrderByID)
 		fulfillmentRoutes.Post("/delivery-orders/:id/dispatch", fulfillmentHandler.DispatchOrder)
 		fulfillmentRoutes.Post("/delivery-orders/:id/pod", fulfillmentHandler.SubmitPOD)
+
+		// 14. Billing, Invoicing & Accounts Receivable (AR) Handlers Registration
+		billingRepo := repository.NewBillingRepository(pgDB.Pool)
+		billingHandler := handler.NewBillingHandler(billingRepo)
+
+		billingRoutes := api.Group("/billing", middleware.RequireAuth(cfg.JWTSecret))
+		billingRoutes.Post("/invoices/generate-from-delivery", billingHandler.GenerateInvoice)
+		billingRoutes.Get("/invoices", billingHandler.ListInvoices)
+		billingRoutes.Get("/invoices/:id", billingHandler.GetInvoiceByID)
+		billingRoutes.Post("/payments", billingHandler.RecordPayment)
+		billingRoutes.Get("/ar-aging", billingHandler.GetARAging)
 	}
 
 	// 7. Protected Tenant Context Verification Route
