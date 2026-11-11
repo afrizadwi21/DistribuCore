@@ -25,7 +25,8 @@
     { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" },
     { "name": "12. Penjualan & Kunci Stok (Sales Orders)", "description": "Pesanan penjualan, evaluasi limit kredit otomatis, dan penguncian stok fisik (reservation)" },
     { "name": "13. Pengiriman & Surat Jalan (Fulfillment & POD)", "description": "Penerbitan surat jalan (DO), pengiriman truk parsial, dan konfirmasi bukti terima digital (POD)" },
-    { "name": "14. Faktur, Pembayaran & Piutang (Billing & AR)", "description": "Penerbitan faktur tagihan dari POD, pencatatan alokasi pembayaran, dan jadwal piutang (AR aging)" }
+    { "name": "14. Faktur, Pembayaran & Piutang (Billing & AR)", "description": "Penerbitan faktur tagihan dari POD, pencatatan alokasi pembayaran, dan jadwal piutang (AR aging)" },
+    { "name": "15. Analisis & Dasbor Eksekutif (Analytics)", "description": "Dasbor metrik real-time eksekutif, tren penjualan SKU, dan peringatan batas stok aman" }
   ],
   "components": {
     "securitySchemes": {
@@ -815,6 +816,36 @@
         "description": "Mengambil rekapitulasi saldo piutang tertunggak per pelanggan dalam bucket umur (Jatuh Tempo, 1-30 hari, 31-60 hari, >60 hari).",
         "security": [{ "BearerAuth": [] }],
         "responses": { "200": { "description": "Laporan jadwal umur piutang" } }
+      }
+    },
+    "/api/v1/analytics/executive-kpis": {
+      "get": {
+        "tags": ["15. Analisis & Dasbor Eksekutif (Analytics)"],
+        "summary": "Metrik KPI Eksekutif Real-Time",
+        "description": "Mengambil ringkasan pendapatan kotor, piutang tertunggak, jumlah pesanan aktif, valuasi inventaris, dan kas belum dialokasikan.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Ringkasan metrik KPI eksekutif" } }
+      }
+    },
+    "/api/v1/analytics/sales-velocity": {
+      "get": {
+        "tags": ["15. Analisis & Dasbor Eksekutif (Analytics)"],
+        "summary": "Analisis Perputaran Penjualan Barang (Sales Velocity)",
+        "description": "Peringkat produk SKU terlaris berdasarkan kuantitas dan total nilai omset.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": { "200": { "description": "Daftar produk dengan perputaran penjualan tertinggi" } }
+      }
+    },
+    "/api/v1/analytics/inventory-health": {
+      "get": {
+        "tags": ["15. Analisis & Dasbor Eksekutif (Analytics)"],
+        "summary": "Peringatan Kesehatan Stok & Titik Pemesanan Ulang",
+        "description": "Memantau status stok barang dibandingkan safety stock dan reorder point (CRITICAL_LOW, WARNING_REORDER, HEALTHY).",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Laporan kesehatan stok barang di gudang" } }
       }
     }
   }
