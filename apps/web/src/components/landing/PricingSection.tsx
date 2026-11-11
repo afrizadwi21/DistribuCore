@@ -39,14 +39,14 @@ export function PricingSection() {
   };
 
   return (
-    <section id="harga" className="mx-auto max-w-6xl px-6 py-16 border-t border-slate-200 dark:border-slate-800">
+    <section id="harga" className="mx-auto max-w-6xl px-6 py-16 border-t border-[var(--bd)]">
       <div className="max-w-xl mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Harga Langganan</h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Pilih periode tagihan. Semakin panjang periodenya, semakin hemat pengeluaran Anda.</p>
-        <div className="mt-4 inline-flex rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 p-1">
-          <button onClick={() => setPeriod("m")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "m" ? "bg-white dark:bg-slate-800 text-blue-600 shadow" : "text-slate-600 dark:text-slate-400"}`}>Bulanan</button>
-          <button onClick={() => setPeriod("y")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "y" ? "bg-white dark:bg-slate-800 text-blue-600 shadow" : "text-slate-600 dark:text-slate-400"}`}>Tahunan (Hemat 15%)</button>
-          <button onClick={() => setPeriod("y2")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "y2" ? "bg-white dark:bg-slate-800 text-blue-600 shadow" : "text-slate-600 dark:text-slate-400"}`}>2 Tahun (Hemat 25%)</button>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--tx)]">Harga Langganan</h2>
+        <p className="mt-2 text-sm text-[var(--mu)]">Pilih periode tagihan. Semakin panjang periodenya, semakin hemat pengeluaran Anda.</p>
+        <div className="mt-4 inline-flex rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-1">
+          <button onClick={() => setPeriod("m")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "m" ? "bg-[var(--bl)] text-[var(--act)] shadow" : "text-[var(--mu)]"}`}>Bulanan</button>
+          <button onClick={() => setPeriod("y")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "y" ? "bg-[var(--bl)] text-[var(--act)] shadow" : "text-[var(--mu)]"}`}>Tahunan (Hemat 15%)</button>
+          <button onClick={() => setPeriod("y2")} className={`px-3 py-1.5 rounded-md text-xs font-semibold ${period === "y2" ? "bg-[var(--bl)] text-[var(--act)] shadow" : "text-[var(--mu)]"}`}>2 Tahun (Hemat 25%)</button>
         </div>
       </div>
 
@@ -54,29 +54,29 @@ export function PricingSection() {
         {tiers.map((t, idx) => {
           const finalPrice = Math.round(t.basePrice * (1 - discount));
           return (
-            <div key={idx} className={`rounded-2xl border p-6 flex flex-col justify-between ${t.popular ? "border-blue-600 bg-blue-50/20 dark:bg-blue-950/20 shadow-lg" : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm"}`}>
+            <div key={idx} className={`rounded-2xl border p-6 flex flex-col justify-between ${t.popular ? "border-[var(--bl)] bg-[var(--card)] shadow-lg" : "border-[var(--bd)] bg-[var(--card)] shadow-sm"}`}>
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t.name}</h3>
-                  {t.popular && <span className="rounded-full bg-blue-600/10 px-2.5 py-0.5 text-[10px] font-bold text-blue-600 dark:text-blue-400">Paling Populer</span>}
+                  <h3 className="text-lg font-bold text-[var(--tx)]">{t.name}</h3>
+                  {t.popular && <span className="rounded-full bg-[var(--bl)] text-[var(--act)] px-2.5 py-0.5 text-[10px] font-bold">Paling Populer</span>}
                 </div>
-                <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 min-h-10">{t.desc}</p>
+                <p className="mt-2 text-xs text-[var(--mu)] min-h-10">{t.desc}</p>
                 <div className="mt-4">
                   {t.basePrice > 0 ? (
-                    <div className="text-2xl font-extrabold text-slate-900 dark:text-white">Rp {finalPrice.toLocaleString("id-ID")} <span className="text-xs font-normal text-slate-500">/ bulan</span></div>
+                    <div className="text-2xl font-extrabold text-[var(--tx)]">Rp {finalPrice.toLocaleString("id-ID")} <span className="text-xs font-normal text-[var(--mu)]">/ bulan</span></div>
                   ) : (
-                    <div className="text-2xl font-extrabold text-slate-900 dark:text-white">Hubungi Kami</div>
+                    <div className="text-2xl font-extrabold text-[var(--tx)]">Hubungi Kami</div>
                   )}
                 </div>
-                <div className="mt-6 space-y-2.5 border-t border-slate-100 dark:border-slate-800 pt-6">
+                <div className="mt-6 space-y-2.5 border-t border-[var(--bd)] pt-6">
                   {t.features.map((f, fi) => (
-                    <div key={fi} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+                    <div key={fi} className="flex items-center gap-2 text-xs text-[var(--tx)]">
                       <CheckIcon className="w-4 h-4 text-emerald-500 flex-shrink-0" /> {f}
                     </div>
                   ))}
                 </div>
               </div>
-              <a href={waLink(t.name)} target="_blank" rel="noopener noreferrer" className={`mt-8 block w-full rounded-lg py-2.5 text-center text-xs font-bold transition-colors ${t.popular ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"}`}>
+              <a href={waLink(t.name)} target="_blank" rel="noopener noreferrer" className={`mt-8 block w-full rounded-lg py-2.5 text-center text-xs font-bold transition-all ${t.popular ? "bg-[var(--bl)] text-[var(--act)] hover:opacity-90" : "border border-[var(--bd)] bg-[var(--card)] text-[var(--tx)] hover:bg-[var(--soft)]"}`}>
                 {t.basePrice > 0 ? `Pilih Paket ${t.name}` : "Minta Penawaran"}
               </a>
             </div>
