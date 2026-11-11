@@ -2,7 +2,7 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { DemoLoginSection } from "@/components/landing/DemoLoginSection";
 import { ModulesSection } from "@/components/landing/ModulesSection";
-import { WorkflowSection } from "@/components/landing/WorkflowSection";
+import { WorkflowConveyor } from "@/components/landing/WorkflowConveyor";
 import { PersonaDrum } from "@/components/landing/PersonaDrum";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { FAQSection } from "@/components/landing/FAQSection";
@@ -16,7 +16,7 @@ export default function HomePage() {
         <Hero />
         <DemoLoginSection />
         <ModulesSection />
-        <WorkflowSection />
+        <WorkflowConveyor />
         <PersonaDrum />
         <PricingSection />
         <FAQSection />
