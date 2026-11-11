@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
+import { DemoLoginSection } from "@/components/landing/DemoLoginSection";
 import { ModulesSection } from "@/components/landing/ModulesSection";
 import { WorkflowSection } from "@/components/landing/WorkflowSection";
 import { PersonasSection } from "@/components/landing/PersonasSection";
@@ -13,6 +14,7 @@ export default function HomePage() {
       <Navbar />
       <main id="home">
         <Hero />
+        <DemoLoginSection />
         <ModulesSection />
         <WorkflowSection />
         <PersonasSection />
