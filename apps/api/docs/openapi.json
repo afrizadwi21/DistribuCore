@@ -24,7 +24,8 @@
     { "name": "10. Pesanan Pembelian (Purchase Orders)", "description": "Pembuatan PO ke pemasok, rincian biaya, dan siklus approval order" },
     { "name": "11. Penerimaan Barang (Goods Receipt Notes)", "description": "Penerimaan fisik barang masuk dari supplier ke rak gudang dan update stok otomatis" },
     { "name": "12. Penjualan & Kunci Stok (Sales Orders)", "description": "Pesanan penjualan, evaluasi limit kredit otomatis, dan penguncian stok fisik (reservation)" },
-    { "name": "13. Pengiriman & Surat Jalan (Fulfillment & POD)", "description": "Penerbitan surat jalan (DO), pengiriman truk parsial, dan konfirmasi bukti terima digital (POD)" }
+    { "name": "13. Pengiriman & Surat Jalan (Fulfillment & POD)", "description": "Penerbitan surat jalan (DO), pengiriman truk parsial, dan konfirmasi bukti terima digital (POD)" },
+    { "name": "14. Faktur, Pembayaran & Piutang (Billing & AR)", "description": "Penerbitan faktur tagihan dari POD, pencatatan alokasi pembayaran, dan jadwal piutang (AR aging)" }
   ],
   "components": {
     "securitySchemes": {
@@ -731,6 +732,89 @@
           }
         },
         "responses": { "201": { "description": "POD berhasil dicatat dan stok fisik resmi dipotong" } }
+      }
+    },
+    "/api/v1/billing/invoices/generate-from-delivery": {
+      "post": {
+        "tags": ["14. Faktur, Pembayaran & Piutang (Billing & AR)"],
+        "summary": "Terbitkan Faktur Tagihan dari Surat Jalan (POD)",
+        "description": "Membuat invoice pelanggan resmi berdasarkan pengiriman barang yang sukses (POD).",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["delivery_order_id", "invoice_number"],
+                "properties": { "delivery_order_id": { "type": "string", "format": "uuid" }, "invoice_number": { "type": "string", "example": "INV-2026-001" } }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Faktur tagihan berhasil diterbitkan" } }
+      }
+    },
+    "/api/v1/billing/invoices": {
+      "get": {
+        "tags": ["14. Faktur, Pembayaran & Piutang (Billing & AR)"],
+        "summary": "Daftar Faktur Tagihan (Invoices)",
+        "description": "Mengambil seluruh faktur tagihan dengan filter pelanggan dan status pembayaran.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20 } },
+          { "name": "customer_id", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Daftar faktur tagihan" } }
+      }
+    },
+    "/api/v1/billing/invoices/{id}": {
+      "get": {
+        "tags": ["14. Faktur, Pembayaran & Piutang (Billing & AR)"],
+        "summary": "Detail Faktur Tagihan & Sisa Tagihan",
+        "description": "Mengambil rincian item faktur, total nominal, dan sisa saldo belum terbayar (balance due).",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Detail faktur tagihan" } }
+      }
+    },
+    "/api/v1/billing/payments": {
+      "post": {
+        "tags": ["14. Faktur, Pembayaran & Piutang (Billing & AR)"],
+        "summary": "Catat Penerimaan Pembayaran & Alokasi Invoice",
+        "description": "Mencatat setoran pembayaran dari pelanggan (transfer/giro/cek) dan mengalokasikannya ke invoice.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["payment_number", "customer_id", "payment_method", "amount_cents"],
+                "properties": {
+                  "payment_number": { "type": "string", "example": "PAY-2026-001" },
+                  "customer_id": { "type": "string", "format": "uuid" },
+                  "payment_method": { "type": "string", "example": "BANK_TRANSFER" },
+                  "amount_cents": { "type": "integer", "example": 720000000 },
+                  "invoice_id": { "type": "string", "format": "uuid" },
+                  "allocate_cents": { "type": "integer", "example": 720000000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Pembayaran berhasil dicatat dan dialokasikan" } }
+      }
+    },
+    "/api/v1/billing/ar-aging": {
+      "get": {
+        "tags": ["14. Faktur, Pembayaran & Piutang (Billing & AR)"],
+        "summary": "Laporan Umur Piutang (AR Aging Schedule)",
+        "description": "Mengambil rekapitulasi saldo piutang tertunggak per pelanggan dalam bucket umur (Jatuh Tempo, 1-30 hari, 31-60 hari, >60 hari).",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Laporan jadwal umur piutang" } }
       }
     }
   }
