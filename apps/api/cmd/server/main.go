@@ -224,6 +224,15 @@ func main() {
 		billingRoutes.Get("/invoices/:id", billingHandler.GetInvoiceByID)
 		billingRoutes.Post("/payments", billingHandler.RecordPayment)
 		billingRoutes.Get("/ar-aging", billingHandler.GetARAging)
+
+		// 15. Analytics & Dashboard Handlers Registration
+		analyticsRepo := repository.NewAnalyticsRepository(pgDB.Pool)
+		analyticsHandler := handler.NewAnalyticsHandler(analyticsRepo)
+
+		analyticsRoutes := api.Group("/analytics", middleware.RequireAuth(cfg.JWTSecret))
+		analyticsRoutes.Get("/executive-kpis", analyticsHandler.GetExecutiveKPIs)
+		analyticsRoutes.Get("/sales-velocity", analyticsHandler.GetSalesVelocity)
+		analyticsRoutes.Get("/inventory-health", analyticsHandler.GetInventoryHealth)
 	}
 
 	// 7. Protected Tenant Context Verification Route
