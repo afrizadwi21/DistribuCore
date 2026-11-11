@@ -52,20 +52,11 @@ p {
   color: var(--act);
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-::view-transition-old(root) {
-  z-index: 1;
-}
-::view-transition-new(root) {
-  z-index: 9999;
-}
-.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-.dark::view-transition-new(root) {
-  z-index: 1;
+/* Clean, stutter-free theme transitions without heavy snapshot freezes */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.25s ease-out, border-color 0.25s ease-out, color 0.2s ease-out, fill 0.2s ease-out, stroke 0.2s ease-out !important;
+  transition-delay: 0s !important;
 }

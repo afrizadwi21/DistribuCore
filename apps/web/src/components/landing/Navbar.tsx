@@ -30,53 +30,21 @@ export function Navbar() {
     document.documentElement.classList.toggle("dark", darkActive);
   }, []);
 
-  const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleTheme = () => {
     const next = !isDark;
     const themeName = next ? "dark" : "light";
+    setIsDark(next);
 
-    const updateThemeState = () => {
-      setIsDark(next);
-      document.documentElement.setAttribute("data-theme", themeName);
-      document.documentElement.classList.toggle("dark", next);
-      try {
-        localStorage.setItem("dc_theme", themeName);
-      } catch {}
-    };
+    document.documentElement.classList.add("theme-transitioning");
+    document.documentElement.setAttribute("data-theme", themeName);
+    document.documentElement.classList.toggle("dark", next);
+    try {
+      localStorage.setItem("dc_theme", themeName);
+    } catch {}
 
-    if (
-      typeof document === "undefined" ||
-      !("startViewTransition" in document) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      updateThemeState();
-      return;
-    }
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(updateThemeState);
-
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 480,
-          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-          pseudoElement: "::view-transition-new(root)",
-        }
-      );
-    });
+    window.setTimeout(() => {
+      document.documentElement.classList.remove("theme-transitioning");
+    }, 280);
   };
 
   return (
