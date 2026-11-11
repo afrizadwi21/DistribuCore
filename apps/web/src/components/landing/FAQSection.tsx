@@ -11,12 +11,12 @@ export function FAQSection() {
   };
 
   return (
-    <section id="faq" className="mx-auto max-w-4xl px-6 py-16 border-t border-slate-200 dark:border-slate-800">
+    <section id="faq" className="mx-auto max-w-4xl px-6 py-16 border-t border-[var(--bd)]">
       <div className="text-center mb-10">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--tx)]">
           Pertanyaan yang Sering Diajukan
         </h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-[var(--mu)]">
           Semua yang perlu Anda ketahui tentang implementasi DistribuCore di bisnis Anda.
         </p>
       </div>
@@ -27,19 +27,19 @@ export function FAQSection() {
           return (
             <div
               key={idx}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 overflow-hidden transition-colors"
+              className="rounded-xl border border-[var(--bd)] bg-[var(--card)] overflow-hidden transition-colors"
             >
               <button
                 onClick={() => toggle(idx)}
-                className="flex w-full items-center justify-between p-5 text-left text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+                className="flex w-full items-center justify-between p-5 text-left text-sm font-semibold text-[var(--tx)] hover:opacity-80"
               >
                 <span>{faq.q}</span>
-                <span className="text-lg font-bold text-blue-600 dark:text-blue-400 ml-4">
+                <span className="text-lg font-bold text-[var(--bl)] ml-4">
                   {isOpen ? "−" : "+"}
                 </span>
               </button>
               {isOpen && (
-                <div className="px-5 pb-5 pt-0 text-xs text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800/80 pt-3">
+                <div className="px-5 pb-5 pt-0 text-xs text-[var(--mu)] leading-relaxed border-t border-[var(--bd)] pt-3">
                   {faq.a}
                 </div>
               )}
