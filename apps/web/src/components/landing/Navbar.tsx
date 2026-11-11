@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 import { ShieldIcon, SunIcon, MoonIcon } from "./Icons";
 
 export function Navbar() {
+  const { locale, setLocale, t } = useLanguage();
   const [isDark, setIsDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -70,15 +72,42 @@ export function Navbar() {
       </a>
 
       <nav className="hidden md:flex items-center gap-8 text-sm sm:text-base font-semibold text-[var(--mu)]">
-        <a href="#fitur" className="hover:text-[var(--tx)] transition-colors">Modul</a>
-        <a href="#alur" className="hover:text-[var(--tx)] transition-colors">Alur Kerja</a>
-        <a href="#peran" className="hover:text-[var(--tx)] transition-colors">Untuk Siapa</a>
-        <a href="#harga" className="hover:text-[var(--tx)] transition-colors">Harga</a>
-        <a href="#faq" className="hover:text-[var(--tx)] transition-colors">FAQ</a>
-        <a href="#kontak" className="hover:text-[var(--tx)] transition-colors">Kontak</a>
+        <a href="#fitur" className="hover:text-[var(--tx)] transition-colors">{t("nav_modules")}</a>
+        <a href="#alur" className="hover:text-[var(--tx)] transition-colors">{t("nav_workflow")}</a>
+        <a href="#peran" className="hover:text-[var(--tx)] transition-colors">{t("nav_personas")}</a>
+        <a href="#harga" className="hover:text-[var(--tx)] transition-colors">{t("nav_pricing")}</a>
+        <a href="#faq" className="hover:text-[var(--tx)] transition-colors">{t("nav_faq")}</a>
+        <a href="#kontak" className="hover:text-[var(--tx)] transition-colors">{t("nav_contact")}</a>
       </nav>
 
-      <div className="flex items-center gap-3.5">
+      <div className="flex items-center gap-3">
+        {/* Language Switcher ID / EN */}
+        <div className="flex items-center rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-0.5 text-xs font-bold" role="group" aria-label="Language selector">
+          <button
+            onClick={() => setLocale("id")}
+            className={`rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
+              locale === "id"
+                ? "bg-[var(--card)] text-[var(--tx)] shadow-xs"
+                : "text-[var(--mu)] hover:text-[var(--tx)]"
+            }`}
+            aria-pressed={locale === "id"}
+          >
+            ID
+          </button>
+          <button
+            onClick={() => setLocale("en")}
+            className={`rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
+              locale === "en"
+                ? "bg-[var(--card)] text-[var(--tx)] shadow-xs"
+                : "text-[var(--mu)] hover:text-[var(--tx)]"
+            }`}
+            aria-pressed={locale === "en"}
+          >
+            EN
+          </button>
+        </div>
+
+        {/* Theme toggle */}
         <button
           onClick={toggleTheme}
           aria-label="Toggle theme"
@@ -95,7 +124,7 @@ export function Navbar() {
           href="#coba"
           className="rounded-lg bg-[var(--bl)] px-5 py-2.5 text-xs sm:text-sm font-bold text-[var(--act)] shadow-sm hover:opacity-90 transition-opacity"
         >
-          Coba Demo
+          {t("nav_demo")}
         </a>
       </div>
     </header>
