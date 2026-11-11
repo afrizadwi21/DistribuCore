@@ -17,15 +17,15 @@ colors:
   danger: "#ef4444"
 typography:
   display:
-    fontFamily: "var(--font-geist-sans), sans-serif"
+    fontFamily: "var(--font-heading), Bricolage Grotesque, sans-serif"
     fontSize: "2.75rem"
     fontWeight: 800
   headline:
-    fontFamily: "var(--font-geist-sans), sans-serif"
+    fontFamily: "var(--font-heading), Bricolage Grotesque, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 700
   body:
-    fontFamily: "var(--font-geist-sans), sans-serif"
+    fontFamily: "var(--font-sans), Instrument Sans, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
 rounded:
@@ -61,7 +61,7 @@ Palet dibangun di atas token dua-tema (`:root` dan `.dark` / `[data-theme="dark"
 - **Status Semantik**: Sukses (`--gr`: `#10b981`), Warning (`--am`: `#f59e0b`), Bahaya (`--rd`: `#ef4444`).
 
 ## Typography
-Tipografi Geist Sans: Display 2.75rem (44px) bold, Section Heading 1.75rem (28px) semi-bold, Body & Data 0.875rem (14px) regular.
+Tipografi menggunakan Bricolage Grotesque (Headings) dan Instrument Sans (Body & Data): Display 2.75rem (44px) bold, Section Heading 1.75rem (28px) semi-bold, Body & Data 0.875rem (14px) regular. Tabular numerals menggunakan JetBrains Mono.
 
 ## Layout
 Sistem Grid dengan kontainer 1280px (`max-w-7xl`), spasi vertikal seksi `py-16` hingga `py-20`, dan adaptif 1 kolom (mobile) hingga 4 kolom (desktop).
