@@ -7,6 +7,7 @@ import { PersonaDrum } from "@/components/landing/PersonaDrum";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { ContactFooter } from "@/components/landing/ContactFooter";
+import { ScrollReveal } from "@/components/landing/ScrollReveal";
 
 export default function HomePage() {
   return (
@@ -14,13 +15,23 @@ export default function HomePage() {
       <Navbar />
       <main id="home">
         <Hero />
-        <DemoLoginSection />
-        <ModulesSection />
+        <ScrollReveal>
+          <DemoLoginSection />
+        </ScrollReveal>
+        <ScrollReveal>
+          <ModulesSection />
+        </ScrollReveal>
         <WorkflowConveyor />
         <PersonaDrum />
-        <PricingSection />
-        <FAQSection />
-        <ContactFooter />
+        <ScrollReveal>
+          <PricingSection />
+        </ScrollReveal>
+        <ScrollReveal>
+          <FAQSection />
+        </ScrollReveal>
+        <ScrollReveal>
+          <ContactFooter />
+        </ScrollReveal>
       </main>
     </div>
   );

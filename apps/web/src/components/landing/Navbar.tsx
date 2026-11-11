@@ -5,6 +5,19 @@ import { ShieldIcon, SunIcon, MoonIcon } from "./Icons";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(total > 0 ? (window.scrollY / total) * 100 : 0);
+      setScrolled(window.scrollY > 15);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("dc_theme");
@@ -66,7 +79,15 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[var(--bd)] bg-[var(--card)] px-6 py-4 backdrop-blur-md transition-colors">
+    <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-[var(--bd)] px-6 backdrop-blur-md transition-all duration-300 ${scrolled ? "py-3 bg-[var(--card)]/90 shadow-sm" : "py-4 bg-[var(--card)]/75"}`}>
+      <div
+        className="absolute bottom-0 left-0 h-[2.5px] bg-[var(--bl)] transition-[width] duration-100 ease-out"
+        style={{ width: `${scrollProgress}%` }}
+        role="progressbar"
+        aria-valuenow={Math.round(scrollProgress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
       <a href="#home" className="flex items-center gap-2.5 font-black text-xl sm:text-2xl font-heading text-[var(--tx)]">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--bl)] text-[var(--act)] shadow-sm">
           <ShieldIcon className="w-5 h-5" />
