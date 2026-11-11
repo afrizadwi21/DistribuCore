@@ -6,54 +6,54 @@ export function ContactFooter() {
 
   return (
     <>
-      <section id="kontak" className="max-w-[1200px] mx-auto py-9 px-[5vw]">
-        <div className="rounded-[10px] border border-[var(--bd)] bg-[var(--card)] p-6 flex flex-col md:flex-row items-center gap-5 justify-between transition-colors">
-          <div className="flex-1 min-w-[240px]">
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--tx)]">Tertarik? Hubungi Afriza</h2>
-            <p className="text-sm text-[var(--mu)] mt-1.5">Minta demo langsung, penawaran harga, atau diskusi kebutuhan distribusi Anda.</p>
+      <section id="kontak" className="max-w-[1200px] mx-auto py-16 lg:py-24 px-[5vw]">
+        <div className="rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-8 sm:p-12 flex flex-col md:flex-row items-center gap-8 justify-between transition-colors shadow-sm">
+          <div className="flex-1 min-w-[260px]">
+            <h2 className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-[var(--tx)] leading-[1.08] [text-wrap:balance]">Tertarik? Hubungi Afriza</h2>
+            <p className="text-base sm:text-lg text-[var(--mu)] mt-3 leading-relaxed [text-wrap:pretty]">Minta demo langsung, penawaran harga, atau diskusi kebutuhan distribusi Anda.</p>
           </div>
-          <div className="flex flex-col gap-2 w-full md:w-auto">
-            <a target="_blank" rel="noopener noreferrer" href={wa("Halo Afriza, saya ingin tahu lebih lanjut tentang DistribuCore.")} className="inline-flex items-center justify-center border border-[var(--bl)] bg-[var(--bl)] text-[var(--act)] rounded-lg px-3.5 py-2 font-semibold text-xs hover:opacity-90 transition-opacity">
+          <div className="flex flex-col gap-3 w-full md:w-auto shrink-0">
+            <a target="_blank" rel="noopener noreferrer" href={wa("Halo Afriza, saya ingin tahu lebih lanjut tentang DistribuCore.")} className="inline-flex items-center justify-center border border-[var(--bl)] bg-[var(--bl)] text-[var(--act)] rounded-xl px-6 py-3.5 font-bold text-sm sm:text-base hover:opacity-90 shadow-md transition-opacity">
               WhatsApp 081339529934
             </a>
-            <a href="mailto:afriza.dwi21@gmail.com" className="inline-flex items-center justify-center border border-[var(--bd)] bg-[var(--card)] text-[var(--tx)] rounded-lg px-3.5 py-2 font-semibold text-xs hover:bg-[var(--soft)] transition-colors">
+            <a href="mailto:afriza.dwi21@gmail.com" className="inline-flex items-center justify-center border border-[var(--bd)] bg-[var(--card)] text-[var(--tx)] rounded-xl px-6 py-3.5 font-bold text-sm sm:text-base hover:bg-[var(--soft)] transition-colors">
               afriza.dwi21@gmail.com
             </a>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-[var(--bd)] bg-[var(--card)] pt-10 pb-5 px-[5vw] transition-colors">
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+      <footer className="border-t border-[var(--bd)] bg-[var(--card)] pt-14 pb-8 px-[5vw] transition-colors">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           <div>
-            <a href="#home" className="inline-flex items-center gap-2 font-bold text-base text-[var(--tx)]">
-              <span className="w-6.5 h-6.5 rounded-[7px] bg-[var(--bl)] text-[var(--act)] grid place-items-center"><ShieldIcon className="w-4 h-4" /></span>
+            <a href="#home" className="inline-flex items-center gap-2.5 font-black text-xl font-heading text-[var(--tx)]">
+              <span className="w-8 h-8 rounded-lg bg-[var(--bl)] text-[var(--act)] grid place-items-center shadow-sm"><ShieldIcon className="w-5 h-5" /></span>
               DistribuCore
             </a>
-            <p className="text-[var(--mu)] text-xs mt-3 max-w-[300px] leading-relaxed">Sistem manajemen distribusi B2B untuk distributor, grosir, dan pemasok bahan bangunan.</p>
+            <p className="text-[var(--mu)] text-sm mt-4 max-w-[300px] leading-relaxed">Sistem manajemen distribusi B2B untuk distributor, grosir, dan pemasok bahan bangunan.</p>
           </div>
           <div>
-            <h4 className="text-xs font-bold text-[var(--tx)] mb-2.5">Keunggulan</h4>
-            <ul className="space-y-1 text-xs text-[var(--mu)] list-none p-0 m-0">
+            <h4 className="text-sm font-black font-heading tracking-wide uppercase text-[var(--tx)] mb-3">Keunggulan</h4>
+            <ul className="space-y-2 text-sm text-[var(--mu)] list-none p-0 m-0 font-medium">
               <li>Stok terkunci, tanpa jual ganda</li><li>Pengiriman parsial &amp; POD digital</li><li>Limit kredit otomatis</li><li>Faktur dari surat jalan</li><li>Banyak gudang &amp; perusahaan</li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-bold text-[var(--tx)] mb-2.5">Menu</h4>
-            <div className="space-y-1 text-xs text-[var(--mu)] flex flex-col">
-              <a href="#fitur" className="hover:text-[var(--tx)]">Modul</a><a href="#alur" className="hover:text-[var(--tx)]">Alur kerja</a><a href="#peran" className="hover:text-[var(--tx)]">Untuk siapa</a><a href="#harga" className="hover:text-[var(--tx)]">Harga</a><a href="#faq" className="hover:text-[var(--tx)]">FAQ</a><a href="#coba" className="hover:text-[var(--tx)]">Masuk</a>
+            <h4 className="text-sm font-black font-heading tracking-wide uppercase text-[var(--tx)] mb-3">Menu</h4>
+            <div className="space-y-2 text-sm text-[var(--mu)] flex flex-col font-medium">
+              <a href="#fitur" className="hover:text-[var(--tx)] transition-colors">Modul</a><a href="#alur" className="hover:text-[var(--tx)] transition-colors">Alur kerja</a><a href="#peran" className="hover:text-[var(--tx)] transition-colors">Untuk siapa</a><a href="#harga" className="hover:text-[var(--tx)] transition-colors">Harga</a><a href="#faq" className="hover:text-[var(--tx)] transition-colors">FAQ</a><a href="#coba" className="hover:text-[var(--tx)] transition-colors">Masuk</a>
             </div>
           </div>
           <div>
-            <h4 className="text-xs font-bold text-[var(--tx)] mb-2.5">Hubungi kami</h4>
-            <div className="space-y-1 text-xs text-[var(--mu)] flex flex-col">
-              <a target="_blank" rel="noopener noreferrer" href={wa("Halo Afriza, saya ingin tahu lebih lanjut tentang DistribuCore.")} className="hover:text-[var(--tx)]">WhatsApp 081339529934</a>
-              <a href="mailto:afriza.dwi21@gmail.com" className="hover:text-[var(--tx)]">afriza.dwi21@gmail.com</a>
-              <span>Minta demo langsung lewat WhatsApp</span>
+            <h4 className="text-sm font-black font-heading tracking-wide uppercase text-[var(--tx)] mb-3">Hubungi kami</h4>
+            <div className="space-y-2 text-sm text-[var(--mu)] flex flex-col font-medium">
+              <a target="_blank" rel="noopener noreferrer" href={wa("Halo Afriza, saya ingin tahu lebih lanjut tentang DistribuCore.")} className="hover:text-[var(--tx)] transition-colors">WhatsApp 081339529934</a>
+              <a href="mailto:afriza.dwi21@gmail.com" className="hover:text-[var(--tx)] transition-colors">afriza.dwi21@gmail.com</a>
+              <span className="text-xs text-[var(--mu)]">Minta demo langsung lewat WhatsApp</span>
             </div>
           </div>
         </div>
-        <div className="max-w-[1200px] mx-auto mt-7 pt-4 border-t border-[var(--bd)] flex flex-wrap justify-between gap-3 text-xs text-[var(--mu)]">
+        <div className="max-w-[1200px] mx-auto mt-12 pt-6 border-t border-[var(--bd)] flex flex-wrap justify-between gap-4 text-xs sm:text-sm text-[var(--mu)] font-medium">
           <span>© 2026 Afriza. Hak cipta dilindungi undang-undang.</span>
           <span>DistribuCore · Sistem Manajemen Distribusi B2B</span>
         </div>
