@@ -28,12 +28,13 @@ export function Hero() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
       <div className="lg:col-span-7 space-y-5">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-          <CheckIcon className="w-3.5 h-3.5" /> Mesin Reservasi Stok Real-Time
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--tx)] leading-[1.15]">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[var(--tx)] leading-[1.12]">
           Stok yang dijanjikan harus stok yang benar-benar ada.
         </h1>
+        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <CheckIcon className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Mesin Reservasi Stok Real-Time (ATP) Terintegrasi</span>
+        </div>
         <p className="text-sm sm:text-base text-[var(--mu)] max-w-xl leading-relaxed">
           DistribuCore adalah sistem manajemen distribusi B2B multi-tenant untuk distributor, grosir, dan pemasok material bangunan. Pengadaan, reservasi stok, pengiriman bertahap, dan piutang berjalan di satu sumber data terpadu.
         </p>
@@ -47,12 +48,12 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="lg:col-span-5 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-6 shadow-xl">
+      <div className="lg:col-span-5 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-6 shadow-sm">
         <div className="flex items-center justify-between pb-4 border-b border-[var(--bd)]">
           <div className="flex items-center gap-2 text-xs font-bold text-[var(--tx)]">
             <LockIcon className="w-4 h-4 text-amber-500" /> Simulator ATP · Semen Tiga Roda 50kg
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
             Redis Lock
           </span>
         </div>
@@ -86,9 +87,9 @@ export function Hero() {
           </button>
         </div>
         {errorMsg ? (
-          <p className="mt-3 text-[11px] font-mono text-rose-500">{errorMsg}</p>
+          <p className="mt-3 text-xs font-mono text-rose-500">{errorMsg}</p>
         ) : (
-          <p className="mt-3 text-[10px] text-[var(--mu)]">Ketik 450 SAK untuk menguji penolakan otomatis saat melebihi kuota ATP.</p>
+          <p className="mt-3 text-xs text-[var(--mu)]">Ketik 450 SAK untuk menguji penolakan otomatis saat melebihi kuota ATP.</p>
         )}
       </div>
     </section>

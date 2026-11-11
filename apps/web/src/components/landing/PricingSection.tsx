@@ -58,7 +58,7 @@ export function PricingSection() {
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold text-[var(--tx)]">{t.name}</h3>
-                  {t.popular && <span className="rounded-full bg-[var(--bl)] text-[var(--act)] px-2.5 py-0.5 text-[10px] font-bold">Paling Populer</span>}
+                  {t.popular && <span className="rounded-full bg-[var(--bl)] text-[var(--act)] px-2.5 py-0.5 text-[11px] font-bold">Paling Populer</span>}
                 </div>
                 <p className="mt-2 text-xs text-[var(--mu)] min-h-10">{t.desc}</p>
                 <div className="mt-4">
