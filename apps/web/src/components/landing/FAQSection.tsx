@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { FAQS } from "./data";
+import { useLanguage } from "@/context/LanguageContext";
+import { FAQS, FAQS_EN } from "./data";
 
 export function FAQSection() {
+  const { t, locale } = useLanguage();
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const faqs = locale === "en" ? FAQS_EN : FAQS;
 
   const toggle = (idx: number) => {
     setOpenIdx(openIdx === idx ? null : idx);
@@ -14,15 +17,15 @@ export function FAQSection() {
     <section id="faq" className="mx-auto max-w-4xl px-6 py-20 lg:py-28 border-t border-[var(--bd)]">
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight text-[var(--tx)] leading-[1.08] [text-wrap:balance]">
-          Pertanyaan yang Sering Diajukan
+          {t("faq_title")}
         </h2>
         <p className="mt-3 text-base sm:text-lg lg:text-xl text-[var(--mu)] leading-relaxed [text-wrap:pretty]">
-          Semua yang perlu Anda ketahui tentang implementasi DistribuCore di bisnis Anda.
+          {t("faq_desc")}
         </p>
       </div>
 
       <div className="space-y-4">
-        {FAQS.map((faq, idx) => {
+        {faqs.map((faq, idx) => {
           const isOpen = openIdx === idx;
           return (
             <div
