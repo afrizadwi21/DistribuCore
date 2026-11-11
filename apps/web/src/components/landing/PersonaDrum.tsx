@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { PERSONAS } from "./data";
+import { useLanguage } from "@/context/LanguageContext";
+import { PERSONAS, PERSONAS_EN } from "./data";
 
 const STEP = 20; // derajat antar peran pada silinder 3D
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export function PersonaDrum() {
-  const total = PERSONAS.length;
+  const { locale } = useLanguage();
+  const list = locale === "en" ? PERSONAS_EN : PERSONAS;
+  const total = list.length;
   const sectionRef = useRef<HTMLElement>(null);
   const drumRef = useRef<HTMLOListElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -58,13 +61,17 @@ export function PersonaDrum() {
     <section ref={sectionRef} id="peran" className="relative border-t border-[var(--bd)]" style={{ height: `${100 + (total - 1) * 60}vh` }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-[var(--bg)] select-none">
         <div className="absolute inset-x-0 top-[9vh] z-10 px-6 text-center">
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[var(--tx)]">Satu sistem untuk setiap peran operasional</h2>
-          <p className="mt-2 text-sm text-[var(--mu)]">Gulir untuk memutar daftar peran.</p>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[var(--tx)]">
+            {locale === "en" ? "One system for every operational role" : "Satu sistem untuk setiap peran operasional"}
+          </h2>
+          <p className="mt-2 text-sm text-[var(--mu)]">
+            {locale === "en" ? "Scroll down to spin through roles." : "Gulir untuk memutar daftar peran."}
+          </p>
         </div>
 
         <div className="absolute inset-0" style={{ perspective: "1400px" }}>
           <ol ref={drumRef} className="absolute inset-0 m-0 list-none p-0" style={{ transformStyle: "preserve-3d", willChange: "transform" }}>
-            {PERSONAS.map((p, i) => (
+            {list.map((p, i) => (
               <li
                 key={p.role}
                 ref={(n) => { itemRefs.current[i] = n; }}
@@ -88,7 +95,7 @@ export function PersonaDrum() {
           <span className="font-mono text-sm font-bold tabular-nums text-[var(--tx)]">
             {pad(active + 1)} <span className="text-[var(--mu)]">/ {pad(total)}</span>
           </span>
-          <p aria-live="polite" className="max-w-md text-right text-sm leading-relaxed text-[var(--mu)] sm:text-base">{PERSONAS[active].desc}</p>
+          <p aria-live="polite" className="max-w-md text-right text-sm leading-relaxed text-[var(--mu)] sm:text-base">{list[active]?.desc || ""}</p>
         </div>
       </div>
     </section>
