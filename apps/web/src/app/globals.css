@@ -3,10 +3,6 @@
 @custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --font-sans: var(--font-sans), system-ui, sans-serif;
-  --font-heading: var(--font-heading), var(--font-sans), sans-serif;
-  --font-mono: var(--font-mono), monospace;
-
   --bg: #f8fafc;
   --card: #ffffff;
   --bd: #e2e8f0;
@@ -36,13 +32,13 @@
 body {
   background-color: var(--bg);
   color: var(--tx);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), system-ui, sans-serif;
   transition: background-color 0.25s ease, color 0.25s ease;
   text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+  font-family: var(--font-heading), var(--font-sans), sans-serif;
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
