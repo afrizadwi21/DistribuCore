@@ -10,26 +10,26 @@ const O2C_STEPS = [
 
 export function WorkflowSection() {
   return (
-    <section id="alur" className="mx-auto max-w-6xl px-6 py-16 border-t border-slate-200 dark:border-slate-800">
+    <section id="alur" className="mx-auto max-w-6xl px-6 py-16 border-t border-[var(--bd)]">
       <div className="max-w-xl mb-10">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--tx)]">
           Alur Kerja Distribusi Terpadu
         </h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-[var(--mu)]">
           Dari pengadaan barang pabrik hingga penagihan dan pembayaran pelanggan.
         </p>
       </div>
 
       <div className="space-y-8">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 shadow-sm">
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+        <div className="rounded-xl border border-[var(--bd)] bg-[var(--card)] p-6 shadow-sm">
+          <span className="text-xs font-bold uppercase tracking-wider text-[var(--tx)]">
             1. Procure-to-Pay (P2P)
           </span>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {P2P_STEPS.map((step, idx) => (
               <React.Fragment key={idx}>
-                {idx > 0 && <span className="text-slate-400 text-xs">›</span>}
-                <span className="rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {idx > 0 && <span className="text-[var(--mu)] text-xs">›</span>}
+                <span className="rounded-full border border-[var(--bd)] bg-[var(--card)] px-3 py-1 text-xs font-semibold text-[var(--tx)]">
                   {step}
                 </span>
               </React.Fragment>
@@ -37,15 +37,15 @@ export function WorkflowSection() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 shadow-sm">
+        <div className="rounded-xl border border-[var(--bd)] bg-[var(--card)] p-6 shadow-sm">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
             2. Order-to-Cash (O2C)
           </span>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {O2C_STEPS.map((step, idx) => (
               <React.Fragment key={idx}>
-                {idx > 0 && <span className="text-slate-400 text-xs">›</span>}
-                <span className="rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {idx > 0 && <span className="text-[var(--mu)] text-xs">›</span>}
+                <span className="rounded-full border border-[var(--bd)] bg-[var(--card)] px-3 py-1 text-xs font-semibold text-[var(--tx)]">
                   {step}
                 </span>
               </React.Fragment>
