@@ -44,3 +44,12 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Local agent & impeccable cache
+.agent/
+.agents/
+.impeccable/config.local.json
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/review/
+
