@@ -17,6 +17,8 @@ coverage.txt
 node_modules/
 .next/
 out/
+package-lock.json
+.turbo/
 .env.local
 .env.development.local
 .env.test.local
