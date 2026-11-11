@@ -50,6 +50,35 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     // Modules
     modules_title: "Tujuh modul, satu sumber kebenaran",
     modules_desc: "Setiap modul memakai saldo stok, batasan plafon kredit, dan faktur yang sama secara terintegrasi.",
+    // Workflow & Personas
+    workflow_title: "Alur Kerja Distribusi Terpadu",
+    workflow_desc: "Dari pengadaan barang pabrik hingga penagihan dan pembayaran pelanggan.",
+    personas_title: "Satu sistem untuk setiap peran",
+    personas_desc: "Dari staf gudang hingga jajaran direksi, setiap peran bekerja dengan data yang saling tersinkronisasi.",
+    // Pricing
+    pricing_title: "Harga Langganan",
+    pricing_desc: "Pilih periode tagihan. Semakin panjang periodenya, semakin hemat pengeluaran Anda.",
+    pricing_m: "Bulanan",
+    pricing_y: "Tahunan (Hemat 15%)",
+    pricing_y2: "2 Tahun (Hemat 25%)",
+    pricing_popular: "Paling Populer",
+    pricing_per_mo: "/ bulan",
+    pricing_contact: "Hubungi Kami",
+    pricing_choose: "Pilih Paket",
+    pricing_quote: "Minta Penawaran",
+    // FAQ
+    faq_title: "Pertanyaan yang Sering Diajukan",
+    faq_desc: "Semua yang perlu Anda ketahui tentang implementasi DistribuCore di bisnis Anda.",
+    // Footer
+    footer_cta_t: "Tertarik? Hubungi Afriza",
+    footer_cta_d: "Minta demo langsung, penawaran harga, atau diskusi kebutuhan distribusi Anda.",
+    footer_tagline: "Sistem manajemen distribusi B2B untuk distributor, grosir, dan pemasok bahan bangunan.",
+    footer_strengths: "Keunggulan",
+    footer_menu: "Menu",
+    footer_contact_us: "Hubungi kami",
+    footer_wa_hint: "Minta demo langsung lewat WhatsApp",
+    footer_copy: "© 2026 Afriza. Hak cipta dilindungi undang-undang.",
+    footer_sub: "DistribuCore · Sistem Manajemen Distribusi B2B",
   },
   en: {
     nav_modules: "Modules",
@@ -90,6 +119,35 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     // Modules
     modules_title: "Seven modules, one source of truth",
     modules_desc: "Every module shares synchronized stock balances, credit limit caps, and invoices seamlessly.",
+    // Workflow & Personas
+    workflow_title: "Unified Distribution Workflow",
+    workflow_desc: "From factory procurement to customer invoicing, collection, and payment.",
+    personas_title: "One system for every role",
+    personas_desc: "From warehouse floor staff to executive directors, every role works with real-time synchronized data.",
+    // Pricing
+    pricing_title: "Subscription Pricing",
+    pricing_desc: "Choose your billing period. The longer the commitment, the more you save.",
+    pricing_m: "Monthly",
+    pricing_y: "Yearly (Save 15%)",
+    pricing_y2: "2 Years (Save 25%)",
+    pricing_popular: "Most Popular",
+    pricing_per_mo: "/ month",
+    pricing_contact: "Contact Us",
+    pricing_choose: "Choose Plan",
+    pricing_quote: "Request Quote",
+    // FAQ
+    faq_title: "Frequently Asked Questions",
+    faq_desc: "Everything you need to know about implementing DistribuCore in your operations.",
+    // Footer
+    footer_cta_t: "Interested? Contact Afriza",
+    footer_cta_d: "Request a live demo, pricing quotation, or discuss your distribution workflow.",
+    footer_tagline: "B2B distribution management system for distributors, wholesalers, and building suppliers.",
+    footer_strengths: "Key Strengths",
+    footer_menu: "Menu",
+    footer_contact_us: "Contact Us",
+    footer_wa_hint: "Request a live demo directly via WhatsApp",
+    footer_copy: "© 2026 Afriza. All rights reserved.",
+    footer_sub: "DistribuCore · B2B Distribution Management System",
   },
 };
 
