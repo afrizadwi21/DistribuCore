@@ -27,6 +27,12 @@ package-lock.json
 # Environment variables
 .env
 
+# Design assets / mockups (local only)
+desain/
+**/desain/
+design/
+**/design/
+
 # Database & Cache data
 postgres_data/
 redis_data/
