@@ -16,15 +16,53 @@ export function Navbar() {
     document.documentElement.classList.toggle("dark", darkActive);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next = !isDark;
     const themeName = next ? "dark" : "light";
-    setIsDark(next);
-    document.documentElement.setAttribute("data-theme", themeName);
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("dc_theme", themeName);
-    } catch {}
+
+    const updateThemeState = () => {
+      setIsDark(next);
+      document.documentElement.setAttribute("data-theme", themeName);
+      document.documentElement.classList.toggle("dark", next);
+      try {
+        localStorage.setItem("dc_theme", themeName);
+      } catch {}
+    };
+
+    if (
+      typeof document === "undefined" ||
+      !("startViewTransition" in document) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      updateThemeState();
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(updateThemeState);
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 480,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   };
 
   return (
@@ -49,9 +87,13 @@ export function Navbar() {
         <button
           onClick={toggleTheme}
           aria-label="Toggle theme"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--bd)] bg-[var(--card)] text-[var(--tx)] hover:bg-[var(--soft)] transition-colors"
+          className="group flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--bd)] bg-[var(--card)] text-[var(--tx)] hover:bg-[var(--soft)] active:scale-95 transition-all"
         >
-          {isDark ? <SunIcon className="w-4 h-4 text-amber-400" /> : <MoonIcon className="w-4 h-4 text-slate-700" />}
+          {isDark ? (
+            <SunIcon className="w-4 h-4 text-amber-400 transition-transform duration-300 group-hover:rotate-45" />
+          ) : (
+            <MoonIcon className="w-4 h-4 text-slate-700 transition-transform duration-300 group-hover:-rotate-12" />
+          )}
         </button>
 
         <a
