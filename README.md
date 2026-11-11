@@ -372,13 +372,13 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Implement Proof of Delivery (POD) confirmation workflows.
 - [x] Implement automated release of stock reservations and deduction of physical inventory.
 
-### Phase 6: Invoicing, Payments & Accounts Receivable (O2C) (Current)
-- [ ] Implement customer invoice generation from confirmed delivery milestones.
-- [ ] Implement payment recording engine (bank transfers, checks, cash).
-- [ ] Implement payment allocation algorithms across multiple outstanding invoices.
-- [ ] Implement Accounts Receivable (AR) aging schedules and statement generation.
+### Phase 6: Invoicing, Payments & Accounts Receivable (O2C) (Completed)
+- [x] Implement customer invoice generation from confirmed delivery milestones.
+- [x] Implement payment recording engine (bank transfers, checks, cash).
+- [x] Implement payment allocation algorithms across multiple outstanding invoices.
+- [x] Implement Accounts Receivable (AR) aging schedules and statement generation.
 
-### Phase 7: Analytics, Dashboards & Production Hardening
+### Phase 7: Analytics, Dashboards & Production Hardening (Current)
 - [ ] Build Executive KPI dashboard (revenue, margins, inventory turnover, AR exposure).
 - [ ] Implement comprehensive audit trail logging and telemetry.
 - [ ] Conduct performance benchmarking, load testing, and security vulnerability audits.
