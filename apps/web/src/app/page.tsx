@@ -3,7 +3,7 @@ import { Hero } from "@/components/landing/Hero";
 import { DemoLoginSection } from "@/components/landing/DemoLoginSection";
 import { ModulesSection } from "@/components/landing/ModulesSection";
 import { WorkflowSection } from "@/components/landing/WorkflowSection";
-import { PersonasSection } from "@/components/landing/PersonasSection";
+import { PersonaDrum } from "@/components/landing/PersonaDrum";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { ContactFooter } from "@/components/landing/ContactFooter";
@@ -17,7 +17,7 @@ export default function HomePage() {
         <DemoLoginSection />
         <ModulesSection />
         <WorkflowSection />
-        <PersonasSection />
+        <PersonaDrum />
         <PricingSection />
         <FAQSection />
         <ContactFooter />
