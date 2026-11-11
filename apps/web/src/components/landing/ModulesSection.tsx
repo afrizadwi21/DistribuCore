@@ -4,12 +4,12 @@ import { ShieldIcon } from "./Icons";
 
 export function ModulesSection() {
   return (
-    <section id="fitur" className="mx-auto max-w-6xl px-6 py-16 border-t border-slate-200 dark:border-slate-800">
+    <section id="fitur" className="mx-auto max-w-6xl px-6 py-16 border-t border-[var(--bd)]">
       <div className="max-w-xl mb-10">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--tx)]">
           Tujuh modul, satu sumber kebenaran
         </h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-2 text-sm text-[var(--mu)]">
           Setiap modul memakai saldo stok, batasan plafon kredit, dan faktur yang sama secara terintegrasi.
         </p>
       </div>
@@ -18,15 +18,15 @@ export function ModulesSection() {
         {MODULES.map((item) => (
           <div
             key={item.id}
-            className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-6 shadow-sm hover:border-blue-500/50 transition-colors"
+            className="rounded-xl border border-[var(--bd)] bg-[var(--card)] p-6 shadow-sm hover:border-[var(--bl)] transition-colors"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--bd)] bg-[var(--card)] text-[var(--bl)] mb-4">
               <ShieldIcon className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">
+            <h3 className="text-base font-bold text-[var(--tx)] mb-2">
               {item.title}
             </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs text-[var(--mu)] leading-relaxed">
               {item.desc}
             </p>
           </div>
