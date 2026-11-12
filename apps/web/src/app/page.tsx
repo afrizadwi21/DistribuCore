@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
-import { DemoLoginSection } from "@/components/landing/DemoLoginSection";
+import { LoginSection } from "@/components/landing/LoginSection";
 import { ModulesSection } from "@/components/landing/ModulesSection";
 import { WorkflowConveyor } from "@/components/landing/WorkflowConveyor";
 import { PersonaDrum } from "@/components/landing/PersonaDrum";
@@ -16,7 +16,7 @@ export default function HomePage() {
       <main id="home">
         <Hero />
         <ScrollReveal>
-          <DemoLoginSection />
+          <LoginSection />
         </ScrollReveal>
         <ScrollReveal>
           <ModulesSection />
