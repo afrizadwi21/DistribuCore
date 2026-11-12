@@ -39,7 +39,7 @@ export default function CatalogPage() {
         </div>
       </Panel>
       <p className="text-xs leading-relaxed text-[var(--mu)]">
-        💡 Data master SKU diintegrasikan dengan modul penetapan harga bertingkat (tier pricing) dan buffer keselamatan otomatis. Nilai satuan dan harga di atas sesuai dengan dataset migrasi backend Go Fiber (`000002_seed_demo_data.sql`).
+        Catatan: Data master SKU diintegrasikan dengan modul penetapan harga bertingkat (tier pricing) dan buffer keselamatan otomatis. Nilai satuan dan harga di atas sesuai dengan dataset migrasi backend Go Fiber (`000002_seed_demo_data.sql`).
       </p>
     </div>
   );

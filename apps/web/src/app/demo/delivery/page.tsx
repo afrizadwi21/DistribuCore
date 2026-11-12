@@ -50,7 +50,7 @@ export default function DeliveryPage() {
         </div>
       </Card>
       <p className="text-xs text-[var(--mu)]">
-        💡 Konfirmasi POD melepas reservasi dan memotong saldo fisik; faktur resmi otomatis dapat diterbitkan dari DO yang telah diverifikasi penerimaannya.
+        Catatan: Konfirmasi POD melepas reservasi dan memotong saldo fisik; faktur resmi otomatis dapat diterbitkan dari DO yang telah diverifikasi penerimaannya.
       </p>
     </div>
   );

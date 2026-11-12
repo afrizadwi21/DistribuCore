@@ -40,19 +40,28 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </React.Fragment>
         ))}
         <div className="mt-auto hidden pt-4 md:block">
+          <div className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--bl)] text-[10px] font-black text-[var(--act)] shrink-0">
+              SBA
+            </span>
+            <div className="min-w-0 flex-1 leading-tight">
+              <p className="truncate text-xs font-bold text-[var(--tx)]">Mode Demo</p>
+              <p className="truncate text-[10px] text-[var(--mu)]">WH-CKR · Gudang Pusat</p>
+            </div>
+          </div>
           <Link
             href="/"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap shadow-xs"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
           >
-            <DIcon name="arrow" className="rotate-180" />
+            <DIcon name="exit" className="h-3.5 w-3.5" />
             <span>Keluar Demo</span>
           </Link>
         </div>
         <Link
           href="/"
-          className="flex items-center gap-1.5 rounded-lg border border-rose-500/25 bg-rose-500/10 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 md:hidden whitespace-nowrap"
+          className="flex items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 md:hidden whitespace-nowrap"
         >
-          <DIcon name="arrow" className="rotate-180" />
+          <DIcon name="exit" className="h-3.5 w-3.5" />
           <span>Keluar</span>
         </Link>
       </nav>

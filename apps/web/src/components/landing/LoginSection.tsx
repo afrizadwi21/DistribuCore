@@ -74,7 +74,7 @@ export function LoginSection() {
           <div className="mt-6 pt-5 border-t border-[var(--bd)] text-center text-xs sm:text-sm text-[var(--mu)]">
             Ingin mencoba tanpa akun?{" "}
             <Link href="/demo" className="font-bold text-[var(--bl)] hover:underline">
-              Buka Demo Interaktif →
+              Buka Demo Interaktif
             </Link>
           </div>
         </div>
