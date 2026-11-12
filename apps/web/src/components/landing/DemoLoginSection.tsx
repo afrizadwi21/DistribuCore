@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { CheckIcon } from "./Icons";
 
@@ -54,12 +55,15 @@ export function DemoLoginSection() {
           </div>
 
           {tab === "demo" ? (
-            <div className="space-y-5">
+            <div className="space-y-4">
               <p className="text-sm sm:text-base text-[var(--mu)] leading-relaxed">
                 {t("demo_sample_desc")}
               </p>
-              <a href="http://localhost:8080/docs" target="_blank" rel="noopener noreferrer" className="block w-full rounded-xl bg-[var(--bl)] py-3.5 text-center text-sm sm:text-base font-bold text-[var(--act)] shadow-md hover:opacity-90 transition-opacity">
-                {t("demo_btn_scalar")}
+              <Link href="/demo" className="block w-full rounded-xl bg-[var(--bl)] py-3.5 text-center text-sm sm:text-base font-bold text-[var(--act)] shadow-md hover:opacity-90 transition-opacity">
+                {t("demo_btn_app")} →
+              </Link>
+              <a href="http://localhost:8080/docs" target="_blank" rel="noopener noreferrer" className="block w-full rounded-xl border border-[var(--bd)] bg-[var(--card)] py-3 text-center text-xs sm:text-sm font-semibold text-[var(--tx)] hover:bg-[var(--soft)] transition-colors">
+                {t("demo_btn_scalar")} ↗
               </a>
             </div>
           ) : (
