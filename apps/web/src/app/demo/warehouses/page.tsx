@@ -1,0 +1,67 @@
+"use client";
+
+import Link from "next/link";
+import { useDemo } from "@/components/demo/DemoContext";
+import { nf } from "@/components/demo/calc";
+import { BINS } from "@/components/demo/data";
+import { Badge, Bar, BTN, Card, DemoTag } from "@/components/demo/ui";
+
+const BRANCHES = [
+  { code: "WH-SBY", name: "Gudang Cabang Surabaya", occ: 64 },
+  { code: "WH-MDN", name: "Gudang Cabang Medan", occ: 51 },
+];
+
+export default function WarehousesPage() {
+  const { skus } = useDemo();
+
+  return (
+    <div className="grid items-start gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <Card className="p-5 md:col-span-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-bold">Gudang Pusat Cikarang</h3>
+            <span className="font-mono text-xs text-[var(--mu)]">WH-CKR · Hub Distribusi Utama</span>
+          </div>
+          <Badge tone="g">AKTIF · INDUK</Badge>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {Object.entries(BINS).map(([bin, zone]) => {
+            const items = skus.filter((s) => s.bin === bin);
+            return (
+              <div key={bin} className="rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold">{bin}</span>
+                  <span className="text-xs text-[var(--mu)]">{zone}</span>
+                </div>
+                <div className="mt-2 text-xs font-medium text-[var(--tx)]">
+                  {items.map((s) => `${s.code}: ${nf(s.onHand)} ${s.uom}`).join(" · ")}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4">
+          <Link href="/demo/inventory" className={BTN}>
+            Buka Saldo Stok Gudang & ATP →
+          </Link>
+        </div>
+      </Card>
+
+      {BRANCHES.map((b) => (
+        <Card key={b.code} className="p-5">
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold">{b.name}</h4>
+            <DemoTag show={true} />
+          </div>
+          <div className="font-mono text-xs text-[var(--mu)]">{b.code} · Hub Regional</div>
+          <div className="mt-4">
+            <Bar parts={[{ pct: b.occ, color: "var(--bl)" }]} />
+            <div className="mt-2 text-xs text-[var(--mu)]">Tingkat Okupansi Ruang: <b>{b.occ}%</b></div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
