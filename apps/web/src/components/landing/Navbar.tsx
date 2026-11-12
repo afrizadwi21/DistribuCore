@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/hooks/useTheme";
 import { ShieldIcon, SunIcon, MoonIcon } from "./Icons";
 
 export function Navbar() {
   const { locale, setLocale, t } = useLanguage();
-  const [isDark, setIsDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -22,32 +22,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("dc_theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = saved || (prefersDark ? "dark" : "light");
-    const darkActive = initialTheme === "dark";
-    setIsDark(darkActive);
-    document.documentElement.setAttribute("data-theme", initialTheme);
-    document.documentElement.classList.toggle("dark", darkActive);
-  }, []);
-
-  const toggleTheme = () => {
-    const next = !isDark;
-    const themeName = next ? "dark" : "light";
-    setIsDark(next);
-
-    document.documentElement.classList.add("theme-transitioning");
-    document.documentElement.setAttribute("data-theme", themeName);
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("dc_theme", themeName);
-    } catch {}
-
-    window.setTimeout(() => {
-      document.documentElement.classList.remove("theme-transitioning");
-    }, 280);
-  };
+  const { isDark, toggle: toggleTheme } = useTheme();
 
   return (
     <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-[var(--bd)] px-6 backdrop-blur-md transition-all duration-300 ${scrolled ? "py-3 bg-[var(--card)]/90 shadow-sm" : "py-4 bg-[var(--card)]/75"}`}>
