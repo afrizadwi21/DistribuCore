@@ -17,7 +17,7 @@ export default function CatalogPage() {
 
   return (
     <div className="grid gap-5">
-      <Panel title="Katalog Produk & Master SKU" icon={<DIcon name="tag" />}>
+      <Panel data-tour="catalog" title="Katalog Produk & Master SKU" icon={<DIcon name="tag" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

@@ -15,7 +15,7 @@ export default function DeliveryPage() {
 
   return (
     <div className="grid gap-5">
-      <Card className="overflow-hidden">
+      <Card data-tour="deliveries" className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

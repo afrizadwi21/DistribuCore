@@ -40,7 +40,7 @@ export default function ArAgingPage() {
       </div>
 
       <div className="grid items-start gap-5 lg:grid-cols-2">
-        <Panel title="Distribusi Umur Piutang (Rp Juta)" icon={<DIcon name="cash" />}>
+        <Panel data-tour="aging" title="Distribusi Umur Piutang (Rp Juta)" icon={<DIcon name="cash" />}>
           <div className="grid h-48 grid-cols-5 items-end gap-3 p-4">
             {BUCKETS.map((b, i) => {
               const val = bucketSums[i];

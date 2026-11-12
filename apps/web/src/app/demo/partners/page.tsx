@@ -11,7 +11,7 @@ export default function PartnersPage() {
 
   return (
     <div className="grid gap-5">
-      <Panel title="Pelanggan B2B & Profil Limit Kredit" icon={<DIcon name="users" />}>
+      <Panel data-tour="credit" title="Pelanggan B2B & Profil Limit Kredit" icon={<DIcon name="users" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>

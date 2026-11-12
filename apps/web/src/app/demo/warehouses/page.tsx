@@ -16,7 +16,7 @@ export default function WarehousesPage() {
 
   return (
     <div className="grid items-start gap-5 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="p-5 md:col-span-2">
+      <Card data-tour="bins" className="p-5 md:col-span-2">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold">Gudang Pusat Cikarang</h3>

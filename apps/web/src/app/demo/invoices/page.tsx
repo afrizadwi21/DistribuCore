@@ -38,7 +38,7 @@ export default function InvoicesPage() {
           </table>
         </div>
       </Panel>
-      <Card className="flex flex-wrap items-center gap-3 p-4">
+      <Card data-tour="pay" className="flex flex-wrap items-center gap-3 p-4">
         <span className="flex-1 text-sm text-[var(--mu)]">
           Catat penerimaan kas / transfer bank dan alokasikan secara otomatis ke faktur tertua pelanggan (FIFO).
         </span>

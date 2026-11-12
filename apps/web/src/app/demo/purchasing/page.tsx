@@ -34,7 +34,7 @@ export default function PurchasingPage() {
           </table>
         </div>
       </Panel>
-      <Card className="flex flex-wrap items-center gap-3 p-4">
+      <Card data-tour="grn-actions" className="flex flex-wrap items-center gap-3 p-4">
         <span className="flex-1 text-sm text-[var(--mu)]">
           Catat penerimaan barang (Goods Receipt Note / GRN). Saldo stok langsung bertambah di Bin <b>{s.bin}</b>.
         </span>

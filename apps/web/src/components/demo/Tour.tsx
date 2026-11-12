@@ -43,8 +43,15 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
   return (
     <>
       {rect && (
-        <div aria-hidden className="pointer-events-none fixed z-40 rounded-xl ring-2 ring-[var(--bl)] ring-offset-4 ring-offset-[var(--bg)] transition-all duration-300 ease-out"
-          style={{ top: rect.top - 4, left: rect.left - 4, width: rect.width + 8, height: rect.height + 8 }} />
+        <div
+          aria-hidden
+          className="pointer-events-none fixed z-40 rounded-xl ring-2 ring-[var(--bl)] ring-offset-4 ring-offset-[var(--bg)] shadow-[0_0_0_9999px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out"
+          style={{ top: rect.top - 4, left: rect.left - 4, width: rect.width + 8, height: rect.height + 8 }}
+        >
+          <div className="absolute -top-8 left-3 flex items-center gap-1.5 rounded-full bg-[var(--bl)] px-2.5 py-1 text-[11px] font-bold text-[var(--act)] shadow-md animate-bounce">
+            <span>👇 Fokus Bagian Ini</span>
+          </div>
+        </div>
       )}
       <aside role="dialog" aria-modal="false" aria-label="Panduan demo" className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-5 shadow-2xl sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[24rem]">
         <p className="text-xs font-semibold text-[var(--mu)]">Langkah {index + 1} dari {TOUR_STEPS.length}</p>
