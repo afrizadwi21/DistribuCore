@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
@@ -13,15 +14,21 @@ const UOM_NAMES: Record<string, string> = {
 };
 
 export default function CatalogPage() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { skus } = useDemo();
+
+  const headers = isEn
+    ? ["SKU Code", "Product Name", "Base UoM", "Safety Stock", "Reorder Point", "Selling Price"]
+    : ["Kode SKU", "Nama Produk", "Satuan Dasar", "Safety Stock", "Titik Pesan Ulang", "Harga Jual"];
 
   return (
     <div className="grid gap-5">
-      <Panel data-tour="catalog" title="Katalog Produk & Master SKU" icon={<DIcon name="tag" />}>
+      <Panel data-tour="catalog" title={isEn ? "Product Catalog & Master SKUs" : "Katalog Produk & Master SKU"} icon={<DIcon name="tag" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr>{["Kode SKU", "Nama Produk", "Satuan Dasar", "Safety Stock", "Titik Pesan Ulang", "Harga Jual"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
+              <tr>{headers.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {skus.map((s) => (
@@ -39,7 +46,9 @@ export default function CatalogPage() {
         </div>
       </Panel>
       <p className="text-xs leading-relaxed text-[var(--mu)]">
-        Catatan: Data master SKU diintegrasikan dengan modul penetapan harga bertingkat (tier pricing) dan buffer keselamatan otomatis. Nilai satuan dan harga di atas sesuai dengan dataset migrasi backend Go Fiber (`000002_seed_demo_data.sql`).
+        {isEn
+          ? "Note: Master SKU records integrate with tiered pricing matrices and automated safety buffers. Standard UoMs and base prices correspond with the Go Fiber backend seed dataset (000002_seed_demo_data.sql)."
+          : "Catatan: Data master SKU diintegrasikan dengan modul penetapan harga bertingkat (tier pricing) dan buffer keselamatan otomatis. Nilai satuan dan harga di atas sesuai dengan dataset migrasi backend Go Fiber (000002_seed_demo_data.sql)."}
       </p>
     </div>
   );

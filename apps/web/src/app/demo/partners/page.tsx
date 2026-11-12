@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { outstanding, rp } from "@/components/demo/calc";
 import { CUSTOMERS } from "@/components/demo/data";
@@ -7,15 +8,29 @@ import { DIcon } from "@/components/demo/icons";
 import { Badge, Bar, DemoTag, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PartnersPage() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { invoices } = useDemo();
+
+  const custHeaders = isEn
+    ? ["Code", "Company", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status"]
+    : ["Kode", "Perusahaan", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status"];
+
+  const suppHeaders = isEn
+    ? ["Supplier Code", "Company Name", "Contact Person", "Payment Terms", "Status"]
+    : ["Kode Pemasok", "Nama Perusahaan", "Kontak Person", "Termin Pembayaran", "Status"];
 
   return (
     <div className="grid gap-5">
-      <Panel data-tour="credit" title="Pelanggan B2B & Profil Limit Kredit" icon={<DIcon name="users" />}>
+      <Panel
+        data-tour="credit"
+        title={isEn ? "B2B Customers & Credit Limit Profiles" : "Pelanggan B2B & Profil Limit Kredit"}
+        icon={<DIcon name="users" />}
+      >
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr>{["Kode", "Perusahaan", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
+              <tr>{custHeaders.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {CUSTOMERS.map((c) => {
@@ -32,8 +47,8 @@ export default function PartnersPage() {
                       <Bar parts={[{ pct: Math.min(100, pct), color: barColor }]} />
                       <span className="text-[11px] text-[var(--mu)]">{pct}%</span>
                     </td>
-                    <td className={TD}>Net {c.terms} hari</td>
-                    <td className={TD}><Badge tone={c.hold ? "r" : "g"}>{c.hold ? "CREDIT HOLD" : "AKTIF"}</Badge></td>
+                    <td className={TD}>Net {c.terms} {isEn ? "days" : "hari"}</td>
+                    <td className={TD}><Badge tone={c.hold ? "r" : "g"}>{c.hold ? "CREDIT HOLD" : (isEn ? "ACTIVE" : "AKTIF")}</Badge></td>
                   </tr>
                 );
               })}
@@ -42,19 +57,19 @@ export default function PartnersPage() {
         </div>
       </Panel>
 
-      <Panel title="Pemasok Utama (Suppliers)" icon={<DIcon name="inbox" />}>
+      <Panel title={isEn ? "Strategic Suppliers" : "Pemasok Utama (Suppliers)"} icon={<DIcon name="inbox" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr>{["Kode Pemasok", "Nama Perusahaan", "Kontak Person", "Termin Pembayaran", "Status"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
+              <tr>{suppHeaders.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
               <tr>
                 <td className={`${TD} font-mono font-bold`}>SUPP-SG</td>
                 <td className={TD}><b>PT Semen Gresik Tbk</b></td>
                 <td className={TD}>Agus Hendrawan (Key Account Manager)</td>
-                <td className={TD}>Net 45 hari</td>
-                <td className={TD}><Badge tone="g">MITRA STRATEGIS</Badge></td>
+                <td className={TD}>Net 45 {isEn ? "days" : "hari"}</td>
+                <td className={TD}><Badge tone="g">{isEn ? "STRATEGIC PARTNER" : "MITRA STRATEGIS"}</Badge></td>
               </tr>
             </tbody>
           </table>
