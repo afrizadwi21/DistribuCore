@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { AtpWidget } from "@/components/demo/AtpWidget";
 import { useDemo } from "@/components/demo/DemoContext";
 import { Kpis } from "@/components/demo/Kpis";
@@ -9,17 +10,21 @@ import { HealthBadge, Panel, TD, TH } from "@/components/demo/ui";
 import { health, nf } from "@/components/demo/calc";
 
 export default function DashboardPage() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { skus } = useDemo();
+  const headers = isEn ? ["SKU", "On-Hand", "Safety", "Reorder Point", "Status"] : ["SKU", "On-Hand", "Safety", "Titik pesan", "Status"];
+
   return (
     <>
       <Kpis />
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_21rem]">
         <div className="grid min-w-0 gap-5">
           <SalesTable limit={4} />
-          <Panel title="Kesehatan stok (inventory-health)" icon={<DIcon name="box" />}>
+          <Panel title={isEn ? "Inventory Health (ATP Buffer)" : "Kesehatan stok (inventory-health)"} icon={<DIcon name="box" />}>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
-                <thead><tr>{["SKU", "On-Hand", "Safety", "Titik pesan", "Status"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
+                <thead><tr>{headers.map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
                 <tbody>{skus.map((s) => (
                   <tr key={s.code}>
                     <td className={`${TD} font-bold`}>{s.code}</td><td className={TD}>{nf(s.onHand)} {s.uom}</td>
