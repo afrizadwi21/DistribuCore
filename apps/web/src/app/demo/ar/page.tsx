@@ -18,10 +18,10 @@ const BUCKET_COLORS: Record<string, string> = {
 export default function ArAgingPage() {
   const { invoices, act } = useDemo();
   const od = overdue(invoices);
-  const totalAr = invoices.reduce((acc, i) => acc + i.rem, 0);
-  const openCount = invoices.filter((i) => i.rem > 0).length;
+  const totalAr = invoices.reduce((acc, i) => acc + i.open, 0);
+  const openCount = invoices.filter((i) => i.open > 0).length;
 
-  const bucketSums = BUCKETS.map((b) => invoices.filter((i) => i.bucket === b).reduce((acc, i) => acc + i.rem, 0));
+  const bucketSums = BUCKETS.map((b) => invoices.filter((i) => i.bucket === b).reduce((acc, i) => acc + i.open, 0));
   const maxBucket = Math.max(...bucketSums, 1);
 
   return (
@@ -61,8 +61,8 @@ export default function ArAgingPage() {
             <table className="w-full border-collapse">
               <thead><tr>{["Pelanggan", "Terutang", "Aksi"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
               <tbody>
-                {CUSTOMERS.filter((c) => outstanding(c.code, invoices) > 0).map((c) => {
-                  const outst = outstanding(c.code, invoices);
+                {CUSTOMERS.filter((c) => outstanding(invoices, c.code) > 0).map((c) => {
+                  const outst = outstanding(invoices, c.code);
                   return (
                     <tr key={c.code}>
                       <td className={`${TD} font-semibold`}>{c.name}</td>

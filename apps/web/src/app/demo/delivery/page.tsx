@@ -37,7 +37,7 @@ export default function DeliveryPage() {
                       {isTransit ? (
                         <button className={`${BTN} bg-emerald-600! text-white!`} onClick={() => act({ type: "pod", id: d.id })}>Konfirmasi POD</button>
                       ) : isPod ? (
-                        d.inv ? <Badge tone="g">Faktur terbit</Badge> : <button className={BTN} onClick={() => act({ type: "invoice", doId: d.id })}>Terbitkan faktur</button>
+                        d.invoiced ? <Badge tone="g">Faktur terbit</Badge> : <button className={BTN} onClick={() => act({ type: "invoice", id: d.id })}>Terbitkan faktur</button>
                       ) : (
                         <button className={`${BTN} bg-sky-600! text-white!`} onClick={() => act({ type: "dispatch", id: d.id })}>Kirim truk</button>
                       )}

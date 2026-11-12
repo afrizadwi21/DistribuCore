@@ -28,8 +28,8 @@ export default function InvoicesPage() {
                     <td className={TD}>{v.so}</td>
                     <td className={TD}>{v.issued}</td>
                     <td className={TD}>{v.due}</td>
-                    <td className={TD}>{rp(v.total)}</td>
-                    <td className={`${TD} font-semibold ${v.rem === 0 ? "text-emerald-700 dark:text-emerald-400" : ""}`}>{rp(v.rem)}</td>
+                    <td className={TD}>{v.total ? rp(v.total) : "-"}</td>
+                    <td className={`${TD} font-semibold ${v.open === 0 ? "text-emerald-700 dark:text-emerald-400" : ""}`}>{rp(v.open)}</td>
                     <td className={TD}><Badge tone={tone}>{v.bucket}</Badge></td>
                   </tr>
                 );

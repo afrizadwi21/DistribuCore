@@ -6,10 +6,10 @@ import { DIcon } from "@/components/demo/icons";
 import { Badge, BTN, Card, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PurchasingPage() {
-  const { po, skus, act } = useDemo();
+  const { po, skus, grns, act } = useDemo();
   const s = skus.find((x) => x.code === po.sku)!;
-  const st = po.rec === 0 ? "ISSUED" : po.rec < po.qty ? "PARTIALLY_RECEIVED" : "RECEIVED";
-  const remaining = po.qty - po.rec;
+  const st = po.received === 0 ? "ISSUED" : po.received < po.qty ? "PARTIALLY_RECEIVED" : "RECEIVED";
+  const remaining = po.qty - po.received;
 
   return (
     <div className="grid gap-5">
@@ -22,11 +22,11 @@ export default function PurchasingPage() {
             <tbody>
               <tr>
                 <td className={`${TD} font-bold`}>{po.no}</td>
-                <td className={TD}>{po.sup}</td>
+                <td className={TD}>{po.supplier}</td>
                 <td className={TD}>{po.issued}</td>
                 <td className={TD}>{po.eta}</td>
                 <td className={TD}>{s.name} × {po.qty} {s.uom}</td>
-                <td className={`${TD} font-semibold`}>{po.rec} / {po.qty}</td>
+                <td className={`${TD} font-semibold`}>{po.received} / {po.qty}</td>
                 <td className={TD}>{rp(po.qty * po.cost)}</td>
                 <td className={TD}><Badge tone={st === "RECEIVED" ? "g" : "b"}>{st}</Badge></td>
               </tr>
@@ -46,16 +46,16 @@ export default function PurchasingPage() {
         </button>
       </Card>
       <Panel title="Bukti Penerimaan Barang Fisik (GRN)" icon={<DIcon name="doc" />}>
-        {po.grn.length ? (
+        {grns.length ? (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead><tr>{["No. GRN", "Referensi PO", "Kuantitas Diterima", "Tanggal Masuk"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
               <tbody>
-                {po.grn.map(([no, qty]) => (
-                  <tr key={no}>
-                    <td className={`${TD} font-bold`}>{no}</td>
+                {grns.map((g) => (
+                  <tr key={g.no}>
+                    <td className={`${TD} font-bold`}>{g.no}</td>
                     <td className={TD}>{po.no}</td>
-                    <td className={`${TD} font-bold text-emerald-700 dark:text-emerald-400`}>+{qty} {s.uom}</td>
+                    <td className={`${TD} font-bold text-emerald-700 dark:text-emerald-400`}>+{g.qty} {s.uom}</td>
                     <td className={TD}>11 Nov 2026</td>
                   </tr>
                 ))}

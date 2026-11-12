@@ -19,7 +19,7 @@ export default function PartnersPage() {
             </thead>
             <tbody>
               {CUSTOMERS.map((c) => {
-                const outst = outstanding(c.code, invoices);
+                const outst = outstanding(invoices, c.code);
                 const pct = Math.round((outst / c.limit) * 100);
                 const barColor = pct > 90 ? "var(--rd)" : pct > 60 ? "var(--am)" : "var(--gr)";
                 return (
