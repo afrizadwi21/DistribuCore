@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "./DemoContext";
 import { DIcon } from "./icons";
 import { Bar, BTN, BTN_PRIMARY, Panel } from "./ui";
@@ -24,6 +25,8 @@ function SkuMeter({ s }: { s: Sku }) {
 }
 
 export function AtpWidget({ all = false }: { all?: boolean }) {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { skus, act } = useDemo();
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState(skus[0].code);
@@ -45,25 +48,47 @@ export function AtpWidget({ all = false }: { all?: boolean }) {
           {open ? (
             <>
               <div className="rounded-lg bg-[var(--soft)] p-2.5 text-xs text-[var(--mu)] leading-relaxed">
-                <strong className="block text-[var(--tx)] font-semibold mb-0.5">Instruksi Cycle Count:</strong>
-                Masukkan angka hitung fisik di Bin {sku.bin}. Selisih otomatis masuk ke buku besar saldo gudang WH-CKR dan memperbarui angka ATP.
+                <strong className="block text-[var(--tx)] font-semibold mb-0.5">
+                  {isEn ? "Cycle Count Instruction:" : "Instruksi Cycle Count:"}
+                </strong>
+                {isEn
+                  ? `Enter physical count in Bin ${sku.bin}. Discrepancies post directly to warehouse WH-CKR ledger and update ATP stock immediately.`
+                  : `Masukkan angka hitung fisik di Bin ${sku.bin}. Selisih otomatis masuk ke buku besar saldo gudang WH-CKR dan memperbarui angka ATP.`}
               </div>
               <label className="block text-sm font-semibold">SKU
                 <select className={`${INPUT} mt-1`} value={code} onChange={(e) => setCode(e.target.value)}>
                   {skus.map((s) => <option key={s.code} value={s.code}>{s.name} ({s.code})</option>)}
                 </select>
               </label>
-              <p className="text-sm text-[var(--mu)]">Bin {sku.bin} · stok sistem <b className="text-[var(--tx)]">{nf(sku.onHand)} {sku.uom}</b>, reservasi {nf(sku.reserved)}</p>
-              <label className="block text-sm font-semibold">Jumlah hitung fisik
-                <input className={`${INPUT} mt-1`} type="number" min={0} placeholder="mis. 492" value={count} onChange={(e) => setCount(e.target.value)} />
+              <p className="text-sm text-[var(--mu)]">
+                Bin {sku.bin} · {isEn ? "system stock" : "stok sistem"} <b className="text-[var(--tx)]">{nf(sku.onHand)} {sku.uom}</b>, {isEn ? "reserved" : "reservasi"} {nf(sku.reserved)}
+              </p>
+              <label className="block text-sm font-semibold">
+                {isEn ? "Physical count quantity" : "Jumlah hitung fisik"}
+                <input className={`${INPUT} mt-1`} type="number" min={0} placeholder={isEn ? "e.g. 492" : "mis. 492"} value={count} onChange={(e) => setCount(e.target.value)} />
               </label>
-              <p className="min-h-5 text-sm text-[var(--mu)]">{diff !== null && `Selisih: ${diff > 0 ? "+" : ""}${diff} ${sku.uom}`}</p>
-              <div className="flex gap-2"><button className={`${BTN_PRIMARY} flex-1`} onClick={save}>Simpan penyesuaian</button><button className={BTN} onClick={() => setOpen(false)}>Batal</button></div>
+              <p className="min-h-5 text-sm text-[var(--mu)]">
+                {diff !== null && `${isEn ? "Variance" : "Selisih"}: ${diff > 0 ? "+" : ""}${diff} ${sku.uom}`}
+              </p>
+              <div className="flex gap-2">
+                <button className={`${BTN_PRIMARY} flex-1`} onClick={save}>
+                  {isEn ? "Save adjustment" : "Simpan penyesuaian"}
+                </button>
+                <button className={BTN} onClick={() => setOpen(false)}>
+                  {isEn ? "Cancel" : "Batal"}
+                </button>
+              </div>
             </>
           ) : (
-            <button className={`${BTN_PRIMARY} w-full`} onClick={() => setOpen(true)}>Cycle count / sesuaikan stok</button>
+            <button className={`${BTN_PRIMARY} w-full`} onClick={() => setOpen(true)}>
+              {isEn ? "Cycle count / adjust stock" : "Cycle count / sesuaikan stok"}
+            </button>
           )}
-          {!all && <Link href="/demo/inventory" className="block text-center text-sm text-[var(--mu)] underline underline-offset-2">Lihat semua SKU</Link>}
+          {!all && (
+            <Link href="/demo/inventory" className="block text-center text-sm text-[var(--mu)] underline underline-offset-2">
+              {isEn ? "View all SKUs" : "Lihat semua SKU"}
+            </Link>
+          )}
         </div>
       </Panel>
     </div>
