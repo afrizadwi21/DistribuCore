@@ -1,7 +1,6 @@
 export type TourStep = { href: string; target: string; title: string; purpose: string; func: string; tryIt: string };
 
-// Urutan mengikuti alur kerja distribusi: ikhtisar -> P2P (stok masuk) -> O2C (stok keluar & kas) -> master data.
-export const TOUR_STEPS: TourStep[] = [
+export const TOUR_STEPS_ID: TourStep[] = [
   { href: "/demo", target: "sidebar", title: "Selamat datang di demo DistribuCore",
     purpose: "Versi interaktif sistem distribusi B2B untuk distributor bahan bangunan (tenant PT Sumber Bangunan Abadi).",
     func: "Menu kiri dikelompokkan sesuai alur divisi: Operasional, Keuangan, Master data. Seluruh angka saling tersinkronisasi.",
@@ -51,3 +50,60 @@ export const TOUR_STEPS: TourStep[] = [
     func: "Seluruh simulasi berjalan interaktif di browser. Di sistem operasional, data terhubung ke backend Go Fiber multi-tenant.",
     tryIt: "Buka menu mana pun dan uji berbagai skenario transaksi. Data akan terus tersinkronisasi secara real-time di seluruh layar." },
 ];
+
+export const TOUR_STEPS_EN: TourStep[] = [
+  { href: "/demo", target: "sidebar", title: "Welcome to the DistribuCore Demo",
+    purpose: "Interactive preview of the B2B distribution management system for building material distributors (PT Sumber Bangunan Abadi).",
+    func: "The left navigation is organized by functional division: Operations, Finance, and Master Data. All metrics are fully synchronized.",
+    tryIt: "Notice the navigation in the left sidebar. Click 'Next' to explore each operational module step-by-step." },
+  { href: "/demo", target: "kpis", title: "Executive Dashboard",
+    purpose: "Daily high-level business pulse for company owners and management on a single unified screen.",
+    func: "Displays MTD gross revenue, active stock valuation, percentage of physical stock locked for orders, and overdue receivables.",
+    tryIt: "Observe the 'Locked physical stock' card. This data reflects active delivery orders (DO) currently being fulfilled." },
+  { href: "/demo/purchasing", target: "grn-actions", title: "Purchasing & Goods Receipt (P2P)",
+    purpose: "Record procurement orders to factories and physical receipt verification when trucks arrive at the warehouse.",
+    func: "Receipts are recorded as official Goods Receipt Notes (GRN). Warehouse on-hand balances increase automatically in designated bins.",
+    tryIt: "Click 'Receive 250 BAGS'. An official GRN document will be issued immediately, adding stock to Bin A1-R01-B01 and raising ATP." },
+  { href: "/demo/inventory", target: "atp", title: "Stock & Available-to-Promise (ATP)",
+    purpose: "Prevent promising the same physical inventory to two customers simultaneously (eliminating double-booking).",
+    func: "ATP = Physical on-hand stock minus active reservations. Cycle counts synchronize system inventory with physical stock.",
+    tryIt: "Click 'Cycle count / adjust stock' on the Available-to-Promise card. Enter 492 and click 'Save adjustment'. The variance updates warehouse WH-CKR balances." },
+  { href: "/demo/sales", target: "orders", title: "Sales Orders (O2C)",
+    purpose: "Manage the customer order pipeline from sales booking to delivery, tracking credit limits and stock reservation locks.",
+    func: "Approved orders instantly lock available stock. A single sales order can be split into multiple truck delivery orders (DO).",
+    tryIt: "Click order row SO-2026-002 to expand split delivery orders (DO) and digital Proof of Delivery (POD) details." },
+  { href: "/demo/delivery", target: "deliveries", title: "Deliveries & Proof of Delivery (POD)",
+    purpose: "Manage truck dispatch runs and digitally verify customer acceptance at project job sites.",
+    func: "Dispatching shifts status to transit. POD confirmation releases the stock reservation and permanently deducts physical inventory.",
+    tryIt: "Click 'Dispatch truck' on DO-2026-001, then click 'Confirm POD', then click 'Issue invoice'. Receivables are updated automatically." },
+  { href: "/demo/invoices", target: "pay", title: "Invoices & Payments",
+    purpose: "Bill customers based on verified deliveries and record incoming cash or bank transfer settlements.",
+    func: "Invoices are generated from delivered DOs. Payments are automatically allocated against oldest open invoices (FIFO method).",
+    tryIt: "Click 'Record Payment of Rp 7,500,000'. The system automatically settles oldest invoice INV-2026-001 using FIFO allocation." },
+  { href: "/demo/ar", target: "aging", title: "Accounts Receivable (AR Aging)",
+    purpose: "Track overdue receivables categorized by aging buckets so the finance team can prioritize collection workflows.",
+    func: "Invoices are sorted into Current, 1-30, 31-60, 61-90, and >90 day aging buckets to mitigate bad debt risks.",
+    tryIt: "Click 'Send Reminder' on PT Wijaya Karya Mandiri (largest overdue balance) to issue a formal collection notification." },
+  { href: "/demo/catalog", target: "catalog", title: "Product Catalog (Master Data)",
+    purpose: "Master registry of distributed SKUs, base units of measure (UOM), and stock buffer thresholds.",
+    func: "Safety stock and reorder points automate system alerts indicating when factory replenishment is needed.",
+    tryIt: "Compare SKU safety stock and reorder thresholds here with stock health status on the main dashboard." },
+  { href: "/demo/partners", target: "credit", title: "Customers & Suppliers (Master Data)",
+    purpose: "B2B customer profiles with credit limits and key supplier partnerships.",
+    func: "Credit limits are evaluated against open receivables. Over-limit customers are placed on CREDIT HOLD automatically.",
+    tryIt: "Observe customer credit utilization percentages. Customers exceeding 100% credit limits are automatically placed on CREDIT HOLD." },
+  { href: "/demo/warehouses", target: "bins", title: "Warehouses & Bins (Master Data)",
+    purpose: "Multi-warehouse storage layout, zone partitioning, and dedicated bin placement per item.",
+    func: "Inventory is tracked per bin so warehouse picking and receiving staff know exact storage locations.",
+    tryIt: "Click 'Open Warehouse Stock & ATP' to review bin-level inventory allocations at Cikarang Central Warehouse (WH-CKR)." },
+  { href: "/demo", target: "", title: "Ready to Explore",
+    purpose: "You have reviewed the complete end-to-end distribution cycle: procurement, stock, orders, dispatch, invoicing, and cash.",
+    func: "All simulations run reactively in your browser. In production, every transaction connects to the Go Fiber multi-tenant backend.",
+    tryIt: "Navigate any menu and test different workflows. All data stays synchronized across every screen in real-time." },
+];
+
+export function getTourSteps(locale: "id" | "en") {
+  return locale === "en" ? TOUR_STEPS_EN : TOUR_STEPS_ID;
+}
+
+export const TOUR_STEPS = TOUR_STEPS_ID;
