@@ -39,6 +39,22 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </React.Fragment>
         ))}
+        <div className="mt-auto hidden pt-4 border-t border-[var(--bd)] md:block">
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400 transition-colors"
+          >
+            <DIcon name="arrow" className="rotate-180" />
+            <span>Keluar Demo</span>
+          </Link>
+        </div>
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400 md:hidden whitespace-nowrap"
+        >
+          <DIcon name="arrow" className="rotate-180" />
+          <span>Keluar</span>
+        </Link>
       </nav>
       <div className="min-w-0">
         <header className="flex flex-wrap items-center gap-2.5 border-b border-[var(--bd)] bg-[var(--card)] px-5 py-3">
@@ -52,7 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <main className="grid content-start gap-5 p-5 sm:p-6">
           <div>
             <h1 className="text-2xl font-black font-heading sm:text-3xl">{page.title}</h1>
-            <p className="mt-1 font-mono text-xs text-[var(--mu)]">{page.api}</p>
+            <p className="mt-1 text-xs text-[var(--mu)]">{page.subtitle}</p>
           </div>
           {children}
         </main>

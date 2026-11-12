@@ -27,7 +27,7 @@ export function reducer(s: State, a: Action): State {
   const d = "id" in a ? s.dos.find((x) => x.id === a.id) : undefined;
   switch (a.type) {
     case "dispatch":
-      return d ? { ...s, dos: patchDo(s, a.id, (x) => ({ ...x, status: "transit" })), toast: `${a.id} dikirim · POST /fulfillment/delivery-orders/${a.id}/dispatch` } : s;
+      return d ? { ...s, dos: patchDo(s, a.id, (x) => ({ ...x, status: "transit" })), toast: `${a.id} diberangkatkan · armada truk dalam perjalanan` } : s;
     case "pod": {
       if (!d) return s;
       const skus = patchSku(s, d.sku, (k) => ({ ...k, onHand: k.onHand - d.qty, reserved: Math.max(0, k.reserved - d.qty) }));

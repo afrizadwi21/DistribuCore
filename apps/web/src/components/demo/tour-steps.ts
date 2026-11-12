@@ -8,7 +8,7 @@ export const TOUR_STEPS: TourStep[] = [
     tryIt: "Ikuti panduan ini langkah demi langkah. Tombol Panduan di atas bisa dibuka kapan saja." },
   { href: "/demo", target: "kpis", title: "Dasbor Eksekutif",
     purpose: "Ringkasan kondisi bisnis untuk pemilik dan manajemen dalam satu layar.",
-    func: "Menampilkan pendapatan, nilai stok, berapa persen stok fisik yang sudah terkunci untuk pesanan, dan piutang yang lewat jatuh tempo. Data berasal dari endpoint analytics.",
+    func: "Menampilkan pendapatan, nilai stok, berapa persen stok fisik yang sudah terkunci untuk pesanan, dan piutang yang lewat jatuh tempo. Data terintegrasi dari buku besar operasional.",
     tryIt: "Perhatikan Meter Reservasi Stok. Angkanya akan berubah setelah Anda memproses pengiriman nanti." },
   { href: "/demo/purchasing", target: "grn-actions", title: "Pembelian & Penerimaan Barang (P2P)",
     purpose: "Tempat mencatat barang yang dipesan ke pemasok dan barang yang benar-benar tiba di gudang.",
@@ -48,6 +48,6 @@ export const TOUR_STEPS: TourStep[] = [
     tryIt: "Klik Lihat saldo stok untuk melihat isi bin dalam bentuk tabel." },
   { href: "/demo", target: "", title: "Siap menjelajah sendiri",
     purpose: "Anda sudah melihat satu putaran lengkap: stok masuk, pesanan, pengiriman, faktur, sampai pembayaran.",
-    func: "Semua perubahan hanya tersimpan di browser ini dan hilang saat halaman dimuat ulang. Di sistem sungguhan, setiap aksi memanggil API Go (Fiber) dengan data per tenant.",
+    func: "Semua perubahan hanya tersimpan di browser ini dan hilang saat halaman dimuat ulang. Di sistem sungguhan, setiap transaksi terlindungi isolasi multi-tenant antar perusahaan.",
     tryIt: "Buka menu mana pun dan coba aksinya. Untuk demo langsung atau penawaran, hubungi Afriza lewat halaman utama." },
 ];

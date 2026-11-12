@@ -55,7 +55,6 @@ export function AtpWidget({ all = false }: { all?: boolean }) {
               </label>
               <p className="min-h-5 text-sm text-[var(--mu)]">{diff !== null && `Selisih: ${diff > 0 ? "+" : ""}${diff} ${sku.uom}`}</p>
               <div className="flex gap-2"><button className={`${BTN_PRIMARY} flex-1`} onClick={save}>Simpan penyesuaian</button><button className={BTN} onClick={() => setOpen(false)}>Batal</button></div>
-              <p className="font-mono text-xs text-[var(--mu)]">POST /api/v1/inventory/adjustments</p>
             </>
           ) : (
             <button className={`${BTN_PRIMARY} w-full`} onClick={() => setOpen(true)}>Cycle count / sesuaikan stok</button>
