@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { LockIcon, CheckIcon, ArrowRightIcon } from "./Icons";
 
@@ -42,11 +43,11 @@ export function Hero() {
           {t("hero_desc")}
         </p>
         <div className="flex flex-wrap items-center gap-3.5 pt-2">
-          <a href="#coba" className="inline-flex items-center gap-2.5 rounded-xl bg-[var(--bl)] px-6 py-3.5 text-sm sm:text-base font-bold text-[var(--act)] shadow-md hover:opacity-90 transition-opacity">
+          <Link href="/demo" className="inline-flex items-center gap-2.5 rounded-xl bg-[var(--bl)] px-6 py-3.5 text-sm sm:text-base font-bold text-[var(--act)] shadow-md hover:opacity-90 transition-opacity">
             {t("hero_cta_demo")} <ArrowRightIcon className="w-4 h-4" />
-          </a>
-          <a href="#fitur" className="rounded-xl border border-[var(--bd)] bg-[var(--card)] px-5 py-3.5 text-sm sm:text-base font-bold text-[var(--tx)] hover:bg-[var(--soft)] transition-colors">
-            {t("hero_cta_modules")}
+          </Link>
+          <a href="#login" className="rounded-xl border border-[var(--bd)] bg-[var(--card)] px-5 py-3.5 text-sm sm:text-base font-bold text-[var(--tx)] hover:bg-[var(--soft)] transition-colors">
+            {t("nav_login")}
           </a>
         </div>
       </div>

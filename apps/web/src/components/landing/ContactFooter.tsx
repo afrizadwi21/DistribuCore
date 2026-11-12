@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { ShieldIcon } from "./Icons";
@@ -62,7 +63,8 @@ export function ContactFooter() {
               <a href="#peran" className="hover:text-[var(--tx)] transition-colors">{t("nav_personas")}</a>
               <a href="#harga" className="hover:text-[var(--tx)] transition-colors">{t("nav_pricing")}</a>
               <a href="#faq" className="hover:text-[var(--tx)] transition-colors">{t("nav_faq")}</a>
-              <a href="#coba" className="hover:text-[var(--tx)] transition-colors">{t("nav_demo")}</a>
+              <Link href="/demo" className="hover:text-[var(--tx)] transition-colors">{t("nav_demo")}</Link>
+              <a href="#login" className="hover:text-[var(--tx)] transition-colors">{t("nav_login")}</a>
             </div>
           </div>
           <div>

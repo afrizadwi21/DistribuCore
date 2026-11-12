@@ -96,10 +96,10 @@ export function Navbar() {
         </button>
 
         <a
-          href="#coba"
+          href="#login"
           className="rounded-lg bg-[var(--bl)] px-5 py-2.5 text-xs sm:text-sm font-bold text-[var(--act)] shadow-sm hover:opacity-90 transition-opacity"
         >
-          {t("nav_demo")}
+          {t("nav_login")}
         </a>
       </div>
     </header>
