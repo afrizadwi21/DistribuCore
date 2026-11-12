@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { TOUR_STEPS } from "./tour-steps";
 import { BTN, BTN_PRIMARY } from "./ui";
 
@@ -9,20 +9,38 @@ type Rect = { top: number; left: number; width: number; height: number };
 
 function useTargetRect(target: string) {
   const [rect, setRect] = useState<Rect | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
-    let raf = 0, tries = 0, scrolled = false;
+    let scrolled = false;
+    let timer: NodeJS.Timeout;
+    let count = 0;
+
     const measure = () => {
       const el = target ? document.querySelector(`[data-tour="${target}"]`) : null;
-      if (!el) { setRect(null); if (target && tries++ < 40) raf = requestAnimationFrame(measure); return; }
-      if (!scrolled) { scrolled = true; el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      if (!el) {
+        setRect(null);
+        if (target && count++ < 30) timer = setTimeout(measure, 80);
+        return;
+      }
+      if (!scrolled) {
+        scrolled = true;
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
       const r = el.getBoundingClientRect();
       setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
     };
+
     measure();
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, { passive: true });
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", measure); window.removeEventListener("scroll", measure); };
-  }, [target]);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure);
+    };
+  }, [target, pathname]);
+
   return rect;
 }
 
@@ -32,7 +50,10 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
   const rect = useTargetRect(step.target);
   const last = index === TOUR_STEPS.length - 1;
 
-  const go = (i: number) => { onIndex(i); router.push(TOUR_STEPS[i].href); };
+  const go = (i: number) => {
+    onIndex(i);
+    router.push(TOUR_STEPS[i].href);
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -40,32 +61,54 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  // If target element is on the right side of the screen, show modal on the left side to avoid covering it
+  const isTargetRight = rect && rect.left + rect.width / 2 > (typeof window !== "undefined" ? window.innerWidth / 2 : 600);
+
   return (
     <>
       {rect && (
-        <div
-          aria-hidden
-          className="pointer-events-none fixed z-40 rounded-xl ring-2 ring-[var(--bl)] ring-offset-4 ring-offset-[var(--bg)] shadow-[0_0_0_9999px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out"
-          style={{ top: rect.top - 4, left: rect.left - 4, width: rect.width + 8, height: rect.height + 8 }}
-        >
-          <div className="absolute -top-8 left-3 flex items-center gap-1.5 rounded-full bg-[var(--bl)] px-2.5 py-1 text-[11px] font-bold text-[var(--act)] shadow-md animate-bounce">
-            <span>👇 Fokus Bagian Ini</span>
+        <>
+          <div aria-hidden className="pointer-events-none fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-[1px] transition-opacity" />
+          <div
+            aria-hidden
+            className="pointer-events-none fixed z-40 rounded-xl ring-4 ring-sky-500 shadow-[0_0_0_4px_rgba(14,165,233,0.3),0_0_30px_rgba(14,165,233,0.4)] transition-all duration-300 ease-out"
+            style={{ top: rect.top - 4, left: rect.left - 4, width: rect.width + 8, height: rect.height + 8 }}
+          >
+            <div className="absolute -top-10 left-2 flex items-center gap-1.5 rounded-full bg-sky-600 px-3 py-1 text-xs font-black text-white shadow-xl animate-bounce">
+              <span>👉 Target Sorotan: {step.title}</span>
+            </div>
           </div>
-        </div>
+        </>
       )}
-      <aside role="dialog" aria-modal="false" aria-label="Panduan demo" className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-5 shadow-2xl sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[24rem]">
-        <p className="text-xs font-semibold text-[var(--mu)]">Langkah {index + 1} dari {TOUR_STEPS.length}</p>
-        <h2 className="mt-1 text-xl font-bold font-heading leading-tight">{step.title}</h2>
-        <dl className="mt-3 space-y-2.5 text-sm leading-relaxed">
-          <div><dt className="font-bold">Untuk apa</dt><dd className="text-[var(--mu)]">{step.purpose}</dd></div>
-          <div><dt className="font-bold">Fungsinya</dt><dd className="text-[var(--mu)]">{step.func}</dd></div>
-          <div><dt className="font-bold">Coba sekarang</dt><dd className="text-[var(--tx)]">{step.tryIt}</dd></div>
+
+      <aside
+        role="dialog"
+        aria-modal="false"
+        aria-label="Panduan demo"
+        className={`fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-5 shadow-2xl transition-all sm:inset-x-auto sm:bottom-6 sm:w-[24rem] ${
+          isTargetRight ? "sm:left-68 sm:right-auto" : "sm:right-6 sm:left-auto"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold uppercase tracking-wider text-[var(--mu)]">Langkah {index + 1} dari {TOUR_STEPS.length}</p>
+          <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400">PANDUAN INTERAKTIF</span>
+        </div>
+        <h2 className="mt-1 text-lg font-black font-heading leading-tight">{step.title}</h2>
+        <dl className="mt-3 space-y-2.5 text-xs sm:text-sm leading-relaxed">
+          <div><dt className="font-bold text-[var(--tx)]">Untuk apa</dt><dd className="text-[var(--mu)]">{step.purpose}</dd></div>
+          <div><dt className="font-bold text-[var(--tx)]">Fungsinya</dt><dd className="text-[var(--mu)]">{step.func}</dd></div>
+          <div><dt className="font-bold text-[var(--tx)]">Coba sekarang</dt><dd className="font-medium text-[var(--tx)]">{step.tryIt}</dd></div>
         </dl>
         <div className="mt-4 flex items-center gap-2">
           <button className={BTN} onClick={() => go(index - 1)} disabled={index === 0}>Sebelumnya</button>
-          {last ? <button className={`${BTN_PRIMARY} flex-1`} onClick={onClose}>Selesai</button>
-            : <button className={`${BTN_PRIMARY} flex-1`} onClick={() => go(index + 1)}>Lanjut</button>}
-          {!last && <button className="px-2 py-2 text-sm font-semibold text-[var(--mu)] hover:text-[var(--tx)]" onClick={onClose}>Tutup</button>}
+          {last ? (
+            <button className={`${BTN_PRIMARY} flex-1`} onClick={onClose}>Selesai</button>
+          ) : (
+            <button className={`${BTN_PRIMARY} flex-1`} onClick={() => go(index + 1)}>Lanjut →</button>
+          )}
+          {!last && (
+            <button className="px-2 py-2 text-xs font-semibold text-[var(--mu)] hover:text-[var(--tx)]" onClick={onClose}>Tutup</button>
+          )}
         </div>
       </aside>
     </>
