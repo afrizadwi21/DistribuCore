@@ -97,7 +97,7 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
         <dl className="mt-3 space-y-2 text-xs leading-relaxed">
           <div><dt className="font-bold text-[var(--tx)]">Untuk apa</dt><dd className="text-[var(--mu)]">{step.purpose}</dd></div>
           <div><dt className="font-bold text-[var(--tx)]">Fungsinya</dt><dd className="text-[var(--mu)]">{step.func}</dd></div>
-          <div><dt className="font-bold text-[var(--tx)]">Coba sekarang</dt><dd className="font-medium text-[var(--tx)]">{step.tryIt}</dd></div>
+          <div><dt className="font-bold text-[var(--tx)]">Instruksi aksi</dt><dd className="font-medium text-[var(--tx)]">{step.tryIt}</dd></div>
         </dl>
         <div className="mt-4 flex items-center gap-2">
           <button className={BTN} onClick={() => go(index - 1)} disabled={index === 0}>Sebelumnya</button>
