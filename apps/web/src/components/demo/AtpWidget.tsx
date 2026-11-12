@@ -44,6 +44,10 @@ export function AtpWidget({ all = false }: { all?: boolean }) {
         <div className="space-y-3 border-t border-[var(--bd)] p-4">
           {open ? (
             <>
+              <div className="rounded-lg bg-[var(--soft)] p-2.5 text-xs text-[var(--mu)] leading-relaxed">
+                <strong className="block text-[var(--tx)] font-semibold mb-0.5">Instruksi Cycle Count:</strong>
+                Masukkan angka hitung fisik di Bin {sku.bin}. Selisih otomatis masuk ke buku besar saldo gudang WH-CKR dan memperbarui angka ATP.
+              </div>
               <label className="block text-sm font-semibold">SKU
                 <select className={`${INPUT} mt-1`} value={code} onChange={(e) => setCode(e.target.value)}>
                   {skus.map((s) => <option key={s.code} value={s.code}>{s.name} ({s.code})</option>)}
