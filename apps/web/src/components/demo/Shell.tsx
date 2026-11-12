@@ -26,7 +26,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="grid min-h-screen md:grid-cols-[15.5rem_1fr]">
-      <nav data-tour="sidebar" aria-label="Menu demo" className="flex gap-1 overflow-x-auto border-b border-[var(--bd)] bg-[var(--card)] p-3 md:flex-col md:overflow-visible md:border-r md:border-b-0">
+      <nav data-tour="sidebar" aria-label="Menu demo" className="flex gap-1 overflow-x-auto border-b border-[var(--bd)] bg-[var(--card)] p-3 md:sticky md:top-0 md:h-screen md:min-h-screen md:flex-col md:overflow-y-auto md:border-r md:border-b-0 md:p-3.5">
         <Link href="/" className="hidden px-2 pb-3 text-lg font-black font-heading md:block">DistribuCore</Link>
         {NAV_GROUPS.map((g) => (
           <React.Fragment key={g.group}>
@@ -39,10 +39,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </React.Fragment>
         ))}
-        <div className="mt-auto hidden pt-4 border-t border-[var(--bd)] md:block">
+        <div className="mt-auto hidden pt-4 md:block">
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400 transition-colors"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap shadow-xs"
           >
             <DIcon name="arrow" className="rotate-180" />
             <span>Keluar Demo</span>
@@ -50,7 +50,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
         <Link
           href="/"
-          className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 dark:text-rose-400 md:hidden whitespace-nowrap"
+          className="flex items-center gap-1.5 rounded-lg border border-rose-500/25 bg-rose-500/10 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 md:hidden whitespace-nowrap"
         >
           <DIcon name="arrow" className="rotate-180" />
           <span>Keluar</span>
