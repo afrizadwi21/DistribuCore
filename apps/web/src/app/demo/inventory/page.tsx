@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { AtpWidget } from "@/components/demo/AtpWidget";
 import { useDemo } from "@/components/demo/DemoContext";
 import { atp, health, nf } from "@/components/demo/calc";
@@ -8,15 +9,24 @@ import { DIcon } from "@/components/demo/icons";
 import { Card, HealthBadge, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function InventoryPage() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { skus } = useDemo();
+
+  const headers = isEn
+    ? ["Bin", "Zone", "SKU", "On-Hand", "Reserved", "ATP", "Safety / Reorder", "Health"]
+    : ["Bin", "Zona", "SKU", "On-Hand", "Reserved", "ATP", "Safety / Titik Pesan", "Kesehatan"];
 
   return (
     <div className="grid gap-5">
-      <Panel title="Saldo stok · Gudang Pusat Cikarang (WH-CKR)" icon={<DIcon name="box" />}>
+      <Panel
+        title={isEn ? "Stock Balances · Cikarang Central Warehouse (WH-CKR)" : "Saldo stok · Gudang Pusat Cikarang (WH-CKR)"}
+        icon={<DIcon name="box" />}
+      >
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr>{["Bin", "Zona", "SKU", "On-Hand", "Reserved", "ATP", "Safety / Titik Pesan", "Kesehatan"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
+              <tr>{headers.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {skus.map((s) => {
@@ -40,9 +50,13 @@ export default function InventoryPage() {
       </Panel>
       <div className="grid items-start gap-5 lg:grid-cols-2">
         <Card className="p-5">
-          <h3 className="font-bold">Formula ATP = Stok Fisik − Reservasi Aktif</h3>
+          <h3 className="font-bold">
+            {isEn ? "ATP Formula = Physical Stock − Active Reservations" : "Formula ATP = Stok Fisik − Reservasi Aktif"}
+          </h3>
           <p className="mt-2 text-sm leading-relaxed text-[var(--mu)]">
-            Mesin reservasi otomatis menolak pesanan penjualan yang kuantitasnya melebihi ATP. Hal ini menjamin tidak ada alokasi ganda (double-booking) saat pesanan masuk secara bersamaan dari berbagai saluran penjualan atau cabang distributor.
+            {isEn
+              ? "The automated reservation engine instantly rejects sales orders exceeding ATP. This guarantees zero double-booking when simultaneous orders arrive from multiple sales channels or distributor branches."
+              : "Mesin reservasi otomatis menolak pesanan penjualan yang kuantitasnya melebihi ATP. Hal ini menjamin tidak ada alokasi ganda (double-booking) saat pesanan masuk secara bersamaan dari berbagai saluran penjualan atau cabang distributor."}
           </p>
         </Card>
         <AtpWidget />
