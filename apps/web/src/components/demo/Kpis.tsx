@@ -9,8 +9,8 @@ import { health, nf, overdue, pendingQty, rp } from "./calc";
 const Cell = ({ label, children, note }: { label: string; children: React.ReactNode; note: React.ReactNode }) => (
   <div className="bg-[var(--card)] p-5">
     <p className="text-sm text-[var(--mu)]">{label}</p>
-    <p className="my-1.5 text-2xl font-black font-heading tabular-nums">{children}</p>
-    <p className="text-sm text-[var(--mu)]">{note}</p>
+    <div className="my-1.5 text-2xl font-black font-heading tabular-nums">{children}</div>
+    <div className="text-sm text-[var(--mu)]">{note}</div>
   </div>
 );
 
