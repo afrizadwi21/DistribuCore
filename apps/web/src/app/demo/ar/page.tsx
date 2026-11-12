@@ -80,6 +80,9 @@ export default function ArAgingPage() {
           </div>
         </Panel>
       </div>
+      <p className="text-xs text-[var(--mu)] leading-relaxed">
+        <strong>Instruksi Piutang:</strong> Pantau grafik umur piutang per kelompok hari. Klik <b>Kirim Pengingat</b> pada pelanggan yang memiliki tunggakan terbesar untuk mengirimkan pemberitahuan tagihan resmi.
+      </p>
     </div>
   );
 }

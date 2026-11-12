@@ -36,7 +36,7 @@ export default function PurchasingPage() {
       </Panel>
       <Card data-tour="grn-actions" className="flex flex-wrap items-center gap-3 p-4">
         <span className="flex-1 text-sm text-[var(--mu)]">
-          Catat penerimaan barang (Goods Receipt Note / GRN). Saldo stok langsung bertambah di Bin <b>{s.bin}</b>.
+          <strong>Instruksi Penerimaan:</strong> Klik tombol untuk menerbitkan dokumen GRN. Kuantitas barang otomatis masuk ke Bin <b>{s.bin}</b> dan menaikkan saldo ATP.
         </span>
         <button disabled={remaining <= 0} className={`${BTN} bg-emerald-600! text-white! disabled:opacity-40`} onClick={() => act({ type: "grn", qty: 250 })}>
           Terima 250 SAK

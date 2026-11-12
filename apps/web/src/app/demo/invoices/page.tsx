@@ -40,7 +40,7 @@ export default function InvoicesPage() {
       </Panel>
       <Card data-tour="pay" className="flex flex-wrap items-center gap-3 p-4">
         <span className="flex-1 text-sm text-[var(--mu)]">
-          Catat penerimaan kas / transfer bank dan alokasikan secara otomatis ke faktur tertua pelanggan (FIFO).
+          <strong>Instruksi Pembayaran:</strong> Klik tombol untuk mencatat penerimaan kas atau transfer. Sistem otomatis mengalokasikan dana lunas ke faktur tertua pelanggan (metode FIFO) dan mengurangi total eksposur piutang.
         </span>
         <button className={`${BTN} bg-emerald-600! text-white!`} onClick={() => act({ type: "pay" })}>
           Catat Pembayaran Masuk Rp 7.500.000

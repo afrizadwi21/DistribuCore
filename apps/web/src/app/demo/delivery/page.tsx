@@ -49,8 +49,8 @@ export default function DeliveryPage() {
           </table>
         </div>
       </Card>
-      <p className="text-xs text-[var(--mu)]">
-        Catatan: Konfirmasi POD melepas reservasi dan memotong saldo fisik; faktur resmi otomatis dapat diterbitkan dari DO yang telah diverifikasi penerimaannya.
+      <p className="text-xs text-[var(--mu)] leading-relaxed">
+        <strong>Instruksi Pengiriman:</strong> Klik <b>Kirim truk</b> saat armada berangkat. Klik <b>Konfirmasi POD</b> saat barang diterima pelanggan (stok fisik gudang berkurang dan reservasi dilepas). Setelah POD terverifikasi, klik <b>Terbitkan faktur</b> untuk mengirim tagihan ke modul Piutang (AR).
       </p>
     </div>
   );
