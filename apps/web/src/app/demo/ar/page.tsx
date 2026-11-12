@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { nf, outstanding, overdue, rp } from "@/components/demo/calc";
 import { CUSTOMERS } from "@/components/demo/data";
@@ -16,6 +17,8 @@ const BUCKET_COLORS: Record<string, string> = {
 };
 
 export default function ArAgingPage() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
   const { invoices, act } = useDemo();
   const od = overdue(invoices);
   const totalAr = invoices.reduce((acc, i) => acc + i.open, 0);
@@ -28,19 +31,31 @@ export default function ArAgingPage() {
     <div className="grid gap-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="border-rose-500/30 p-5">
-          <span className="text-xs uppercase tracking-wider text-[var(--mu)]">Lewat Jatuh Tempo &gt; 30 Hari</span>
+          <span className="text-xs uppercase tracking-wider text-[var(--mu)]">
+            {isEn ? "Overdue > 30 Days" : "Lewat Jatuh Tempo > 30 Hari"}
+          </span>
           <div className="mt-1 text-2xl font-black text-rose-700 dark:text-rose-400">{rp(od)}</div>
-          <span className="text-xs text-[var(--mu)]">Mencakup bucket 31–60, 61–90, dan &gt;90 hari</span>
+          <span className="text-xs text-[var(--mu)]">
+            {isEn ? "Covers 31–60, 61–90, and >90 day buckets" : "Mencakup bucket 31–60, 61–90, dan >90 hari"}
+          </span>
         </Card>
         <Card className="p-5">
-          <span className="text-xs uppercase tracking-wider text-[var(--mu)]">Total Piutang Berjalan</span>
+          <span className="text-xs uppercase tracking-wider text-[var(--mu)]">
+            {isEn ? "Total Active Receivables" : "Total Piutang Berjalan"}
+          </span>
           <div className="mt-1 text-2xl font-black">{rp(totalAr)}</div>
-          <span className="text-xs text-[var(--mu)]">{openCount} faktur belum lunas</span>
+          <span className="text-xs text-[var(--mu)]">
+            {isEn ? `${openCount} unpaid invoices` : `${openCount} faktur belum lunas`}
+          </span>
         </Card>
       </div>
 
       <div className="grid items-start gap-5 lg:grid-cols-2">
-        <Panel data-tour="aging" title="Distribusi Umur Piutang (Rp Juta)" icon={<DIcon name="cash" />}>
+        <Panel
+          data-tour="aging"
+          title={isEn ? "AR Aging Distribution (Rp Millions)" : "Distribusi Umur Piutang (Rp Juta)"}
+          icon={<DIcon name="cash" />}
+        >
           <div className="grid h-48 grid-cols-5 items-end gap-3 p-4">
             {BUCKETS.map((b, i) => {
               const val = bucketSums[i];
@@ -56,10 +71,10 @@ export default function ArAgingPage() {
           </div>
         </Panel>
 
-        <Panel title="Eksposur per Pelanggan" icon={<DIcon name="users" />}>
+        <Panel title={isEn ? "Customer Credit Exposure" : "Eksposur per Pelanggan"} icon={<DIcon name="users" />}>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
-              <thead><tr>{["Pelanggan", "Terutang", "Aksi"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
+              <thead><tr>{[isEn ? "Customer" : "Pelanggan", isEn ? "Outstanding" : "Terutang", isEn ? "Action" : "Aksi"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
               <tbody>
                 {CUSTOMERS.filter((c) => outstanding(invoices, c.code) > 0).map((c) => {
                   const outst = outstanding(invoices, c.code);
@@ -68,8 +83,8 @@ export default function ArAgingPage() {
                       <td className={`${TD} font-semibold`}>{c.name}</td>
                       <td className={`${TD} font-bold text-rose-700 dark:text-rose-400`}>{rp(outst)}</td>
                       <td className={TD}>
-                        <button className={BTN} onClick={() => act({ type: "notify", message: `Pengingat tagihan resmi berhasil dikirim ke ${c.name}` })}>
-                          Kirim Pengingat
+                        <button className={BTN} onClick={() => act({ type: "notify", message: isEn ? `Dunning reminder successfully sent to ${c.name}` : `Pengingat tagihan resmi berhasil dikirim ke ${c.name}` })}>
+                          {isEn ? "Send Dunning" : "Kirim Pengingat"}
                         </button>
                       </td>
                     </tr>
@@ -81,7 +96,10 @@ export default function ArAgingPage() {
         </Panel>
       </div>
       <p className="text-xs text-[var(--mu)] leading-relaxed">
-        <strong>Instruksi Piutang:</strong> Pantau grafik umur piutang per kelompok hari. Klik <b>Kirim Pengingat</b> pada pelanggan yang memiliki tunggakan terbesar untuk mengirimkan pemberitahuan tagihan resmi.
+        <strong>{isEn ? "AR Instructions:" : "Instruksi Piutang:"}</strong>{" "}
+        {isEn
+          ? "Monitor receivables aging distribution by aging bucket. Click Send Dunning on customers with overdue balances to initiate debt collection notices."
+          : "Pantau grafik umur piutang per kelompok hari. Klik Kirim Pengingat pada pelanggan yang memiliki tunggakan terbesar untuk mengirimkan pemberitahuan tagihan resmi."}
       </p>
     </div>
   );
