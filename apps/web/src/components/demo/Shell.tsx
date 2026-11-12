@@ -46,7 +46,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <span className="flex-1" />
           <Badge tone="a">Mode demo · data contoh</Badge>
           <button className={BTN} onClick={open}><DIcon name="help" />Panduan</button>
-          <button aria-label="Ganti tema" onClick={toggle} className={`${BTN} !px-2.5`}>{isDark ? <SunIcon className="h-4 w-4 text-amber-400" /> : <MoonIcon className="h-4 w-4" />}</button>
+          <button aria-label="Ganti tema" onClick={toggle} className={`${BTN} px-2.5!`}>{isDark ? <SunIcon className="h-4 w-4 text-amber-400" /> : <MoonIcon className="h-4 w-4" />}</button>
           <Link href="/" className={BTN}>Beranda</Link>
         </header>
         <main className="grid content-start gap-5 p-5 sm:p-6">

@@ -1,6 +1,7 @@
 import React from "react";
+import type { Health } from "./calc";
 
-type Tone = "g" | "a" | "r" | "b" | "m";
+export type Tone = "g" | "a" | "r" | "b" | "m";
 
 const TONES: Record<Tone, string> = {
   g: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
@@ -20,6 +21,8 @@ export function Badge({ tone = "m", children }: { tone?: Tone; children: React.R
 }
 
 export const DemoTag = ({ show }: { show: boolean }) => (show ? <Badge>DEMO</Badge> : null);
+
+export const HealthBadge = ({ h }: { h: Health }) => <Badge tone={h === "HEALTHY" ? "g" : h === "CRITICAL_LOW" ? "r" : "a"}>{h}</Badge>;
 
 export function Card({ children, className = "", ...rest }: React.HTMLAttributes<HTMLDivElement>) {
   return <div {...rest} className={`rounded-xl border border-[var(--bd)] bg-[var(--card)] ${className}`}>{children}</div>;
