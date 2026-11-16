@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
@@ -8,9 +9,11 @@ import { Badge, BTN, Card, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PurchasingPage() {
   const { locale } = useLanguage();
+  const { mode } = useAuth();
   const isEn = locale === "en";
   const { po, skus, grns, act } = useDemo();
-  const s = skus.find((x) => x.code === po.sku)!;
+  const hasPo = po && po.no !== "-";
+  const s = skus.find((x) => x.code === po.sku) || { name: "-", uom: "UNIT", bin: "-" };
   const st = po.received === 0 ? "ISSUED" : po.received < po.qty ? "PARTIALLY_RECEIVED" : "RECEIVED";
   const remaining = po.qty - po.received;
 
@@ -31,34 +34,44 @@ export default function PurchasingPage() {
               <tr>{poHeaders.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
-              <tr>
-                <td className={`${TD} font-bold`}>{po.no}</td>
-                <td className={TD}>{po.supplier}</td>
-                <td className={TD}>{po.issued}</td>
-                <td className={TD}>{po.eta}</td>
-                <td className={TD}>{s.name} × {po.qty} {s.uom}</td>
-                <td className={`${TD} font-semibold`}>{po.received} / {po.qty}</td>
-                <td className={TD}>{rp(po.qty * po.cost)}</td>
-                <td className={TD}><Badge tone={st === "RECEIVED" ? "g" : "b"}>{st}</Badge></td>
-              </tr>
+              {hasPo ? (
+                <tr>
+                  <td className={`${TD} font-bold`}>{po.no}</td>
+                  <td className={TD}>{po.supplier}</td>
+                  <td className={TD}>{po.issued}</td>
+                  <td className={TD}>{po.eta}</td>
+                  <td className={TD}>{s.name} × {po.qty} {s.uom}</td>
+                  <td className={`${TD} font-semibold`}>{po.received} / {po.qty}</td>
+                  <td className={TD}>{rp(po.qty * po.cost)}</td>
+                  <td className={TD}><Badge tone={st === "RECEIVED" ? "g" : "b"}>{st}</Badge></td>
+                </tr>
+              ) : (
+                <tr>
+                  <td colSpan={8} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No purchase orders issued for this tenant yet." : "Belum ada pesanan pembelian (PO) untuk perusahaan ini."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </Panel>
-      <Card data-tour="grn-actions" className="flex flex-wrap items-center gap-3 p-4">
-        <span className="flex-1 text-sm text-[var(--mu)]">
-          <strong>{isEn ? "Receiving Instructions:" : "Instruksi Penerimaan:"}</strong>{" "}
-          {isEn
-            ? `Click button to issue GRN document. Items are physically placed in Bin ${s.bin} and immediately increase ATP stock.`
-            : `Klik tombol untuk menerbitkan dokumen GRN. Kuantitas barang otomatis masuk ke Bin ${s.bin} dan menaikkan saldo ATP.`}
-        </span>
-        <button disabled={remaining <= 0} className={`${BTN} bg-emerald-600! text-white! disabled:opacity-40`} onClick={() => act({ type: "grn", qty: 250 })}>
-          {isEn ? "Receive 250 SAK" : "Terima 250 SAK"}
-        </button>
-        <button disabled={remaining <= 0} className={`${BTN} disabled:opacity-40`} onClick={() => act({ type: "grn", qty: remaining })}>
-          {isEn ? `Receive Remaining (${remaining} ${s.uom})` : `Terima Semua Sisa (${remaining} ${s.uom})`}
-        </button>
-      </Card>
+      {hasPo && (
+        <Card data-tour="grn-actions" className="flex flex-wrap items-center gap-3 p-4">
+          <span className="flex-1 text-sm text-[var(--mu)]">
+            <strong>{isEn ? "Receiving Instructions:" : "Instruksi Penerimaan:"}</strong>{" "}
+            {isEn
+              ? `Click button to issue GRN document. Items are physically placed in Bin ${s.bin} and immediately increase ATP stock.`
+              : `Klik tombol untuk menerbitkan dokumen GRN. Kuantitas barang otomatis masuk ke Bin ${s.bin} dan menaikkan saldo ATP.`}
+          </span>
+          <button disabled={remaining <= 0} className={`${BTN} bg-emerald-600! text-white! disabled:opacity-40`} onClick={() => act({ type: "grn", qty: 250 })}>
+            {isEn ? "Receive 250 SAK" : "Terima 250 SAK"}
+          </button>
+          <button disabled={remaining <= 0} className={`${BTN} disabled:opacity-40`} onClick={() => act({ type: "grn", qty: remaining })}>
+            {isEn ? `Receive Remaining (${remaining} ${s.uom})` : `Terima Semua Sisa (${remaining} ${s.uom})`}
+          </button>
+        </Card>
+      )}
       <Panel title={isEn ? "Goods Receipt Notes (Physical GRN)" : "Bukti Penerimaan Barang Fisik (GRN)"} icon={<DIcon name="doc" />}>
         {grns.length ? (
           <div className="overflow-x-auto">
