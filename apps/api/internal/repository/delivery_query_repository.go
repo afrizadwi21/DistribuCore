@@ -17,28 +17,28 @@ func (r *FulfillmentRepository) ListDeliveryOrders(ctx context.Context, tenantID
 	}
 	offset := (page - 1) * limit
 
-	where := "WHERE do.tenant_id = $1"
+	where := "WHERE del.tenant_id = $1"
 	args := []interface{}{tenantID}
 	if salesOrderID != nil && *salesOrderID != uuid.Nil {
-		where += " AND do.sales_order_id = $2"
+		where += " AND del.sales_order_id = $2"
 		args = append(args, *salesOrderID)
 	}
 	if status != "" {
-		where += fmt.Sprintf(" AND do.delivery_status = $%d", len(args)+1)
+		where += fmt.Sprintf(" AND del.delivery_status = $%d", len(args)+1)
 		args = append(args, status)
 	}
 
 	var total int
-	_ = r.db.QueryRow(ctx, fmt.Sprintf("SELECT COUNT(*) FROM delivery_orders do %s", where), args...).Scan(&total)
+	_ = r.db.QueryRow(ctx, fmt.Sprintf("SELECT COUNT(*) FROM delivery_orders del %s", where), args...).Scan(&total)
 
 	query := fmt.Sprintf(`
-		SELECT do.id, do.tenant_id, do.delivery_number, do.sales_order_id, so.order_number,
-		       do.origin_warehouse_id, w.name, do.delivery_status, do.driver_name, do.vehicle_registration,
-		       do.dispatched_at, do.created_at
-		FROM delivery_orders do
-		JOIN sales_orders so ON do.sales_order_id = so.id
-		JOIN warehouses w ON do.origin_warehouse_id = w.id
-		%s ORDER BY do.created_at DESC LIMIT $%d OFFSET $%d
+		SELECT del.id, del.tenant_id, del.delivery_number, del.sales_order_id, so.order_number,
+		       del.origin_warehouse_id, w.name, del.delivery_status, del.driver_name, del.vehicle_registration,
+		       del.dispatched_at, del.created_at
+		FROM delivery_orders del
+		JOIN sales_orders so ON del.sales_order_id = so.id
+		JOIN warehouses w ON del.origin_warehouse_id = w.id
+		%s ORDER BY del.created_at DESC LIMIT $%d OFFSET $%d
 	`, where, len(args)+1, len(args)+2)
 	args = append(args, limit, offset)
 
@@ -62,12 +62,12 @@ func (r *FulfillmentRepository) ListDeliveryOrders(ctx context.Context, tenantID
 func (r *FulfillmentRepository) GetDeliveryOrderByID(ctx context.Context, tenantID, doID uuid.UUID) (*DeliveryOrder, error) {
 	var d DeliveryOrder
 	err := r.db.QueryRow(ctx, `
-		SELECT do.id, do.tenant_id, do.delivery_number, do.sales_order_id, so.order_number,
-		       do.origin_warehouse_id, w.name, do.delivery_status, do.driver_name, do.vehicle_registration, do.dispatched_at, do.created_at
-		FROM delivery_orders do
-		JOIN sales_orders so ON do.sales_order_id = so.id
-		JOIN warehouses w ON do.origin_warehouse_id = w.id
-		WHERE do.tenant_id = $1 AND do.id = $2
+		SELECT del.id, del.tenant_id, del.delivery_number, del.sales_order_id, so.order_number,
+		       del.origin_warehouse_id, w.name, del.delivery_status, del.driver_name, del.vehicle_registration, del.dispatched_at, del.created_at
+		FROM delivery_orders del
+		JOIN sales_orders so ON del.sales_order_id = so.id
+		JOIN warehouses w ON del.origin_warehouse_id = w.id
+		WHERE del.tenant_id = $1 AND del.id = $2
 	`, tenantID, doID).Scan(&d.ID, &d.TenantID, &d.DeliveryNumber, &d.SalesOrderID, &d.OrderNumber,
 		&d.OriginWarehouseID, &d.WarehouseName, &d.DeliveryStatus, &d.DriverName, &d.VehicleRegistration, &d.DispatchedAt, &d.CreatedAt)
 	if err != nil {
