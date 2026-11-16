@@ -59,6 +59,12 @@ export default function PurchasingPage() {
 
   return (
     <div className="grid gap-5">
+      <Card className="p-4 text-xs leading-relaxed text-[var(--mu)]">
+        <b className="text-[var(--tx)]">{isEn ? "Inbound Procurement Flow (P2P):" : "Alur Kerja Pembelian & Barang Masuk (P2P):"}</b>{" "}
+        {isEn
+          ? "1. Issue Purchase Order (PO) to supplier → 2. Click Receive GRN when supplier truck arrives → 3. Physical stock (On-Hand) & ATP automatically increase in the Stock & ATP menu!"
+          : "1. Terbitkan Purchase Order (PO) ke pemasok → 2. Klik Terima Barang (GRN) saat truk pemasok tiba di gudang → 3. Saldo stok fisik (On-Hand) & ATP produk tersebut otomatis bertambah di menu Stok & ATP!"}
+      </Card>
       {isReal && canEdit && (
         <Card className="p-5">
           <div className="flex items-center justify-between">

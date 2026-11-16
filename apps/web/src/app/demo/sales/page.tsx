@@ -23,34 +23,17 @@ export default function SalesPage() {
   const handleCreateOrder = (e: React.FormEvent) => {
     e.preventDefault();
     const cCode = cust || customers[0]?.code || "CUST-01";
-    const sObj = skus.find((s) => s.code === (skuCode || skus[0]?.code));
-    const unitPrice = sObj?.price || 75000;
-    const total = (Number(qty) || 1) * unitPrice;
-    const newId = `SO-2026-${String(orders.length + 1).padStart(3, "0")}`;
-    act({
-      type: "set_real_data",
-      data: {
-        orders: [{ id: newId, cust: cCode, total, hold: false, demo: false }, ...orders],
-      },
-    });
-    act({ type: "notify", message: isEn ? `Sales Order ${newId} created` : `Pesanan Penjualan ${newId} berhasil dibuat` });
+    const sCode = skuCode || skus[0]?.code || "";
+    act({ type: "create_so", cust: cCode, sku: sCode, qty: Number(qty) || 1 });
   };
 
   return (
     <div className="grid gap-5">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm text-[var(--mu)]">
-        <span className="flex items-center gap-2">
-          <DIcon name="cart" />
-          <span>
-            <b>Order-to-Cash:</b>{" "}
-            {isEn
-              ? "Approved orders automatically lock Available-to-Promise (ATP) stock."
-              : "Pesanan dengan limit kredit aman langsung mengunci alokasi stok (ATP)."}
-          </span>
-        </span>
-        <span className="text-xs">
-          Multi-tenant · {isReal ? (tenant?.name || tenant?.code || "Sesi Nyata") : "SBA Cabang Cikarang"}
-        </span>
+      <Card className="p-4 text-xs leading-relaxed text-[var(--mu)]">
+        <b className="text-[var(--tx)]">{isEn ? "End-to-End Order-to-Cash Flow:" : "Alur Kerja Penjualan (Order-to-Cash):"}</b>{" "}
+        {isEn
+          ? "1. Create Sales Order (SO) here → 2. System locks ATP stock & automatically generates a Delivery Order (DO) in Delivery & POD menu → 3. Dispatch truck & confirm POD → 4. Issue Invoice & record payment."
+          : "1. Buat Pesanan Penjualan (SO) di halaman ini → 2. Sistem otomatis mengunci stok ATP & menerbitkan Surat Jalan (DO) ke menu Pengiriman & POD → 3. Kirim truk & konfirmasi POD → 4. Terbitkan Faktur & catat pelunasan."}
       </Card>
 
       {isReal && canCreate && (

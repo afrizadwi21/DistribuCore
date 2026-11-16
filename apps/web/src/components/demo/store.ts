@@ -17,6 +17,7 @@ export type State = {
 export type Action =
   | { type: "dispatch" | "pod" | "invoice"; id: string }
   | { type: "grn"; qty: number }
+  | { type: "create_so"; cust: string; sku: string; qty: number }
   | { type: "adjust"; code: string; count: number }
   | { type: "pay" | "clear" }
   | { type: "notify"; message: string }
@@ -62,9 +63,34 @@ export function reducer(s: State, a: Action): State {
     case "grn": {
       const qty = Math.min(a.qty, s.po.qty - s.po.received);
       if (qty <= 0) return { ...s, toast: "PO sudah diterima penuh" };
-      const k = s.skus.find((x) => x.code === s.po.sku)!;
+      const k = s.skus.find((x) => x.code === s.po.sku) || { code: s.po.sku, uom: "UNIT", bin: "WH-MAIN" };
       return { ...s, po: { ...s.po, received: s.po.received + qty }, grns: [...s.grns, { no: `GRN-2026-${pad(s.grns.length + 1)}`, qty }],
-        skus: patchSku(s, k.code, (x) => ({ ...x, onHand: x.onHand + qty })), toast: `GRN dicatat: +${qty} ${k.uom} masuk ke Bin ${k.bin} Gudang Cikarang, kuantitas ATP naik.` };
+        skus: patchSku(s, k.code, (x) => ({ ...x, onHand: x.onHand + qty })), toast: `GRN dicatat: +${qty} ${k.uom} masuk ke Bin ${k.bin}, saldo On-Hand & ATP di modul Stok & ATP otomatis bertambah!` };
+    }
+    case "create_so": {
+      const k = s.skus.find((x) => x.code === a.sku);
+      if (!k) return { ...s, toast: "Pilih produk SKU yang terdaftar di Katalog terlebih dahulu." };
+      const avail = atp(k);
+      if (a.qty > avail) {
+        return { ...s, toast: `Ditolak (ATP Lock): Kuantitas ${a.qty} ${k.uom} melebihi saldo ATP tersedia (${avail} ${k.uom}). Tambahkan stok melalui Pembelian & GRN atau Cycle Count.` };
+      }
+      const c = s.customers.find((x) => x.code === a.cust);
+      const total = a.qty * (k.price || 75000);
+      const hold = Boolean(c?.hold || (c && c.limit > 0 && total > c.limit));
+      const soId = `SO-2026-${pad(s.orders.length + 1)}`;
+      const doId = `DO-2026-${pad(s.dos.length + 1)}`;
+      const newOrder: Order = { id: soId, cust: a.cust, total, hold, demo: false };
+      if (hold) {
+        return { ...s, orders: [newOrder, ...s.orders], toast: `${soId} dibuat dengan status CREDIT HOLD (melebihi limit kredit). Menunggu persetujuan Finance.` };
+      }
+      const newDo: DeliveryOrder = { id: doId, so: soId, sku: k.code, qty: a.qty, status: "picking" };
+      return {
+        ...s,
+        orders: [newOrder, ...s.orders],
+        dos: [newDo, ...s.dos],
+        skus: patchSku(s, k.code, (x) => ({ ...x, reserved: x.reserved + a.qty })),
+        toast: `${soId} disetujui: ${a.qty} ${k.uom} ${k.code} dikunci (Reserved) & Surat Jalan ${doId} otomatis diterbitkan ke menu Pengiriman & POD!`,
+      };
     }
     case "adjust": {
       const k = s.skus.find((x) => x.code === a.code)!;
