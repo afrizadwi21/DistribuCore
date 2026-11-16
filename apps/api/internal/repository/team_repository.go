@@ -77,3 +77,43 @@ func (r *AuthRepository) CreateTenantUser(ctx context.Context, tenantID uuid.UUI
 	u.Roles = []string{roleName}
 	return &u, nil
 }
+
+// UpdateUserRole updates a user's assigned role and optionally their full name or active status within a tenant.
+func (r *AuthRepository) UpdateUserRole(ctx context.Context, tenantID, userID uuid.UUID, roleName, fullName string, isActive *bool) error {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	if fullName != "" {
+		_, _ = tx.Exec(ctx, `UPDATE users SET full_name = $1, updated_at = NOW() WHERE tenant_id = $2 AND id = $3`, fullName, tenantID, userID)
+	}
+	if isActive != nil {
+		_, _ = tx.Exec(ctx, `UPDATE users SET is_active = $1, updated_at = NOW() WHERE tenant_id = $2 AND id = $3`, *isActive, tenantID, userID)
+	}
+	if roleName != "" {
+		var roleID uuid.UUID
+		err = tx.QueryRow(ctx, `
+			INSERT INTO roles (tenant_id, name, description, is_system_role)
+			VALUES ($1, $2, $3, FALSE)
+			ON CONFLICT (tenant_id, name) DO UPDATE SET updated_at = NOW()
+			RETURNING id
+		`, tenantID, roleName, "Role "+roleName).Scan(&roleID)
+		if err != nil {
+			return err
+		}
+		_, _ = tx.Exec(ctx, `DELETE FROM user_roles WHERE user_id = $1`, userID)
+		if _, err := tx.Exec(ctx, `INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)`, userID, roleID); err != nil {
+			return err
+		}
+	}
+	return tx.Commit(ctx)
+}
+
+// DeleteTenantUser removes a user belonging to a tenant.
+func (r *AuthRepository) DeleteTenantUser(ctx context.Context, tenantID, userID uuid.UUID) error {
+	_, err := r.db.Exec(ctx, `DELETE FROM users WHERE tenant_id = $1 AND id = $2`, tenantID, userID)
+	return err
+}
+
