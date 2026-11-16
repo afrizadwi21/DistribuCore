@@ -3,17 +3,16 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { DO_LABEL } from "@/components/demo/SalesTable";
-import { CUSTOMERS, ORDERS } from "@/components/demo/data";
 import { Badge, BTN, Card, TD, TH } from "@/components/demo/ui";
 
 export default function DeliveryPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
-  const { dos, skus, act } = useDemo();
+  const { dos, skus, orders, customers, act } = useDemo();
   const sku = (code: string) => skus.find((s) => s.code === code) || { name: code, uom: "UNIT" };
   const custName = (soId: string) => {
-    const o = ORDERS.find((q) => q.id === soId);
-    return o ? CUSTOMERS.find((c) => c.code === o.cust)?.name : "-";
+    const o = orders.find((q) => q.id === soId);
+    return o ? (customers.find((c) => c.code === o.cust)?.name || o.cust) : "-";
   };
 
   const headers = isEn
