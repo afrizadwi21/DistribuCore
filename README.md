@@ -2,11 +2,11 @@
 
 **A cloud-native, multi-tenant B2B Distribution Management System (DMS) engineered for small and medium-sized distributors, wholesalers, and supply chain operators.**
 
-[![Project Status: Backend v1.0 Ready](https://img.shields.io/badge/Status-Backend%20v1.0%20Ready-brightgreen.svg)](#project-status)
-[![Stack: Go Fiber](https://img.shields.io/badge/Backend-Go%20(Fiber)-00ADD8.svg?logo=go)](#planned-technology-stack)
-[![Stack: Next.js](https://img.shields.io/badge/Frontend-Next.js%2014+-black.svg?logo=next.js)](#planned-technology-stack)
-[![Stack: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1.svg?logo=postgresql)](#planned-technology-stack)
-[![Architecture: Multi--Tenant](https://img.shields.io/badge/Architecture-Multi--Tenant%20SaaS-orange.svg)](#multi-tenant-architecture)
+[![Project Status: Full-Stack v1.0 Ready](https://img.shields.io/badge/Status-Full--Stack%20v1.0%20Ready-brightgreen.svg)](#project-status--implementation-scope)
+[![Stack: Go Fiber](https://img.shields.io/badge/Backend-Go%20(Fiber)-00ADD8.svg?logo=go)](#technology-stack)
+[![Stack: Next.js 16](https://img.shields.io/badge/Frontend-Next.js%2016-black.svg?logo=next.js)](#technology-stack)
+[![Stack: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1.svg?logo=postgresql)](#technology-stack)
+[![Architecture: Multi--Tenant](https://img.shields.io/badge/Architecture-Multi--Tenant%20SaaS-orange.svg)](#multi-tenant-architecture--data-isolation)
 [![License](https://img.shields.io/badge/License-Proprietary%20%2F%20TBD-lightgrey.svg)](#license)
 
 ---
@@ -24,12 +24,12 @@
   - [1. Procure-to-Pay (P2P) Flow](#1-procure-to-pay-p2p-flow)
   - [2. Order-to-Cash (O2C) Flow](#2-order-to-cash-o2c-flow)
   - [3. Complete Workflow Visual Guide (Indonesian)](docs/WORKFLOW_GUIDE.md)
-- [Planned Functional Modules](#planned-functional-modules)
+- [Functional Modules](#functional-modules)
 - [System Architecture & Design](#system-architecture--design)
   - [High-Level Architectural Topology](#high-level-architectural-topology)
   - [Multi-Tenant Architecture & Data Isolation](#multi-tenant-architecture--data-isolation)
   - [High-Concurrency Stock Reservation Strategy](#high-concurrency-stock-reservation-strategy)
-- [Planned Technology Stack](#planned-technology-stack)
+- [Technology Stack](#technology-stack)
 - [Security & Compliance Considerations](#security--compliance-considerations)
 - [Project Status & Implementation Scope](#project-status--implementation-scope)
 - [Development Roadmap](#development-roadmap)
@@ -164,7 +164,7 @@ flowchart TD
 
 ---
 
-## Planned Functional Modules
+## Functional Modules
 
 DistribuCore is structured as modular, domain-driven components:
 
@@ -172,7 +172,7 @@ DistribuCore is structured as modular, domain-driven components:
 DistribuCore Functional Modules
 ├── 1. Tenant & Identity Management
 │   ├── Multi-Company & Tenant Onboarding
-│   └── Role-Based Access Control (RBAC) & Security Policies
+│   └── Role-Based Access Control (RBAC) & Dynamic Team Role Switching
 ├── 2. Master Data Management
 │   ├── Product Catalog, Units of Measure (UOM) & Tiered Pricing
 │   ├── Supplier & Vendor Directory
@@ -186,11 +186,11 @@ DistribuCore Functional Modules
 │   └── Goods Receiving Notes (GRN) & Backorder Tracking
 ├── 5. Sales & Outbound Fulfillment
 │   ├── Quotation Management & Price Versioning
-│   ├── Sales Order Management & Fulfillment Scheduling
+│   ├── Sales Order Management & Automatic DO Generation
 │   └── Partial Deliveries, Route Dispatch & Proof of Delivery (POD)
 ├── 6. Financial Settlement & Receivables
 │   ├── Automated Customer Invoicing (Per Delivery / Periodic)
-│   ├── Payment Ingestion & Multi-Invoice Allocation
+│   ├── Payment Ingestion & Multi-Invoice FIFO Allocation
 │   └── Accounts Receivable (AR) Aging & Credit Management
 └── 7. Analytics & Operational Intelligence
     ├── Sales Performance, Velocity & Margin Analysis
@@ -200,7 +200,7 @@ DistribuCore Functional Modules
 
 ### Detailed Functional Breakdown
 
-| Domain Module | Planned Capabilities & Scope |
+| Domain Module | Implemented Capabilities & Scope |
 |---|---|
 | **Company & Tenant Management** | Multi-organization tenancy; tenant configuration; branch and subsidiary boundaries; localization settings (currency, time zones, fiscal year definitions). |
 | **Authentication & RBAC** | Identity management; session and token governance; granular role assignments (Admin, Warehouse Clerk, Sales Rep, Finance Manager, Auditor); permission matrices. |
@@ -291,13 +291,13 @@ In wholesale and construction supply operations, multiple sales agents frequentl
 
 ---
 
-## Planned Technology Stack
+## Technology Stack
 
-The planned technology stack prioritizes operational stability, type safety, low latency, and developer ergonomics:
+The technology stack prioritizes operational stability, type safety, low latency, and developer ergonomics:
 
 | Layer | Technology | Architectural Justification |
 |---|---|---|
-| **Frontend Framework** | **Next.js** (React) | Modern App Router, Server-Side Rendering (SSR) for fast initial dashboard loads, and robust client-side interactions for complex data grids. |
+| **Frontend Framework** | **Next.js 16** (React 19) | Modern App Router, Server-Side Rendering (SSR) for fast initial dashboard loads, and robust client-side interactions for complex data grids. |
 | **Frontend Language** | **TypeScript** | Strict typing across state boundaries, component props, and API response contracts. |
 | **Styling & UI Kit** | **Tailwind CSS** & **shadcn/ui** | Headless, accessible, customizable component architecture suitable for high-density enterprise interfaces, data tables, and input forms. |
 | **Backend Language** | **Go (Golang)** | High-throughput, low-memory footprint, clean concurrency primitives for handling parallel requests, and rapid cold-start performance. |
@@ -324,9 +324,9 @@ The planned technology stack prioritizes operational stability, type safety, low
 ## Project Status & Implementation Scope
 
 > [!IMPORTANT]
-> **Current Repository Status:** `Phase 7 Completed — Backend v1.0 Production-Ready`
+> **Current Repository Status:** `Phase 8 Completed — Full-Stack v1.0 Production-Ready`
 > 
-> The core Go/Fiber multi-tenant backend engines across all 7 operational phases (IAM, Master Data, Procurement, Stock Reservation, Fulfillment, Billing, and Analytics) are fully implemented, seeded, and documented via interactive Scalar docs at `/docs`.
+> Both the Go/Fiber multi-tenant backend engines and the Next.js 16 operational web platform across all 8 phases (IAM, Master Data, Procurement P2P, Stock Reservation & ATP, Outbound Fulfillment & POD, Billing & AR Aging, Analytics, and Dual-Mode Live Server / Interactive Demo Web Client with RBAC Team Management) are fully implemented and connected to PostgreSQL and Redis.
 
 ---
 
@@ -382,11 +382,12 @@ The planned technology stack prioritizes operational stability, type safety, low
 - [x] Conduct performance benchmarking, load testing, and security vulnerability audits.
 - [x] Finalize end-to-end integration test suites and CI/CD pipelines.
 
-### Phase 8: Web Dashboard & Next.js Client (Planned)
-- [ ] Initialize Next.js 14+ frontend with Tailwind CSS and shadcn/ui.
-- [ ] Implement multi-tenant authentication and session management.
-- [ ] Build interactive inventory matrix, stock adjustment, and transfer views.
-- [ ] Build Order-to-Cash dispatch, POD photo upload, and invoice generation flows.
+### Phase 8: Web Dashboard, Multi-Tenant Session & Team RBAC (Completed)
+- [x] Initialize Next.js 16 (React 19) frontend with Tailwind CSS and Industrial Precision design system (`DESIGN.md`).
+- [x] Implement dual-mode workspace: isolated Real Server multi-tenant session (`mode: "real"`) and Guided Interactive Demo (`mode: "demo"`).
+- [x] Implement Tenant Profile & Team RBAC Management (`/demo/profile`) allowing administrators to manage tenant users and switch operational roles (`ADMIN`, `SALES_MANAGER`, `WAREHOUSE_MANAGER`, `FINANCE_OFFICER`, `STAFF`).
+- [x] Build interactive inventory matrix, Available-to-Promise (ATP) reservation locks, cycle count adjustments, and multi-warehouse registration.
+- [x] Build connected Procure-to-Pay (PO to GRN stock increment) and Order-to-Cash (SO to automatic DO/POD to FIFO Invoice & AR Aging) flows persisted to PostgreSQL via REST API.
 
 ---
 
