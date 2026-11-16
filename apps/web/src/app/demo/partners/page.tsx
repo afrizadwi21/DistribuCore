@@ -1,22 +1,56 @@
 "use client";
 
+import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { outstanding, rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
-import { Badge, Bar, DemoTag, Panel, TD, TH } from "@/components/demo/ui";
+import { Badge, Bar, BTN, Card, DemoTag, INP, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PartnersPage() {
   const { locale } = useLanguage();
-  const { mode } = useAuth();
+  const { mode, token, role, can } = useAuth();
   const isEn = locale === "en";
-  const { invoices, customers = [] } = useDemo();
+  const { invoices, customers = [], refresh, act } = useDemo();
   const isReal = mode === "real";
+  const canEdit = can("sales") || can("finance");
+
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
+  const [limit, setLimit] = useState("100000000");
+  const [terms, setTerms] = useState("30");
+
+  const handleAddCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim() || !name.trim() || !token) return;
+    const res = await fetch("/api/proxy/v1/partners/customers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        code: code.trim().toUpperCase(),
+        name: name.trim(),
+        credit_limit_cents: Math.round((Number(limit) || 0) * 100),
+        payment_terms_days: Number(terms) || 30,
+      }),
+    });
+    if (res.ok) {
+      setCode(""); setName("");
+      refresh();
+      act({ type: "notify", message: isEn ? "Customer registered" : "Pelanggan B2B berhasil ditambahkan" });
+    }
+  };
+
+  const handleDeleteCustomer = async (id?: string) => {
+    if (!id || !token) return;
+    await fetch(`/api/proxy/v1/partners/customers/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    refresh();
+    act({ type: "notify", message: isEn ? "Customer removed" : "Data pelanggan berhasil dihapus" });
+  };
 
   const custHeaders = isEn
-    ? ["Code", "Company", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status"]
-    : ["Kode", "Perusahaan", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status"];
+    ? ["Code", "Company", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status", ...(isReal && canEdit ? ["Action"] : [])]
+    : ["Kode", "Perusahaan", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status", ...(isReal && canEdit ? ["Aksi"] : [])];
 
   const suppHeaders = isEn
     ? ["Supplier Code", "Company Name", "Contact Person", "Payment Terms", "Status"]
@@ -24,6 +58,23 @@ export default function PartnersPage() {
 
   return (
     <div className="grid gap-5">
+      {isReal && canEdit && (
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold">{isEn ? "Register B2B Customer" : "Tambah Pelanggan B2B Baru"}</h4>
+            <Badge tone="b">{role}</Badge>
+          </div>
+          <form onSubmit={handleAddCustomer} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <input required placeholder="Kode (mis. CUST-01)" value={code} onChange={(e) => setCode(e.target.value)} className={INP} />
+            <input required placeholder={isEn ? "Company Name" : "Nama Perusahaan"} value={name} onChange={(e) => setName(e.target.value)} className={INP} />
+            <input type="number" placeholder="Limit Kredit (Rp)" value={limit} onChange={(e) => setLimit(e.target.value)} className={INP} />
+            <input type="number" placeholder="Termin (Hari)" value={terms} onChange={(e) => setTerms(e.target.value)} className={INP} />
+            <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
+              {isEn ? "Add Customer" : "Tambah Pelanggan"}
+            </button>
+          </form>
+        </Card>
+      )}
       <Panel
         data-tour="credit"
         title={isEn ? "B2B Customers & Credit Limit Profiles" : "Pelanggan B2B & Profil Limit Kredit"}
@@ -51,12 +102,19 @@ export default function PartnersPage() {
                     </td>
                     <td className={TD}>Net {c.terms} {isEn ? "days" : "hari"}</td>
                     <td className={TD}><Badge tone={c.hold ? "r" : "g"}>{c.hold ? "CREDIT HOLD" : (isEn ? "ACTIVE" : "AKTIF")}</Badge></td>
+                    {isReal && canEdit && (
+                      <td className={TD}>
+                        <button onClick={() => handleDeleteCustomer(c.id)} className="rounded-md bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500/20">
+                          {isEn ? "Delete" : "Hapus"}
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
               {!customers.length && (
                 <tr>
-                  <td colSpan={7} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                  <td colSpan={custHeaders.length} className={`${TD} py-8 text-center text-[var(--mu)]`}>
                     {isEn ? "No customer accounts registered for this tenant yet." : "Belum ada pelanggan B2B terdaftar untuk perusahaan ini."}
                   </td>
                 </tr>
