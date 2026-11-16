@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"strings"
 
 	"github.com/afrizadwi21/distribucore/apps/api/internal/middleware"
@@ -89,5 +90,29 @@ func (h *TeamHandler) DeleteUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
 	}
 	_ = h.repo.DeleteTenantUser(c.Context(), tenantID, userID)
+	return c.JSON(fiber.Map{"success": true})
+}
+
+func (h *TeamHandler) GetState(c *fiber.Ctx) error {
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
+	raw, _ := h.repo.GetWorkspaceState(c.Context(), tenantID)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true, "data": json.RawMessage(raw)})
+}
+
+func (h *TeamHandler) SaveState(c *fiber.Ctx) error {
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
+	body := c.Body()
+	if len(body) == 0 {
+		body = []byte("{}")
+	}
+	if err := h.repo.SaveWorkspaceState(c.Context(), tenantID, body); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "error": fiber.Map{"message": err.Error()}})
+	}
 	return c.JSON(fiber.Map{"success": true})
 }

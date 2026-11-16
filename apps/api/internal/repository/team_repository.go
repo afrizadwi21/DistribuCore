@@ -113,7 +113,39 @@ func (r *AuthRepository) UpdateUserRole(ctx context.Context, tenantID, userID uu
 
 // DeleteTenantUser removes a user belonging to a tenant.
 func (r *AuthRepository) DeleteTenantUser(ctx context.Context, tenantID, userID uuid.UUID) error {
-	_, err := r.db.Exec(ctx, `DELETE FROM users WHERE tenant_id = $1 AND id = $2`, tenantID, userID)
+	_, err := r.db.Exec(ctx, `DELETE FROM users WHERE tenant_id = $1 AND id = $2`, tenantID, idOrNil(userID))
+	return err
+}
+
+func idOrNil(u uuid.UUID) uuid.UUID { return u }
+
+func (r *AuthRepository) ensureStateTable(ctx context.Context) {
+	_, _ = r.db.Exec(ctx, `
+		CREATE TABLE IF NOT EXISTS tenant_workspace_states (
+			tenant_id UUID PRIMARY KEY REFERENCES tenants(id) ON DELETE CASCADE,
+			state_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)
+	`)
+}
+
+func (r *AuthRepository) GetWorkspaceState(ctx context.Context, tenantID uuid.UUID) ([]byte, error) {
+	r.ensureStateTable(ctx)
+	var raw []byte
+	err := r.db.QueryRow(ctx, `SELECT state_json FROM tenant_workspace_states WHERE tenant_id = $1`, tenantID).Scan(&raw)
+	if err != nil {
+		return []byte("{}"), nil
+	}
+	return raw, nil
+}
+
+func (r *AuthRepository) SaveWorkspaceState(ctx context.Context, tenantID uuid.UUID, raw []byte) error {
+	r.ensureStateTable(ctx)
+	_, err := r.db.Exec(ctx, `
+		INSERT INTO tenant_workspace_states (tenant_id, state_json, updated_at)
+		VALUES ($1, $2::jsonb, NOW())
+		ON CONFLICT (tenant_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()
+	`, tenantID, string(raw))
 	return err
 }
 

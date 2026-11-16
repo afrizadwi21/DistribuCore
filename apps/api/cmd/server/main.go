@@ -145,6 +145,8 @@ func main() {
 		teamRoutes.Post("/users", teamHandler.CreateUser)
 		teamRoutes.Patch("/users/:id", teamHandler.UpdateUser)
 		teamRoutes.Delete("/users/:id", teamHandler.DeleteUser)
+		teamRoutes.Get("/state", teamHandler.GetState)
+		teamRoutes.Put("/state", teamHandler.SaveState)
 
 		// 7. Master Data Catalog Handlers Registration
 		uomRepo := repository.NewUOMRepository(pgDB.Pool)
