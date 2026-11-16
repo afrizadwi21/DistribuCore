@@ -26,8 +26,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const page = allNavItems.find((n) => n.href === path) ?? allNavItems[0];
 
   useEffect(() => {
-    if (!localStorage.getItem("dc_tour_done")) setTour(0);
-  }, []);
+    if (mode !== "real" && !localStorage.getItem("dc_tour_done")) setTour(0);
+  }, [mode]);
 
   const close = () => { setTour(null); try { localStorage.setItem("dc_tour_done", "1"); } catch {} };
   const open = () => setTour(Math.max(0, TOUR_STEPS.findIndex((s) => s.href === path && s.target !== "sidebar")));
@@ -89,12 +89,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </nav>
       <div className="min-w-0">
         <header className="flex flex-wrap items-center gap-2.5 border-b border-[var(--bd)] bg-[var(--card)] px-5 py-3">
-          <span className="text-sm text-[var(--mu)]">PT Sumber Bangunan Abadi (SBA) / <b className="text-[var(--tx)]">{isEn ? "Cikarang Central Warehouse" : "Gudang Pusat Cikarang"}</b></span>
+          <span className="text-sm text-[var(--mu)]">
+            {mode === "real" ? (
+              <span>{tenant?.name || "Perusahaan"} ({tenant?.code || "TENANT"}) / <b className="text-[var(--tx)]">{user?.full_name || "Admin"}</b></span>
+            ) : (
+              <span>PT Sumber Bangunan Abadi (SBA) / <b className="text-[var(--tx)]">{isEn ? "Cikarang Central Warehouse" : "Gudang Pusat Cikarang"}</b></span>
+            )}
+          </span>
           <span className="flex-1" />
           <Badge tone={mode === "real" ? "g" : "a"}>
             {mode === "real" ? (isEn ? "Live Server · API" : "Server Nyata · API") : (isEn ? "Demo mode · sample data" : "Mode demo · data contoh")}
           </Badge>
-          <button className={BTN} onClick={open}><DIcon name="help" />{isEn ? "Tour Guide" : "Panduan"}</button>
+          {mode !== "real" && (
+            <button className={BTN} onClick={open}><DIcon name="help" />{isEn ? "Tour Guide" : "Panduan"}</button>
+          )}
           
           {/* Language Selector */}
           <div className="flex items-center rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-0.5 text-xs font-bold" role="group" aria-label="Language selector">
