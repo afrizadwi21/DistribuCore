@@ -34,7 +34,7 @@ func Load() (*Config, error) {
 		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379/0"),
 		JWTSecret:    getEnv("JWT_SECRET", "distribucore-dev-secret-key-must-be-changed-in-production"),
 		JWTExpiryHrs: jwtExpiry,
-		AllowedCORS:  getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000"),
+		AllowedCORS:  getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001"),
 	}
 
 	return cfg, nil
