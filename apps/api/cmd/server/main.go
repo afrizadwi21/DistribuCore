@@ -139,6 +139,13 @@ func main() {
 		authRoutes.Post("/login", authHandler.Login)
 		authRoutes.Get("/me", middleware.RequireAuth(cfg.JWTSecret), authHandler.GetMe)
 
+		teamHandler := handler.NewTeamHandler(authRepo)
+		teamRoutes := api.Group("/tenant", middleware.RequireAuth(cfg.JWTSecret))
+		teamRoutes.Get("/users", teamHandler.ListUsers)
+		teamRoutes.Post("/users", teamHandler.CreateUser)
+		teamRoutes.Patch("/users/:id", teamHandler.UpdateUser)
+		teamRoutes.Delete("/users/:id", teamHandler.DeleteUser)
+
 		// 7. Master Data Catalog Handlers Registration
 		uomRepo := repository.NewUOMRepository(pgDB.Pool)
 		uomHandler := handler.NewUOMHandler(uomRepo)

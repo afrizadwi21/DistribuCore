@@ -3,8 +3,8 @@ package handler
 import (
 	"strings"
 
-	"github.com/afriza/distribucore/api/internal/middleware"
-	"github.com/afriza/distribucore/api/internal/repository"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/middleware"
+	"github.com/afrizadwi21/distribucore/apps/api/internal/repository"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
