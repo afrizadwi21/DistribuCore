@@ -18,21 +18,24 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const base = "/api/proxy/v1";
-      const [prodRes, orderRes, doRes, invRes] = await Promise.all([
+      const [prodRes, orderRes, doRes, invRes, custRes] = await Promise.all([
         fetch(`${base}/catalog/products`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/catalog/products`, { headers })),
         fetch(`${base}/sales/orders`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/sales/orders`, { headers })),
         fetch(`${base}/fulfillment/delivery-orders`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/fulfillment/delivery-orders`, { headers })),
         fetch(`${base}/billing/invoices`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/billing/invoices`, { headers })),
+        fetch(`${base}/partners/customers`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/partners/customers`, { headers })),
       ]);
 
-      const [prods, orders, dos, invoices] = await Promise.all([
+      const [prods, orders, dos, invoices, custs] = await Promise.all([
         prodRes?.ok ? prodRes.json() : { data: [] },
         orderRes?.ok ? orderRes.json() : { data: [] },
         doRes?.ok ? doRes.json() : { data: [] },
         invRes?.ok ? invRes.json() : { data: [] },
+        custRes?.ok ? custRes.json() : { data: [] },
       ]);
 
       const skus = Array.isArray(prods?.data) ? prods.data.map((p: any) => ({
+        id: p.id,
         code: p.sku || p.code,
         name: p.name,
         uom: p.uom_code || "UNIT",
@@ -47,9 +50,20 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
 
       const realOrders = Array.isArray(orders?.data) ? orders.data.map((o: any) => ({
         id: o.order_number || o.id,
+        rawId: o.id,
         cust: o.customer_code || o.customer_name || "CUST",
         total: Number(o.total_amount_cents ? o.total_amount_cents / 100 : o.total || 0),
         hold: o.status === "CREDIT_HOLD",
+        demo: false,
+      })) : [];
+
+      const realCustomers = Array.isArray(custs?.data) ? custs.data.map((c: any) => ({
+        id: c.id,
+        code: c.code,
+        name: c.name,
+        limit: Number(c.credit_limit_cents ? c.credit_limit_cents / 100 : c.limit || 0),
+        terms: Number(c.payment_terms_days || 30),
+        hold: Boolean(c.credit_hold),
         demo: false,
       })) : [];
 
@@ -58,17 +72,19 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         data: {
           skus,
           orders: realOrders,
+          customers: realCustomers,
           dos: Array.isArray(dos?.data) ? dos.data : [],
           invoices: Array.isArray(invoices?.data) ? invoices.data : [],
           loading: false,
         },
       });
     } catch {
-      act({ type: "set_real_data", data: { loading: false } });
+      act({ type: "set_real_data", data: { skus: [], orders: [], customers: [], dos: [], invoices: [], loading: false } });
     }
   };
 
   useEffect(() => {
+    act({ type: "reset_mode", isReal });
     if (isReal) fetchRealData();
   }, [isReal, token]);
 

@@ -2,9 +2,9 @@
 export type Bucket = "Current" | "1-30" | "31-60" | "61-90" | ">90" | "Lunas";
 export type DoStatus = "planned" | "picking" | "transit" | "pod";
 
-export type Sku = { code: string; name: string; uom: string; uomName: string; onHand: number; reserved: number; safety: number; reorder: number; bin: string; price: number; demo: boolean };
-export type Customer = { code: string; name: string; limit: number; hold: boolean; terms: number; demo: boolean };
-export type Order = { id: string; cust: string; total: number; hold: boolean; demo: boolean };
+export type Sku = { id?: string; code: string; name: string; uom: string; uomName?: string; onHand: number; reserved: number; safety: number; reorder: number; bin: string; price: number; demo: boolean };
+export type Customer = { id?: string; code: string; name: string; limit: number; hold: boolean; terms: number; demo: boolean };
+export type Order = { id: string; rawId?: string; cust: string; total: number; hold: boolean; demo: boolean };
 export type DeliveryOrder = { id: string; so: string; sku: string; qty: number; status: DoStatus; invoiced?: boolean };
 export type Invoice = { no: string; cust: string; so: string; issued: string; due: string; total: number; open: number; bucket: Bucket; demo: boolean };
 

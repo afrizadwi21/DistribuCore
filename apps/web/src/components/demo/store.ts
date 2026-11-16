@@ -20,6 +20,7 @@ export type Action =
   | { type: "adjust"; code: string; count: number }
   | { type: "pay" | "clear" }
   | { type: "notify"; message: string }
+  | { type: "reset_mode"; isReal: boolean }
   | { type: "set_real_data"; data: Partial<State> };
 
 export const initialState = (isReal = false): State => ({
@@ -78,6 +79,7 @@ export function reducer(s: State, a: Action): State {
     }
     case "notify": return { ...s, toast: a.message };
     case "clear": return { ...s, toast: "" };
+    case "reset_mode": return initialState(a.isReal);
     case "set_real_data": return { ...s, ...a.data, loading: false };
   }
 }
