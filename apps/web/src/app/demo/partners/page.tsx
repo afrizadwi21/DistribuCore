@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
@@ -21,6 +21,22 @@ export default function PartnersPage() {
   const [limit, setLimit] = useState("100000000");
   const [terms, setTerms] = useState("30");
 
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [sCode, setSCode] = useState("");
+  const [sName, setSName] = useState("");
+  const [sContact, setSContact] = useState("");
+
+  const loadSuppliers = async () => {
+    if (!isReal || !token) return;
+    try {
+      const res = await fetch("/api/proxy/v1/partners/suppliers", { headers: { Authorization: `Bearer ${token}` } });
+      const j = await res.json();
+      if (Array.isArray(j?.data)) setSuppliers(j.data);
+    } catch {}
+  };
+
+  useEffect(() => { loadSuppliers(); }, [isReal, token]);
+
   const handleAddCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim() || !name.trim() || !token) return;
@@ -29,15 +45,33 @@ export default function PartnersPage() {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({
         code: code.trim().toUpperCase(),
-        name: name.trim(),
+        company_name: name.trim(),
         credit_limit_cents: Math.round((Number(limit) || 0) * 100),
         payment_terms_days: Number(terms) || 30,
       }),
     });
+    const j = await res.json().catch(() => ({}));
     if (res.ok) {
       setCode(""); setName("");
       refresh();
       act({ type: "notify", message: isEn ? "Customer registered" : "Pelanggan B2B berhasil ditambahkan" });
+    } else {
+      act({ type: "notify", message: j?.error?.message || "Gagal menambahkan pelanggan" });
+    }
+  };
+
+  const handleAddSupplier = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sCode.trim() || !sName.trim() || !token) return;
+    const res = await fetch("/api/proxy/v1/partners/suppliers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ code: sCode.trim().toUpperCase(), company_name: sName.trim(), contact_person: sContact.trim() || "-" }),
+    });
+    if (res.ok) {
+      setSCode(""); setSName(""); setSContact("");
+      await loadSuppliers();
+      act({ type: "notify", message: isEn ? "Supplier registered" : "Pemasok berhasil ditambahkan" });
     }
   };
 
@@ -124,6 +158,20 @@ export default function PartnersPage() {
         </div>
       </Panel>
 
+      {isReal && canEdit && (
+        <Card className="p-5">
+          <h2 className="text-base font-bold">{isEn ? "Register Supplier" : "Tambah Pemasok Baru (Supplier)"}</h2>
+          <form onSubmit={handleAddSupplier} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <input required placeholder="Kode (mis. SUPP-01)" value={sCode} onChange={(e) => setSCode(e.target.value)} className={INP} />
+            <input required placeholder={isEn ? "Supplier Company" : "Nama Perusahaan Pemasok"} value={sName} onChange={(e) => setSName(e.target.value)} className={INP} />
+            <input placeholder={isEn ? "Contact Person" : "Kontak Person"} value={sContact} onChange={(e) => setSContact(e.target.value)} className={INP} />
+            <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
+              {isEn ? "Add Supplier" : "Tambah Pemasok"}
+            </button>
+          </form>
+        </Card>
+      )}
+
       <Panel title={isEn ? "Strategic Suppliers" : "Pemasok Utama (Suppliers)"} icon={<DIcon name="inbox" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
@@ -132,11 +180,21 @@ export default function PartnersPage() {
             </thead>
             <tbody>
               {isReal ? (
-                <tr>
-                  <td colSpan={5} className={`${TD} py-8 text-center text-[var(--mu)]`}>
-                    {isEn ? "No strategic suppliers registered yet." : "Belum ada pemasok terdaftar untuk perusahaan ini."}
-                  </td>
-                </tr>
+                suppliers.length ? suppliers.map((s) => (
+                  <tr key={s.id || s.code}>
+                    <td className={`${TD} font-mono font-bold`}>{s.code}</td>
+                    <td className={TD}><b>{s.company_name || s.name}</b></td>
+                    <td className={TD}>{s.contact_person || "-"}</td>
+                    <td className={TD}>Net {s.payment_terms_days || 30} {isEn ? "days" : "hari"}</td>
+                    <td className={TD}><Badge tone="g">{isEn ? "ACTIVE" : "AKTIF"}</Badge></td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={5} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                      {isEn ? "No strategic suppliers registered yet." : "Belum ada pemasok terdaftar untuk perusahaan ini."}
+                    </td>
+                  </tr>
+                )
               ) : (
                 <tr>
                   <td className={`${TD} font-mono font-bold`}>SUPP-SG</td>

@@ -38,13 +38,13 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         id: p.id,
         code: p.sku || p.code,
         name: p.name,
-        uom: p.uom_code || "UNIT",
+        uom: p.base_uom_code || p.uom_code || "UNIT",
         onHand: Number(p.on_hand || p.quantity_on_hand || 0),
         reserved: Number(p.reserved || 0),
         safety: Number(p.safety_stock_quantity || 0),
         reorder: Number(p.reorder_point_quantity || 0),
         bin: p.bin_code || "WH-MAIN",
-        price: Number(p.base_price_cents ? p.base_price_cents / 100 : p.price || 0),
+        price: Number(p.base_price_cents ? p.base_price_cents / 100 : p.price || 75000),
         demo: false,
       })) : [];
 
@@ -60,10 +60,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       const realCustomers = Array.isArray(custs?.data) ? custs.data.map((c: any) => ({
         id: c.id,
         code: c.code,
-        name: c.name,
+        name: c.company_name || c.name || c.code,
         limit: Number(c.credit_limit_cents ? c.credit_limit_cents / 100 : c.limit || 0),
         terms: Number(c.payment_terms_days || 30),
-        hold: Boolean(c.credit_hold),
+        hold: Boolean(c.is_credit_held ?? c.credit_hold),
         demo: false,
       })) : [];
 
