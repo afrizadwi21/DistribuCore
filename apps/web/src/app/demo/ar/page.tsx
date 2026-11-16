@@ -84,7 +84,7 @@ export default function ArAgingPage() {
                       <td className={`${TD} font-bold text-rose-700 dark:text-rose-400`}>{rp(outst)}</td>
                       <td className={TD}>
                         <button
-                          className={`${BTN} bg-emerald-600! text-white!`}
+                          className={`${BTN} bg-emerald-700! text-white!`}
                           onClick={() => {
                             openWhatsApp(
                               c.phone,

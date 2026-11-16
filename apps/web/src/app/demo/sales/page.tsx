@@ -30,10 +30,12 @@ export default function SalesPage() {
   return (
     <div className="grid gap-5">
       <Card className="p-4 text-xs leading-relaxed text-[var(--mu)]">
-        <b className="text-[var(--tx)]">{isEn ? "End-to-End Order-to-Cash Flow:" : "Alur Kerja Penjualan (Order-to-Cash):"}</b>{" "}
-        {isEn
-          ? "1. Create Sales Order (SO) here → 2. System locks ATP stock & automatically generates a Delivery Order (DO) in Delivery & POD menu → 3. Dispatch truck & confirm POD → 4. Issue Invoice & record payment."
-          : "1. Buat Pesanan Penjualan (SO) di halaman ini → 2. Sistem otomatis mengunci stok ATP & menerbitkan Surat Jalan (DO) ke menu Pengiriman & POD → 3. Kirim truk & konfirmasi POD → 4. Terbitkan Faktur & catat pelunasan."}
+        <p className="max-w-[75ch]">
+          <b className="text-[var(--tx)]">{isEn ? "End-to-End Order-to-Cash Flow:" : "Alur Kerja Penjualan (Order-to-Cash):"}</b>{" "}
+          {isEn
+            ? "1. Create Sales Order (SO) here → 2. System locks ATP stock & automatically generates a Delivery Order (DO) in Delivery & POD menu → 3. Dispatch truck & confirm POD → 4. Issue Invoice & record payment."
+            : "1. Buat Pesanan Penjualan (SO) di halaman ini → 2. Sistem otomatis mengunci stok ATP & menerbitkan Surat Jalan (DO) ke menu Pengiriman & POD → 3. Kirim truk & konfirmasi POD → 4. Terbitkan Faktur & catat pelunasan."}
+        </p>
       </Card>
 
       {isReal && canCreate && (
