@@ -148,3 +148,13 @@ func (r *PartnerRepository) ListSuppliersByTenant(ctx context.Context, tenantID 
 
 	return suppliers, nil
 }
+
+func (r *PartnerRepository) DeleteCustomer(ctx context.Context, tenantID, id uuid.UUID) error {
+	_, err := r.db.Exec(ctx, `DELETE FROM customers WHERE tenant_id = $1 AND id = $2`, tenantID, id)
+	return err
+}
+
+func (r *PartnerRepository) DeleteSupplier(ctx context.Context, tenantID, id uuid.UUID) error {
+	_, err := r.db.Exec(ctx, `DELETE FROM suppliers WHERE tenant_id = $1 AND id = $2`, tenantID, id)
+	return err
+}

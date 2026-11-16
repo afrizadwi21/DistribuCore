@@ -229,3 +229,23 @@ func (h *PartnerHandler) ListSuppliers(c *fiber.Ctx) error {
 		"data":    suppliers,
 	})
 }
+
+func (h *PartnerHandler) DeleteCustomer(c *fiber.Ctx) error {
+	tenantID, _ := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
+	}
+	_ = h.repo.DeleteCustomer(c.Context(), tenantID, id)
+	return c.JSON(fiber.Map{"success": true})
+}
+
+func (h *PartnerHandler) DeleteSupplier(c *fiber.Ctx) error {
+	tenantID, _ := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
+	}
+	_ = h.repo.DeleteSupplier(c.Context(), tenantID, id)
+	return c.JSON(fiber.Map{"success": true})
+}

@@ -168,8 +168,10 @@ func main() {
 		partnerRoutes := api.Group("/partners", middleware.RequireAuth(cfg.JWTSecret))
 		partnerRoutes.Post("/customers", partnerHandler.CreateCustomer)
 		partnerRoutes.Get("/customers", partnerHandler.ListCustomers)
+		partnerRoutes.Delete("/customers/:id", partnerHandler.DeleteCustomer)
 		partnerRoutes.Post("/suppliers", partnerHandler.CreateSupplier)
 		partnerRoutes.Get("/suppliers", partnerHandler.ListSuppliers)
+		partnerRoutes.Delete("/suppliers/:id", partnerHandler.DeleteSupplier)
 
 		// 9. Warehouse & Bin Locations Handlers Registration
 		warehouseRepo := repository.NewWarehouseRepository(pgDB.Pool)
