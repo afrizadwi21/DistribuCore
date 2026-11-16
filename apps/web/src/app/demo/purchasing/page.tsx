@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
+import { openWhatsApp } from "@/components/demo/wa";
 import { Badge, BTN, Card, INP, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PurchasingPage() {
@@ -122,6 +123,12 @@ export default function PurchasingPage() {
               ? `Click button to issue GRN document. Items are physically placed in Bin ${s.bin} and immediately increase ATP stock.`
               : `Klik tombol untuk menerbitkan dokumen GRN. Kuantitas barang otomatis masuk ke Bin ${s.bin} dan menaikkan saldo ATP.`}
           </span>
+          <button
+            className={BTN}
+            onClick={() => openWhatsApp("", `Halo ${po.supplier}, berikut rincian Purchase Order ${po.no}: ${s.name} sebanyak ${po.qty} ${s.uom} (Total ${rp(po.qty * po.cost)}). Mohon konfirmasi jadwal pengiriman.`)}
+          >
+            {isEn ? "Send PO via WA" : "Kirim PO via WA"}
+          </button>
           <button disabled={remaining <= 0} className={`${BTN} bg-emerald-600! text-white! disabled:opacity-40`} onClick={() => act({ type: "grn", qty: 250 })}>
             {isEn ? "Receive 250 SAK" : "Terima 250 SAK"}
           </button>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "./DemoContext";
 import { DIcon } from "./icons";
+import { openWhatsApp } from "./wa";
 import { Badge, Bar, BTN, Card, DemoTag, TD, TH } from "./ui";
 import type { Tone } from "./ui";
 import { nf, orderTab, progress, rp } from "./calc";
@@ -50,7 +51,8 @@ export function SalesTable({ limit }: { limit?: number }) {
           <tbody>
             {rows.map((o) => {
               const p = progress(o, dos), mine = dos.filter((d) => d.so === o.id), pod = mine.find((d) => d.status === "pod");
-              const name = customers.find((c) => c.code === o.cust)?.name || o.cust || "-";
+              const custObj = customers.find((c) => c.code === o.cust);
+              const name = custObj?.name || o.cust || "-";
               const isOpen = open === o.id;
               return (
                 <React.Fragment key={o.id}>
@@ -61,9 +63,31 @@ export function SalesTable({ limit }: { limit?: number }) {
                     <td className={TD}><Badge tone={o.hold ? "r" : "g"}>{o.hold ? "CREDIT HOLD" : "APPROVED"}</Badge></td>
                     <td className={TD}><Badge tone="a"><DIcon name="lock" className="h-3 w-3" />{o.hold ? (isEn ? "HOLD REVIEW" : "MENUNGGU KREDIT") : "LOCKED / ATP OK"}</Badge></td>
                     <td className={`${TD} w-36`}><Bar parts={[{ pct: p, color: p === 100 ? "var(--gr)" : "var(--bl)" }]} /><span className="text-xs text-[var(--mu)]">{p}%</span></td>
-                    <td className={TD}>{o.hold
-                      ? <button className={`${BTN} bg-rose-700! text-white!`} onClick={() => act({ type: "notify", message: isEn ? `Credit override request for ${o.id} sent to Finance Manager` : `Permintaan override kredit ${o.id} dikirim ke Manajer Keuangan` })}>{isEn ? "Review credit" : "Review kredit"}</button>
-                      : <Link className={BTN} href="/demo/delivery">{p === 100 ? (isEn ? "View DO" : "Lihat DO") : (isEn ? "Manage DO" : "Kelola DO")}</Link>}</td>
+                    <td className={TD}>
+                      <div className="flex items-center gap-1.5">
+                        {o.hold ? (
+                          <button
+                            className={`${BTN} bg-rose-700! text-white!`}
+                            onClick={() => {
+                              openWhatsApp(custObj?.phone, `Halo Tim Keuangan / ${name}, mohon review persetujuan limit kredit untuk pesanan ${o.id} senilai ${rp(o.total)}.`);
+                              act({ type: "notify", message: isEn ? `WhatsApp credit review opened for ${o.id}` : `Permintaan review kredit ${o.id} dibuka di WhatsApp` });
+                            }}
+                          >
+                            {isEn ? "Review credit (WA)" : "Review kredit (WA)"}
+                          </button>
+                        ) : (
+                          <>
+                            <Link className={BTN} href="/demo/delivery">{p === 100 ? (isEn ? "View DO" : "Lihat DO") : (isEn ? "Manage DO" : "Kelola DO")}</Link>
+                            <button
+                              className="rounded-lg bg-emerald-500/15 px-2.5 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-500/25 dark:text-emerald-300"
+                              onClick={() => openWhatsApp(custObj?.phone, `Halo ${name}, pesanan Anda ${o.id} senilai ${rp(o.total)} telah disetujui dan stok gudang telah dikunci (status pengiriman: ${p}%).`)}
+                            >
+                              WA
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                   {isOpen && (
                     <tr><td colSpan={7} className="grid gap-6 border-b border-[var(--bd)] bg-[var(--soft)] p-4 text-sm md:grid-cols-2">

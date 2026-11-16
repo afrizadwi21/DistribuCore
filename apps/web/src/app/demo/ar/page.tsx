@@ -4,6 +4,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { nf, outstanding, overdue, rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
+import { openWhatsApp } from "@/components/demo/wa";
 import { BTN, Card, Panel, TD, TH } from "@/components/demo/ui";
 
 const BUCKETS = ["Current", "1-30", "31-60", "61-90", ">90"] as const;
@@ -82,8 +83,19 @@ export default function ArAgingPage() {
                       <td className={`${TD} font-semibold`}>{c.name}</td>
                       <td className={`${TD} font-bold text-rose-700 dark:text-rose-400`}>{rp(outst)}</td>
                       <td className={TD}>
-                        <button className={BTN} onClick={() => act({ type: "notify", message: isEn ? `Dunning reminder successfully sent to ${c.name}` : `Pengingat tagihan resmi berhasil dikirim ke ${c.name}` })}>
-                          {isEn ? "Send Dunning" : "Kirim Pengingat"}
+                        <button
+                          className={`${BTN} bg-emerald-600! text-white!`}
+                          onClick={() => {
+                            openWhatsApp(
+                              c.phone,
+                              isEn
+                                ? `Hello ${c.name}, this is an official payment reminder regarding your outstanding balance of ${rp(outst)}. Please confirm settlement at your earliest convenience.`
+                                : `Halo Bapak/Ibu ${c.name}, kami mengirimkan pengingat tagihan piutang jatuh tempo sebesar ${rp(outst)}. Mohon konfirmasi pembayarannya. Terima kasih.`
+                            );
+                            act({ type: "notify", message: isEn ? `WhatsApp reminder opened for ${c.name}` : `Pengingat tagihan WhatsApp dibuka untuk ${c.name}` });
+                          }}
+                        >
+                          {isEn ? "Send WA Reminder" : "Kirim Pengingat WA"}
                         </button>
                       </td>
                     </tr>
