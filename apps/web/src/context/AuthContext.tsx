@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export interface AuthUser { id?: string; email: string; full_name?: string; }
+export interface AuthUser { id?: string; email: string; full_name?: string; roles?: string[]; }
 export interface AuthTenant { id?: string; code: string; name: string; }
 
 export interface AuthContextType {
@@ -10,11 +10,14 @@ export interface AuthContextType {
   token: string | null;
   tenant: AuthTenant | null;
   user: AuthUser | null;
+  role: string;
   serverUrl: string;
   mode: "real" | "demo";
   login: (tc: string, em: string, pw: string, url?: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   setServerUrl: (url: string) => void;
+  updateLocalUser: (patch: Partial<AuthUser>) => void;
+  can: (mod: "admin" | "sales" | "warehouse" | "finance" | "catalog") => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -81,8 +84,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   };
 
+  const updateLocalUser = (patch: Partial<AuthUser>) => {
+    setUser((prev) => {
+      const next = { ...(prev || { email: "" }), ...patch };
+      try { localStorage.setItem("dc_user", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const role = (user?.roles?.[0] || "ADMIN").toUpperCase();
+  const can = (mod: "admin" | "sales" | "warehouse" | "finance" | "catalog") => {
+    if (role === "ADMIN" || role === "OWNER") return true;
+    if (role === "SALES_MANAGER") return mod === "sales" || mod === "catalog";
+    if (role === "WAREHOUSE_MANAGER") return mod === "warehouse" || mod === "catalog";
+    if (role === "FINANCE_OFFICER") return mod === "finance";
+    return false;
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!token || mode === "real", token, tenant, user, serverUrl, mode, login, logout, setServerUrl }}>
+    <AuthContext.Provider value={{ isAuthenticated: !!token || mode === "real", token, tenant, user, role, serverUrl, mode, login, logout, setServerUrl, updateLocalUser, can }}>
       {children}
     </AuthContext.Provider>
   );
