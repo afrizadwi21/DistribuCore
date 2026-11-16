@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { AtpWidget } from "@/components/demo/AtpWidget";
 import { useDemo } from "@/components/demo/DemoContext";
 import { atp, health, nf } from "@/components/demo/calc";
@@ -10,6 +11,7 @@ import { Card, HealthBadge, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function InventoryPage() {
   const { locale } = useLanguage();
+  const { mode, tenant } = useAuth();
   const isEn = locale === "en";
   const { skus } = useDemo();
 
@@ -17,12 +19,13 @@ export default function InventoryPage() {
     ? ["Bin", "Zone", "SKU", "On-Hand", "Reserved", "ATP", "Safety / Reorder", "Health"]
     : ["Bin", "Zona", "SKU", "On-Hand", "Reserved", "ATP", "Safety / Titik Pesan", "Kesehatan"];
 
+  const title = mode === "real"
+    ? `${isEn ? "Stock Balances" : "Saldo Stok"} · ${tenant?.name || tenant?.code || "Tenant"}`
+    : (isEn ? "Stock Balances · Cikarang Central Warehouse (WH-CKR)" : "Saldo stok · Gudang Pusat Cikarang (WH-CKR)");
+
   return (
     <div className="grid gap-5">
-      <Panel
-        title={isEn ? "Stock Balances · Cikarang Central Warehouse (WH-CKR)" : "Saldo stok · Gudang Pusat Cikarang (WH-CKR)"}
-        icon={<DIcon name="box" />}
-      >
+      <Panel title={title} icon={<DIcon name="box" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -44,6 +47,13 @@ export default function InventoryPage() {
                   </tr>
                 );
               })}
+              {!skus.length && (
+                <tr>
+                  <td colSpan={8} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No inventory records found for this tenant. Register products to track stock." : "Belum ada saldo stok fisik untuk perusahaan ini. Daftarkan master barang untuk mulai pencatatan."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
