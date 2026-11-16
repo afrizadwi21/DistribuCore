@@ -388,6 +388,7 @@ The technology stack prioritizes operational stability, type safety, low latency
 - [x] Implement Tenant Profile & Team RBAC Management (`/demo/profile`) allowing administrators to manage tenant users and switch operational roles (`ADMIN`, `SALES_MANAGER`, `WAREHOUSE_MANAGER`, `FINANCE_OFFICER`, `STAFF`).
 - [x] Build interactive inventory matrix, Available-to-Promise (ATP) reservation locks, cycle count adjustments, and multi-warehouse registration.
 - [x] Build connected Procure-to-Pay (PO to GRN stock increment) and Order-to-Cash (SO to automatic DO/POD to FIFO Invoice & AR Aging) flows persisted to PostgreSQL via REST API.
+- [x] Integrate direct WhatsApp (`wa.me`) and Email B2B communication across Customer/Supplier CRM, AR Dunning reminders, Sales Order credit reviews, and Supplier PO dispatches.
 
 ---
 

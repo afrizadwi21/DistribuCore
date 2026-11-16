@@ -171,3 +171,14 @@ Pada menu **Profil & Tim RBAC (`/demo/profile`)**, Administrator perusahaan (`AD
 | `WAREHOUSE_MANAGER` | Mendaftarkan Gudang, membuat Purchase Order (PO), mengonfirmasi penerimaan barang (GRN), melakukan Cycle Count stok fisik, serta mengelola pengiriman (DO/POD). |
 | `FINANCE_OFFICER` | Mengelola limit kredit pelanggan, menerbitkan faktur penagihan, mencatat pembayaran masuk (FIFO), dan memantau umur piutang (AR Aging). |
 | `STAFF` | Akses baca (read-only) untuk memantau status operasional dan stok lintas modul tanpa hak modifikasi data. |
+
+---
+
+## 7. Alur Komunikasi B2B Otomatis via WhatsApp
+
+Seluruh kontak nomor WhatsApp (`phone`) dan email (`email`) disimpan pada tabel PostgreSQL (`customers` dan `suppliers`) saat pendaftaran mitra bisnis, bukan dipaksakan saat login awal. Sistem memformat nomor Indonesia secara otomatis (`08xx` ke `628xx`) pada 4 titik komunikasi utama:
+
+1. **Penagihan Piutang Jatuh Tempo (`Piutang AR Aging` `/demo/ar`)**: Tombol **Kirim Pengingat WA** membuka pesan resmi berisi total tunggakan (`Rp`) langsung ke nomor WhatsApp pelanggan.
+2. **Pengiriman PO ke Pemasok (`Pembelian & GRN` `/demo/purchasing`)**: Tombol **Kirim PO via WA** mengirimkan rincian nomor PO, barang SKU, kuantitas, dan nilai order ke pemasok.
+3. **Konfirmasi Sales Order & Review Kredit (`Pesanan Penjualan` `/demo/sales`)**: Tombol **Review kredit (WA)** dan **WA** mengirimkan status persetujuan limit kredit serta progres pengiriman ke pelanggan.
+4. **Direktori Mitra B2B (`Pelanggan & Pemasok` `/demo/partners`)**: Tombol **Chat WA** pada setiap baris pelanggan dan pemasok untuk komunikasi cepat.
