@@ -17,7 +17,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const { isDark, toggle } = useTheme();
   const { locale, setLocale } = useLanguage();
-  const { mode, user, tenant, logout } = useAuth();
+  const { mode, user, tenant, role, logout } = useAuth();
   const isEn = locale === "en";
   const [tour, setTour] = useState<number | null>(null);
 
@@ -48,19 +48,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </React.Fragment>
         ))}
         <div className="mt-auto hidden pt-4 md:block">
-          <div className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-2">
+          <Link href="/demo/profile" className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-2 hover:border-[var(--bl)] transition-colors">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--bl)] text-[10px] font-black text-[var(--act)] shrink-0">
-              {tenant?.code || "SBA"}
+              {tenant?.code?.slice(0, 4) || "SBA"}
             </span>
             <div className="min-w-0 flex-1 leading-tight">
               <p className="truncate text-xs font-bold text-[var(--tx)]">
                 {mode === "real" ? (user?.full_name || user?.email || "Admin Server") : (isEn ? "Demo Mode" : "Mode Demo")}
               </p>
               <p className="truncate text-[10px] text-[var(--mu)]">
-                {mode === "real" ? (isEn ? "Live Server Session" : "Sesi Server Nyata") : (isEn ? "WH-CKR · Central Warehouse" : "WH-CKR · Gudang Pusat")}
+                {mode === "real" ? `${role} · ${tenant?.code || "LIVE"}` : (isEn ? "WH-CKR · Central Warehouse" : "WH-CKR · Gudang Pusat")}
               </p>
             </div>
-          </div>
+          </Link>
           {mode === "real" ? (
             <button
               onClick={logout}

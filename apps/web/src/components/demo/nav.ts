@@ -18,6 +18,7 @@ export function getNavGroups(locale: "id" | "en") {
       { href: "/demo/catalog", label: isEn ? "Product Catalog" : "Katalog Produk", icon: "tag", title: isEn ? "Product Catalog & Master SKUs" : "Katalog Produk", subtitle: isEn ? "Master SKU registry, base units (UOM), and stock buffer parameters" : "Master SKU barang, satuan dasar (UOM), dan buffer keselamatan stok" },
       { href: "/demo/partners", label: isEn ? "Customers & Suppliers" : "Pelanggan & Pemasok", icon: "users", title: isEn ? "B2B Customers & Suppliers" : "Pelanggan & Pemasok", subtitle: isEn ? "B2B customer credit profiles and strategic supplier directories" : "Direktori pelanggan B2B dengan plafon kredit dan mitra pemasok" },
       { href: "/demo/warehouses", label: isEn ? "Warehouses & Bins" : "Gudang & Bin", icon: "wh", title: isEn ? "Warehouses & Storage Bins" : "Gudang & Bin", subtitle: isEn ? "Central warehouse bin layout and regional branch storage capacities" : "Tata letak zona bin gudang pusat dan kapasitas cabang regional" },
+      { href: "/demo/profile", label: isEn ? "Profile & Team RBAC" : "Profil & Tim RBAC", icon: "users", title: isEn ? "Profile & Tenant Team Management (RBAC)" : "Profil & Manajemen Tim Tenant (RBAC)", subtitle: isEn ? "Manage active tenant users, positions, and role-based access permissions" : "Kelola pengguna yang login di tenant ini, ubah posisi/role, dan hak akses operasional" },
     ] },
   ];
 }

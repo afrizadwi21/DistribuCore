@@ -93,6 +93,73 @@ export default function ProfileTeamPage() {
           <Badge tone="g">{isReal ? "SERVER NYATA" : "MODE DEMO"}</Badge>
         </div>
       </Card>
+
+      <Panel title={isEn ? "Tenant Users & Role Assignments (RBAC)" : "Daftar Pengguna Tenant & Manajemen Posisi (RBAC)"} icon={<DIcon name="users" />}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                {[isEn ? "Full Name" : "Nama Lengkap", "Email", isEn ? "Active Position / Role" : "Posisi / Role Aktif", isEn ? "Change Position" : "Ubah Posisi (Admin)", isEn ? "Action" : "Aksi"].map((h) => (
+                  <th key={h} className={TH}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((u) => {
+                const uRole = (u.roles?.[0] || "STAFF").toUpperCase();
+                const isSelf = u.email === user?.email;
+                return (
+                  <tr key={u.id || u.email}>
+                    <td className={`${TD} font-bold`}>{u.full_name} {isSelf && <Badge tone="b">{isEn ? "YOU" : "ANDA"}</Badge>}</td>
+                    <td className={`${TD} font-mono text-xs`}>{u.email}</td>
+                    <td className={TD}><Badge tone={uRole === "ADMIN" ? "g" : "a"}>{uRole}</Badge></td>
+                    <td className={TD}>
+                      <select
+                        value={uRole}
+                        onChange={(e) => handleRoleChange(u, e.target.value)}
+                        className="rounded-lg border border-[var(--bd)] bg-[var(--card)] px-2.5 py-1.5 text-xs font-semibold text-[var(--tx)]"
+                      >
+                        {ROLES.map((r) => (
+                          <option key={r.code} value={r.code}>{isEn ? r.labelEn : r.labelId}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className={TD}>
+                      {!isSelf && isReal ? (
+                        <button onClick={() => handleDeleteUser(u.id, u.email)} className="rounded-md bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500/20">
+                          {isEn ? "Remove" : "Hapus"}
+                        </button>
+                      ) : (
+                        <span className="text-xs text-[var(--mu)]">{isEn ? "Primary Session" : "Sesi Utama"}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      {isReal && (
+        <Card className="p-5">
+          <h4 className="font-bold">{isEn ? "Invite / Add New Team Member to Tenant" : "Tambah Pengguna Baru ke Tenant Ini"}</h4>
+          <p className="mt-1 text-xs text-[var(--mu)]">
+            {isEn ? "New users can sign in using the same Tenant Code and their assigned credentials." : "Pengguna baru dapat login ke server asli menggunakan Kode Tenant perusahaan ini sesuai posisinya."}
+          </p>
+          <form onSubmit={handleAddUser} className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <input required placeholder={isEn ? "Full Name" : "Nama Lengkap"} value={name} onChange={(e) => setName(e.target.value)} className={INP} />
+            <input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={INP} />
+            <input required type="password" placeholder={isEn ? "Password" : "Kata Sandi"} value={password} onChange={(e) => setPassword(e.target.value)} className={INP} />
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value)} className={INP}>
+              {ROLES.map((r) => <option key={r.code} value={r.code}>{r.code}</option>)}
+            </select>
+            <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
+              {isEn ? "Add Team Member" : "Tambah Anggota Tim"}
+            </button>
+          </form>
+        </Card>
+      )}
     </div>
   );
 }
