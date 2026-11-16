@@ -38,6 +38,18 @@ func NewProductRepository(db *pgxpool.Pool) *ProductRepository {
 
 // Create inserts a new master product SKU scoped to a tenant.
 func (r *ProductRepository) Create(ctx context.Context, p *Product) (*Product, error) {
+	if p.BaseUOMID == uuid.Nil {
+		uomCode := p.BaseUOMCode
+		if uomCode == "" {
+			uomCode = "UNIT"
+		}
+		_ = r.db.QueryRow(ctx, `
+			INSERT INTO units_of_measure (tenant_id, code, name, is_base_unit)
+			VALUES ($1, $2, $3, TRUE)
+			ON CONFLICT (tenant_id, code) DO UPDATE SET code = EXCLUDED.code
+			RETURNING id
+		`, p.TenantID, uomCode, uomCode).Scan(&p.BaseUOMID)
+	}
 	err := r.db.QueryRow(ctx, `
 		INSERT INTO products (
 			tenant_id, category_id, sku, barcode, name, description,
@@ -54,6 +66,11 @@ func (r *ProductRepository) Create(ctx context.Context, p *Product) (*Product, e
 	}
 
 	return p, nil
+}
+
+func (r *ProductRepository) Delete(ctx context.Context, tenantID, id uuid.UUID) error {
+	_, err := r.db.Exec(ctx, `DELETE FROM products WHERE tenant_id = $1 AND id = $2`, tenantID, id)
+	return err
 }
 
 // ListByTenant retrieves paginated products with their base UOM code for a tenant.

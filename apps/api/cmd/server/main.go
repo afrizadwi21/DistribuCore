@@ -159,6 +159,7 @@ func main() {
 		catalogRoutes.Post("/products", productHandler.Create)
 		catalogRoutes.Get("/products", productHandler.List)
 		catalogRoutes.Get("/products/:id", productHandler.GetByID)
+		catalogRoutes.Delete("/products/:id", productHandler.Delete)
 
 		// 8. Business Partners Handlers Registration (Customers & Suppliers)
 		partnerRepo := repository.NewPartnerRepository(pgDB.Pool)

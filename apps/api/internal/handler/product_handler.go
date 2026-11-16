@@ -24,6 +24,7 @@ type CreateProductRequest struct {
 	Name                string     `json:"name"`
 	Description         *string    `json:"description"`
 	BaseUOMID           uuid.UUID  `json:"base_uom_id"`
+	UOMCode             string     `json:"uom_code"`
 	SafetyStockQuantity float64    `json:"safety_stock_quantity"`
 	ReorderPointQuantity float64   `json:"reorder_point_quantity"`
 	IsActive            *bool      `json:"is_active"`
@@ -53,12 +54,12 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	if req.SKU == "" || req.Name == "" || req.BaseUOMID == uuid.Nil {
+	if req.SKU == "" || req.Name == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"error": fiber.Map{
 				"code":    "VALIDATION_ERROR",
-				"message": "SKU, product name, and base_uom_id are required fields",
+				"message": "SKU and product name are required fields",
 			},
 		})
 	}
@@ -76,6 +77,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		Name:                req.Name,
 		Description:         req.Description,
 		BaseUOMID:           req.BaseUOMID,
+		BaseUOMCode:         req.UOMCode,
 		SafetyStockQuantity: req.SafetyStockQuantity,
 		ReorderPointQuantity: req.ReorderPointQuantity,
 		IsActive:            isActive,
@@ -181,4 +183,16 @@ func (h *ProductHandler) GetByID(c *fiber.Ctx) error {
 		"success": true,
 		"data":    product,
 	})
+}
+
+func (h *ProductHandler) Delete(c *fiber.Ctx) error {
+	tenantID, _ := middleware.GetTenantID(c)
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
+	}
+	if err := h.repo.Delete(c.Context(), tenantID, id); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "error": fiber.Map{"message": err.Error()}})
+	}
+	return c.JSON(fiber.Map{"success": true})
 }
