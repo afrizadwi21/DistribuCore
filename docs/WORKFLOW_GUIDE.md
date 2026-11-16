@@ -5,38 +5,40 @@ Dokumen ini berisi visualisasi grafis (diagram alur, sequence, dan state machine
 ---
 
 ## Daftar Isi
-1. [Peta Jalan Alur Pengerjaan Proyek (Fase 0 s/d 7)](#1-peta-jalan-alur-pengerjaan-proyek)
+1. [Peta Jalan Alur Pengerjaan Proyek (Fase 0 s/d 8 — Selesai)](#1-peta-jalan-alur-pengerjaan-proyek)
 2. [Alur Pembelian Barang (Procure-to-Pay / P2P)](#2-alur-pembelian-barang-procure-to-pay)
 3. [Alur Penjualan & Pengiriman (Order-to-Cash / O2C)](#3-alur-penjualan--pengiriman-order-to-cash)
 4. [Arsitektur Teknis & Isolasi Data Multi-Tenant](#4-arsitektur-teknis--isolasi-data-multi-tenant)
 5. [Mekanisme Kunci Stok Real-Time (Stock Reservation)](#5-mekanisme-kunci-stok-real-time)
+6. [Alur Manajemen Tim Tenant & Hak Akses Posisi (RBAC)](#6-alur-manajemen-tim-tenant--hak-akses-posisi-rbac)
 
 ---
 
 ## 1. Peta Jalan Alur Pengerjaan Proyek
 
-Diagram ini menunjukkan urutan pengerjaan teknis dari fondasi awal hingga aplikasi siap produksi:
+Diagram ini menunjukkan urutan pengerjaan teknis dari fondasi awal hingga aplikasi produksi penuh (Fase 0 s/d Fase 8 telah selesai diimplementasikan):
 
 ```mermaid
 flowchart TD
-    subgraph Selesai ["✅ TAHAP SELESAI"]
-        F0["Fase 0: Blueprint & Skema DB<br/>(33 Tabel PostgreSQL & Kontrak REST)"]
+    subgraph Fondasi ["TAHAP FONDASI & MASTER DATA (SELESAI)"]
+        F0["Fase 0: Blueprint & Skema DB<br/>(33+ Tabel PostgreSQL & Kontrak REST)"]
         F1["Fase 1: Server Go Fiber & Auth<br/>(Docker, PGX Pool, JWT, Multi-Tenant)"]
         F2["Fase 2: Master Data Terpadu<br/>(Satuan UOM, Produk SKU, Mitra, Gudang, Stok)"]
         F0 --> F1 --> F2
     end
 
-    subgraph Berjalan ["🚀 TAHAP OPERASIONAL & TRANSAKSI"]
+    subgraph Operasional ["TAHAP OPERATIONAL & TRANSAKSI (SELESAI)"]
         F3["Fase 3: Pembelian & Penerimaan (P2P)<br/>(Purchase Order & Goods Receipt Note)"]
-        F4["Fase 4: Penjualan & Kunci Stok (O2C)<br/>(Quotation, Sales Order, Redis Reservation)"]
-        F5["Fase 5: Logistik & Bukti Terima (POD)<br/>(Delivery Order Parsial & Bukti Kirim)"]
-        F6["Fase 6: Faktur & Manajemen Piutang<br/>(Invoicing, Pelunasan, AR Aging Macet)"]
+        F4["Fase 4: Penjualan & Kunci Stok (O2C)<br/>(Quotation, Sales Order, ATP Reservation)"]
+        F5["Fase 5: Logistik & Bukti Terima (POD)<br/>(Delivery Order Otomatis & Bukti Kirim)"]
+        F6["Fase 6: Faktur & Manajemen Piutang<br/>(Invoicing FIFO, Pelunasan, AR Aging)"]
         F2 --> F3 --> F4 --> F5 --> F6
     end
 
-    subgraph Visual ["💻 TAHAP ANTARMUKA WEB"]
-        F7["Fase 7: Frontend Web Next.js<br/>(Tailwind, shadcn/ui, Dashboard Eksekutif)"]
-        F6 --> F7
+    subgraph Platform ["TAHAP WEB PLATFORM & RBAC (SELESAI)"]
+        F7["Fase 7: Analytics & KPI Eksekutif<br/>(Metrik Pendapatan, Stok, & Eksposur AR)"]
+        F8["Fase 8: Next.js 16 Dual-Mode Web & Tim RBAC<br/>(Sesi Server Nyata, Manajemen Role, Sinkronisasi DB)"]
+        F6 --> F7 --> F8
     end
 ```
 
@@ -155,3 +157,17 @@ stateDiagram-v2
 $$\text{Stok Tersedia (ATP)} = \text{Stok Fisik di Rak} - \text{Stok Sedang Dikunci (Reserved)} - \text{Batas Stok Aman (Safety Stock)}$$
 
 Dengan rumus ini, sales tidak akan pernah bisa menjanjikan barang yang fisiknya ada di gudang tetapi sebenarnya sudah dibayar/dipesan oleh pelanggan lain.
+
+---
+
+## 6. Alur Manajemen Tim Tenant & Hak Akses Posisi (RBAC)
+
+Pada menu **Profil & Tim RBAC (`/demo/profile`)**, Administrator perusahaan (`ADMIN` / `OWNER`) dapat melihat seluruh pengguna yang terdaftar di tenant tersebut, menambahkan staf baru, serta mengubah posisi/role secara dinamis:
+
+| Role / Posisi | Hak Akses Operasional Utama |
+|---|---|
+| `ADMIN` | Akses penuh ke seluruh modul operasional, keuangan, master data, dan manajemen anggota tim tenant (`GET/POST/PATCH/DELETE /api/v1/tenant/users`). |
+| `SALES_MANAGER` | Membuat Pesanan Penjualan (SO), mengelola Katalog Produk (Master SKU), serta menambah/menghapus Pelanggan B2B. |
+| `WAREHOUSE_MANAGER` | Mendaftarkan Gudang, membuat Purchase Order (PO), mengonfirmasi penerimaan barang (GRN), melakukan Cycle Count stok fisik, serta mengelola pengiriman (DO/POD). |
+| `FINANCE_OFFICER` | Mengelola limit kredit pelanggan, menerbitkan faktur penagihan, mencatat pembayaran masuk (FIFO), dan memantau umur piutang (AR Aging). |
+| `STAFF` | Akses baca (read-only) untuk memantau status operasional dan stok lintas modul tanpa hak modifikasi data. |
