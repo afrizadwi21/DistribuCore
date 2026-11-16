@@ -74,10 +74,10 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
           <div aria-hidden className="pointer-events-none fixed inset-0 z-40 bg-slate-900/15 backdrop-blur-[0.5px] transition-opacity" />
           <div
             aria-hidden
-            className="pointer-events-none fixed z-40 rounded-xl ring-4 ring-sky-500 shadow-[0_0_0_4px_rgba(14,165,233,0.3),0_0_25px_rgba(14,165,233,0.35)] transition-all duration-300 ease-out"
+            className="pointer-events-none fixed z-40 rounded-xl ring-4 ring-sky-600 shadow-lg transition-all duration-300 ease-out"
             style={{ top: rect.top - 4, left: rect.left - 4, width: rect.width + 8, height: rect.height + 8 }}
           >
-            <div className="absolute -top-8 left-2 flex items-center gap-1.5 rounded-full bg-sky-600 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-md">
+            <div className="absolute -top-8 left-2 flex items-center gap-1.5 rounded-full bg-sky-700 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-md">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
               <span>{isEn ? "Focus" : "Fokus"}: {step.title}</span>
             </div>
@@ -97,7 +97,7 @@ export function Tour({ index, onIndex, onClose }: { index: number; onIndex: (i: 
           <p className="text-xs font-bold uppercase tracking-wider text-[var(--mu)]">
             {isEn ? `Step ${index + 1} of ${steps.length}` : `Langkah ${index + 1} dari ${steps.length}`}
           </p>
-          <span className="rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400">
+          <span className="rounded-md bg-sky-500/15 px-2 py-0.5 text-[11px] font-bold text-sky-800 dark:text-sky-300">
             {isEn ? "TOUR GUIDE" : "PANDUAN"}
           </span>
         </div>

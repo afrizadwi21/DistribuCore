@@ -49,14 +49,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
         ))}
         <div className="mt-auto hidden pt-4 md:block">
           <Link href="/demo/profile" className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-2 hover:border-[var(--bl)] transition-colors">
-            <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--bl)] text-[10px] font-black text-[var(--act)] shrink-0">
-              {tenant?.code?.slice(0, 4) || "SBA"}
+            <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--bl)] text-[11px] font-black text-[var(--act)] shrink-0">
+              {tenant?.code?.slice(0, 3) || "SBA"}
             </span>
             <div className="min-w-0 flex-1 leading-tight">
               <p className="truncate text-xs font-bold text-[var(--tx)]">
                 {mode === "real" ? (user?.full_name || user?.email || "Admin Server") : (isEn ? "Demo Mode" : "Mode Demo")}
               </p>
-              <p className="truncate text-[10px] text-[var(--mu)]">
+              <p className="truncate text-[11px] text-[var(--mu)]">
                 {mode === "real" ? `${role} · ${tenant?.code || "LIVE"}` : (isEn ? "WH-CKR · Central Warehouse" : "WH-CKR · Gudang Pusat")}
               </p>
             </div>
@@ -64,7 +64,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {mode === "real" ? (
             <button
               onClick={logout}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-800 hover:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/30 transition-all whitespace-nowrap"
             >
               <DIcon name="exit" className="h-3.5 w-3.5" />
               <span>{isEn ? "Logout Server" : "Keluar Sesi"}</span>
@@ -72,7 +72,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           ) : (
             <Link
               href="/"
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-800 hover:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/30 transition-all whitespace-nowrap"
             >
               <DIcon name="exit" className="h-3.5 w-3.5" />
               <span>{isEn ? "Exit Demo" : "Keluar Demo"}</span>
@@ -81,7 +81,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
         <Link
           href="/"
-          className="flex items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 md:hidden whitespace-nowrap"
+          className="flex items-center gap-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2.5 py-1.5 text-xs font-bold text-rose-800 hover:bg-rose-500/20 dark:text-rose-300 md:hidden whitespace-nowrap"
         >
           <DIcon name="exit" className="h-3.5 w-3.5" />
           <span>{isEn ? "Exit" : "Keluar"}</span>

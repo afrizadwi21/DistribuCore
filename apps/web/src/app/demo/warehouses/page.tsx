@@ -36,15 +36,19 @@ export default function WarehousesPage() {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim() || !name.trim() || !token) return;
+    const addr = address.trim() || null;
     const res = await fetch("/api/proxy/v1/inventory/warehouses", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ code: code.trim().toUpperCase(), name: name.trim(), address: address.trim() }),
+      body: JSON.stringify({ code: code.trim().toUpperCase(), name: name.trim(), address_line: addr, city: addr }),
     });
+    const j = await res.json().catch(() => ({}));
     if (res.ok) {
       setCode(""); setName(""); setAddress("");
       await loadWarehouses();
       act({ type: "notify", message: isEn ? "Warehouse registered" : "Fasilitas gudang berhasil ditambahkan" });
+    } else {
+      act({ type: "notify", message: j?.error?.message || "Gagal menambahkan gudang" });
     }
   };
 
@@ -59,7 +63,7 @@ export default function WarehousesPage() {
         {canEdit && (
           <Card className="p-5">
             <div className="flex items-center justify-between">
-              <h4 className="font-bold">{isEn ? "Register Warehouse Facility" : "Tambah Gudang Baru"}</h4>
+              <h2 className="text-base font-bold">{isEn ? "Register Warehouse Facility" : "Tambah Gudang Baru"}</h2>
               <Badge tone="b">{role}</Badge>
             </div>
             <form onSubmit={handleAdd} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -75,7 +79,7 @@ export default function WarehousesPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold">{tenant?.name || "Tenant Distribution Hub"}</h3>
+              <h2 className="text-lg font-bold">{tenant?.name || "Tenant Distribution Hub"}</h2>
               <p className="font-mono text-xs text-[var(--mu)]">
                 {tenant?.code || "TENANT"} · {isEn ? "Enterprise Distribution Network" : "Jaringan Distribusi Multi-Gudang"}
               </p>
@@ -91,7 +95,7 @@ export default function WarehousesPage() {
                     <Badge tone="g">{isEn ? "ACTIVE" : "AKTIF"}</Badge>
                   </div>
                   <p className="mt-1 font-bold">{w.name}</p>
-                  {w.address && <p className="mt-0.5 text-xs text-[var(--mu)]">{w.address}</p>}
+                  {(w.address_line || w.city || w.address) && <p className="mt-0.5 text-xs text-[var(--mu)]">{w.address_line || w.city || w.address}</p>}
                 </div>
               ))}
             </div>

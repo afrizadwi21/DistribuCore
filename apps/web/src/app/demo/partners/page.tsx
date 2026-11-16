@@ -95,7 +95,7 @@ export default function PartnersPage() {
       {isReal && canEdit && (
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold">{isEn ? "Register B2B Customer" : "Tambah Pelanggan B2B Baru"}</h4>
+            <h2 className="text-base font-bold">{isEn ? "Register B2B Customer" : "Tambah Pelanggan B2B Baru"}</h2>
             <Badge tone="b">{role}</Badge>
           </div>
           <form onSubmit={handleAddCustomer} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

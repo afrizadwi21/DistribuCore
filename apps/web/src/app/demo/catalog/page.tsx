@@ -67,7 +67,7 @@ export default function CatalogPage() {
       {isReal && canEdit && (
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold">{isEn ? "Add Master Product SKU" : "Tambah Produk Baru (Master SKU)"}</h4>
+            <h2 className="text-base font-bold">{isEn ? "Add Master Product SKU" : "Tambah Produk Baru (Master SKU)"}</h2>
             <Badge tone="b">{role}</Badge>
           </div>
           <form onSubmit={handleCreate} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">

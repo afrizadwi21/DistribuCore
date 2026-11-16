@@ -56,7 +56,7 @@ export default function SalesPage() {
       {isReal && canCreate && (
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold">{isEn ? "Create New Sales Order (SO)" : "Buat Pesanan Penjualan Baru (SO)"}</h4>
+            <h2 className="text-base font-bold">{isEn ? "Create New Sales Order (SO)" : "Buat Pesanan Penjualan Baru (SO)"}</h2>
             <Badge tone="b">{role}</Badge>
           </div>
           <form onSubmit={handleCreateOrder} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

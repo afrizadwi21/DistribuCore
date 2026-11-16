@@ -85,7 +85,7 @@ export default function ProfileTeamPage() {
       <Card className="flex flex-wrap items-center justify-between gap-4 p-5">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--mu)]">{isEn ? "Active Session Profile" : "Profil Sesi Aktif"}</span>
-          <h3 className="mt-1 text-lg font-bold">{user?.full_name || "Administrator"} ({user?.email || "demo@sba.co.id"})</h3>
+          <h2 className="mt-1 text-lg font-bold">{user?.full_name || "Administrator"} ({user?.email || "demo@sba.co.id"})</h2>
           <p className="text-xs text-[var(--mu)]">{tenant?.name || "PT Sumber Bangunan Abadi"} · Kode Tenant: <b className="font-mono">{tenant?.code || "DIST-001"}</b></p>
         </div>
         <div className="flex items-center gap-2">
@@ -143,7 +143,7 @@ export default function ProfileTeamPage() {
 
       {isReal && (
         <Card className="p-5">
-          <h4 className="font-bold">{isEn ? "Invite / Add New Team Member to Tenant" : "Tambah Pengguna Baru ke Tenant Ini"}</h4>
+          <h2 className="text-base font-bold">{isEn ? "Invite / Add New Team Member to Tenant" : "Tambah Pengguna Baru ke Tenant Ini"}</h2>
           <p className="mt-1 text-xs text-[var(--mu)]">
             {isEn ? "New users can sign in using the same Tenant Code and their assigned credentials." : "Pengguna baru dapat login ke server asli menggunakan Kode Tenant perusahaan ini sesuai posisinya."}
           </p>

@@ -32,7 +32,7 @@ export function Card({ children, className = "", ...rest }: React.HTMLAttributes
 export function Panel({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <Card>
-      <h3 className="flex items-center gap-2 border-b border-[var(--bd)] px-4 py-3 text-base font-bold font-heading">{icon}{title}</h3>
+      <h2 className="flex items-center gap-2 border-b border-[var(--bd)] px-4 py-3 text-base font-bold font-heading">{icon}{title}</h2>
       {children}
     </Card>
   );
