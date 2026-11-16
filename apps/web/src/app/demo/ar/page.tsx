@@ -19,7 +19,7 @@ const BUCKET_COLORS: Record<string, string> = {
 export default function ArAgingPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
-  const { invoices, act } = useDemo();
+  const { invoices, act, customers = [] } = useDemo();
   const od = overdue(invoices);
   const totalAr = invoices.reduce((acc, i) => acc + i.open, 0);
   const openCount = invoices.filter((i) => i.open > 0).length;
@@ -76,7 +76,7 @@ export default function ArAgingPage() {
             <table className="w-full border-collapse">
               <thead><tr>{[isEn ? "Customer" : "Pelanggan", isEn ? "Outstanding" : "Terutang", isEn ? "Action" : "Aksi"].map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
               <tbody>
-                {CUSTOMERS.filter((c) => outstanding(invoices, c.code) > 0).map((c) => {
+                {customers.filter((c) => outstanding(invoices, c.code) > 0).map((c) => {
                   const outst = outstanding(invoices, c.code);
                   return (
                     <tr key={c.code}>
@@ -90,6 +90,13 @@ export default function ArAgingPage() {
                     </tr>
                   );
                 })}
+                {!customers.filter((c) => outstanding(invoices, c.code) > 0).length && (
+                  <tr>
+                    <td colSpan={3} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                      {isEn ? "No outstanding customer receivables." : "Tidak ada piutang pelanggan yang terutang."}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
