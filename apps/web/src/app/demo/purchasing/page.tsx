@@ -1,21 +1,53 @@
 "use client";
 
+import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
-import { Badge, BTN, Card, Panel, TD, TH } from "@/components/demo/ui";
+import { Badge, BTN, Card, INP, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PurchasingPage() {
   const { locale } = useLanguage();
-  const { mode } = useAuth();
+  const { mode, role, can } = useAuth();
   const isEn = locale === "en";
   const { po, skus, grns, act } = useDemo();
+  const isReal = mode === "real";
+  const canEdit = can("warehouse");
   const hasPo = po && po.no !== "-";
-  const s = skus.find((x) => x.code === po.sku) || { name: "-", uom: "UNIT", bin: "-" };
+  const s = skus.find((x) => x.code === po.sku) || { name: po.sku || "-", uom: "UNIT", bin: "WH-MAIN" };
   const st = po.received === 0 ? "ISSUED" : po.received < po.qty ? "PARTIALLY_RECEIVED" : "RECEIVED";
   const remaining = po.qty - po.received;
+
+  const [supp, setSupp] = useState("");
+  const [skuCode, setSkuCode] = useState("");
+  const [qty, setQty] = useState("200");
+  const [cost, setCost] = useState("65000");
+
+  const handleCreatePo = (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetSku = skuCode || skus[0]?.code || "SKU-01";
+    act({
+      type: "set_real_data",
+      data: {
+        po: {
+          no: "PO-2026-001",
+          supplier: supp.trim() || "Pemasok Utama",
+          code: "SUPP-01",
+          contact: "-",
+          terms: 30,
+          issued: "16 Nov 2026",
+          eta: "23 Nov 2026",
+          sku: targetSku,
+          qty: Number(qty) || 100,
+          received: 0,
+          cost: Number(cost) || 50000,
+        },
+      },
+    });
+    act({ type: "notify", message: isEn ? "Purchase Order PO-2026-001 issued" : "Purchase Order PO-2026-001 berhasil diterbitkan" });
+  };
 
   const poHeaders = isEn
     ? ["PO #", "Supplier", "Issued", "ETA", "Item", "Received", "Total Cost", "Status"]
@@ -27,6 +59,26 @@ export default function PurchasingPage() {
 
   return (
     <div className="grid gap-5">
+      {isReal && canEdit && (
+        <Card className="p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold">{isEn ? "Create Purchase Order (PO)" : "Buat Purchase Order (PO) Baru"}</h2>
+            <Badge tone="b">{role}</Badge>
+          </div>
+          <form onSubmit={handleCreatePo} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <input required placeholder={isEn ? "Supplier Name" : "Nama Pemasok"} value={supp} onChange={(e) => setSupp(e.target.value)} className={INP} />
+            <select value={skuCode} onChange={(e) => setSkuCode(e.target.value)} className={INP}>
+              <option value="">{isEn ? "-- Select SKU --" : "-- Pilih Produk SKU --"}</option>
+              {skus.map((k) => <option key={k.code} value={k.code}>{k.name} ({k.code})</option>)}
+            </select>
+            <input type="number" min={1} placeholder={isEn ? "Order Qty" : "Kuantitas PO"} value={qty} onChange={(e) => setQty(e.target.value)} className={INP} />
+            <input type="number" min={0} placeholder={isEn ? "Unit Cost (Rp)" : "Harga Beli (Rp)"} value={cost} onChange={(e) => setCost(e.target.value)} className={INP} />
+            <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
+              {isEn ? "Issue PO" : "Terbitkan PO"}
+            </button>
+          </form>
+        </Card>
+      )}
       <Panel title={isEn ? "Purchase Order (P2P Procurement)" : "Purchase Order (P2P Procurement)"} icon={<DIcon name="inbox" />}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
