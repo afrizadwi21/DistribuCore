@@ -186,7 +186,10 @@ func (h *ProductHandler) GetByID(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Delete(c *fiber.Ctx) error {
-	tenantID, _ := middleware.GetTenantID(c)
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})

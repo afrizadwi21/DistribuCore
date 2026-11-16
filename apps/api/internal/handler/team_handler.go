@@ -84,10 +84,16 @@ func (h *TeamHandler) UpdateUser(c *fiber.Ctx) error {
 }
 
 func (h *TeamHandler) DeleteUser(c *fiber.Ctx) error {
-	tenantID, _ := middleware.GetTenantID(c)
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
 	userID, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
+	}
+	if callerID, ok := c.Locals(middleware.UserIDKey).(uuid.UUID); ok && callerID == userID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"success": false, "error": fiber.Map{"message": "Cannot delete active session user"}})
 	}
 	_ = h.repo.DeleteTenantUser(c.Context(), tenantID, userID)
 	return c.JSON(fiber.Map{"success": true})
@@ -110,6 +116,9 @@ func (h *TeamHandler) SaveState(c *fiber.Ctx) error {
 	body := c.Body()
 	if len(body) == 0 {
 		body = []byte("{}")
+	}
+	if len(body) > 262144 || !json.Valid(body) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false, "error": fiber.Map{"message": "Invalid or oversized state payload"}})
 	}
 	if err := h.repo.SaveWorkspaceState(c.Context(), tenantID, body); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": false, "error": fiber.Map{"message": err.Error()}})

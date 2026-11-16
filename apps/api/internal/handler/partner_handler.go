@@ -231,7 +231,10 @@ func (h *PartnerHandler) ListSuppliers(c *fiber.Ctx) error {
 }
 
 func (h *PartnerHandler) DeleteCustomer(c *fiber.Ctx) error {
-	tenantID, _ := middleware.GetTenantID(c)
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
@@ -241,7 +244,10 @@ func (h *PartnerHandler) DeleteCustomer(c *fiber.Ctx) error {
 }
 
 func (h *PartnerHandler) DeleteSupplier(c *fiber.Ctx) error {
-	tenantID, _ := middleware.GetTenantID(c)
+	tenantID, err := middleware.GetTenantID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"success": false})
+	}
 	id, err := uuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"success": false})
