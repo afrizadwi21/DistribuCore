@@ -18,12 +18,12 @@ export const DO_LABEL: Record<DoStatus, [string, Tone]> = { picking: ["Picking",
 export function SalesTable({ limit }: { limit?: number }) {
   const { locale } = useLanguage();
   const isEn = locale === "en";
-  const { dos, skus, act } = useDemo();
+  const { dos, skus, act, orders = [], customers = [], loading } = useDemo();
   const [tab, setTab] = useState<OrderTab>("all");
   const [open, setOpen] = useState<string | null>(null);
-  const count = (t: OrderTab) => ORDERS.filter((o) => t === "all" || orderTab(o, dos) === t).length;
-  const rows = ORDERS.filter((o) => tab === "all" || orderTab(o, dos) === tab).slice(0, limit);
-  const sku = (code: string) => skus.find((s) => s.code === code)!;
+  const count = (t: OrderTab) => orders.filter((o) => t === "all" || orderTab(o, dos) === t).length;
+  const rows = orders.filter((o) => tab === "all" || orderTab(o, dos) === tab).slice(0, limit);
+  const sku = (code: string) => skus.find((s) => s.code === code) || { name: code, uom: "UNIT" };
 
   const tabs: [OrderTab, string][] = [
     ["all", isEn ? "All Orders" : "Semua Pesanan"],
@@ -52,7 +52,8 @@ export function SalesTable({ limit }: { limit?: number }) {
           <tbody>
             {rows.map((o) => {
               const p = progress(o, dos), mine = dos.filter((d) => d.so === o.id), pod = mine.find((d) => d.status === "pod");
-              const name = CUSTOMERS.find((c) => c.code === o.cust)!.name, isOpen = open === o.id;
+              const name = customers.find((c) => c.code === o.cust)?.name || o.cust || "-";
+              const isOpen = open === o.id;
               return (
                 <React.Fragment key={o.id}>
                   <tr>
@@ -79,7 +80,15 @@ export function SalesTable({ limit }: { limit?: number }) {
                 </React.Fragment>
               );
             })}
-            {!rows.length && <tr><td colSpan={7} className={`${TD} text-[var(--mu)]`}>{isEn ? "No orders found in this view." : "Tidak ada pesanan di tampilan ini."}</td></tr>}
+            {!rows.length && (
+              <tr>
+                <td colSpan={7} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                  {loading
+                    ? (isEn ? "Loading orders from server..." : "Memuat data pesanan dari server...")
+                    : (isEn ? "No sales orders found for this tenant. Create your first order to begin." : "Belum ada pesanan penjualan untuk perusahaan ini. Buat pesanan baru untuk memulai.")}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
