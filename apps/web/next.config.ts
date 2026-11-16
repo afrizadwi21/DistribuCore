@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: "http://127.0.0.1:8080/api/:path*",
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -44,29 +44,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (tenantCode: string, email: string, password: string, targetUrl?: string) => {
     const api = (targetUrl || serverUrl).replace(/\/+$/, "");
-    try {
-      const res = await fetch(`${api}/api/v1/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenant_code: tenantCode.trim(), email: email.trim(), password }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.data?.access_token) {
-        return { success: false, error: data?.error?.message || "Invalid tenant code, email, or password" };
-      }
-      const tok = data.data.access_token;
-      const usr = data.data.user || { email, full_name: "Admin Utama" };
-      const ten = data.data.tenant || { code: tenantCode, name: "PT Sumber Bangunan Abadi" };
-      setToken(tok); setUser(usr); setTenant(ten); setMode("real"); setServerUrl(api);
-      localStorage.setItem("dc_token", tok);
-      localStorage.setItem("dc_auth_mode", "real");
-      localStorage.setItem("dc_tenant", JSON.stringify(ten));
-      localStorage.setItem("dc_user", JSON.stringify(usr));
-      localStorage.setItem("dc_api_url", api);
-      return { success: true };
-    } catch {
-      return { success: false, error: "Cannot connect to server at " + api };
+    const endpoints = [`/api/proxy/v1/auth/login`, `${api}/api/v1/auth/login`];
+    for (const ep of endpoints) {
+      try {
+        const res = await fetch(ep, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tenant_code: tenantCode.trim(), email: email.trim(), password }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data?.data?.access_token) {
+          return { success: false, error: data?.error?.message || "Invalid tenant code, email, or password" };
+        }
+        const tok = data.data.access_token;
+        const usr = data.data.user || { email, full_name: "Admin" };
+        const ten = data.data.tenant || { code: tenantCode, name: tenantCode };
+        setToken(tok); setUser(usr); setTenant(ten); setMode("real"); setServerUrl(api);
+        localStorage.setItem("dc_token", tok);
+        localStorage.setItem("dc_auth_mode", "real");
+        localStorage.setItem("dc_tenant", JSON.stringify(ten));
+        localStorage.setItem("dc_user", JSON.stringify(usr));
+        localStorage.setItem("dc_api_url", api);
+        return { success: true };
+      } catch {}
     }
+    return { success: false, error: "Cannot connect to server at " + api + ". Ensure backend is running on port 8080." };
   };
 
   const logout = () => {
