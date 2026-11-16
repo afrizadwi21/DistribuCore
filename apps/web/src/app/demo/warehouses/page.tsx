@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
+import { useAuth } from "@/context/AuthContext";
 import { nf } from "@/components/demo/calc";
 import { BINS } from "@/components/demo/data";
 import { Badge, Bar, BTN, Card, DemoTag } from "@/components/demo/ui";
@@ -11,11 +12,41 @@ export default function WarehousesPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
   const { skus } = useDemo();
+  const { mode, user } = useAuth();
+  const isReal = mode === "real";
 
   const branches = [
     { code: "WH-SBY", name: isEn ? "Surabaya Branch Warehouse" : "Gudang Cabang Surabaya", occ: 64 },
     { code: "WH-MDN", name: isEn ? "Medan Branch Warehouse" : "Gudang Cabang Medan", occ: 51 },
   ];
+
+  if (isReal) {
+    return (
+      <div className="space-y-6">
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold">{user?.tenantName || "Tenant Distribution Hub"}</h3>
+              <p className="font-mono text-xs text-[var(--mu)]">
+                {user?.tenantCode} · {isEn ? "Enterprise Distribution Network" : "Jaringan Distribusi Multi-Gudang"}
+              </p>
+            </div>
+            <Badge tone="g">{isEn ? "REAL SERVER · ACTIVE" : "SERVER ASLI · AKTIF"}</Badge>
+          </div>
+          <div className="mt-8 rounded-lg border border-dashed border-[var(--bd)] p-8 text-center">
+            <p className="font-semibold text-[var(--tx)]">
+              {isEn ? "No warehouse facilities registered yet" : "Belum ada fasilitas gudang terdaftar"}
+            </p>
+            <p className="mt-1 text-xs text-[var(--mu)]">
+              {isEn
+                ? "Configure warehouse locations, bins, and storage zones through the backend inventory API."
+                : "Daftarkan lokasi gudang induk, bin alokasi, dan zona simpan melalui API inventaris backend."}
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="grid items-start gap-5 md:grid-cols-2 lg:grid-cols-3">
