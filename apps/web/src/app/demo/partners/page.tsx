@@ -6,11 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { outstanding, rp } from "@/components/demo/calc";
 import { DIcon } from "@/components/demo/icons";
+import { openWhatsApp } from "@/components/demo/wa";
 import { Badge, Bar, BTN, Card, DemoTag, INP, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PartnersPage() {
   const { locale } = useLanguage();
-  const { mode, token, role, can } = useAuth();
+  const { mode, token, tenant, role, can } = useAuth();
   const isEn = locale === "en";
   const { invoices, customers = [], refresh, act } = useDemo();
   const isReal = mode === "real";
@@ -18,6 +19,8 @@ export default function PartnersPage() {
 
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [limit, setLimit] = useState("100000000");
   const [terms, setTerms] = useState("30");
 
@@ -25,6 +28,7 @@ export default function PartnersPage() {
   const [sCode, setSCode] = useState("");
   const [sName, setSName] = useState("");
   const [sContact, setSContact] = useState("");
+  const [sPhone, setSPhone] = useState("");
 
   const loadSuppliers = async () => {
     if (!isReal || !token) return;
@@ -46,13 +50,15 @@ export default function PartnersPage() {
       body: JSON.stringify({
         code: code.trim().toUpperCase(),
         company_name: name.trim(),
+        phone: phone.trim() || null,
+        email: email.trim() || null,
         credit_limit_cents: Math.round((Number(limit) || 0) * 100),
         payment_terms_days: Number(terms) || 30,
       }),
     });
     const j = await res.json().catch(() => ({}));
     if (res.ok) {
-      setCode(""); setName("");
+      setCode(""); setName(""); setPhone(""); setEmail("");
       refresh();
       act({ type: "notify", message: isEn ? "Customer registered" : "Pelanggan B2B berhasil ditambahkan" });
     } else {
@@ -66,10 +72,15 @@ export default function PartnersPage() {
     const res = await fetch("/api/proxy/v1/partners/suppliers", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ code: sCode.trim().toUpperCase(), company_name: sName.trim(), contact_person: sContact.trim() || "-" }),
+      body: JSON.stringify({
+        code: sCode.trim().toUpperCase(),
+        company_name: sName.trim(),
+        contact_person: sContact.trim() || "-",
+        phone: sPhone.trim() || null,
+      }),
     });
     if (res.ok) {
-      setSCode(""); setSName(""); setSContact("");
+      setSCode(""); setSName(""); setSContact(""); setSPhone("");
       await loadSuppliers();
       act({ type: "notify", message: isEn ? "Supplier registered" : "Pemasok berhasil ditambahkan" });
     }
@@ -83,12 +94,12 @@ export default function PartnersPage() {
   };
 
   const custHeaders = isEn
-    ? ["Code", "Company", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status", ...(isReal && canEdit ? ["Action"] : [])]
-    : ["Kode", "Perusahaan", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status", ...(isReal && canEdit ? ["Aksi"] : [])];
+    ? ["Code", "Company", "WhatsApp / Email", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status", "Action"]
+    : ["Kode", "Perusahaan", "WhatsApp / Email", "Limit Kredit", "Terutang", "Pemakaian", "Termin", "Status", "Aksi"];
 
   const suppHeaders = isEn
-    ? ["Supplier Code", "Company Name", "Contact Person", "Payment Terms", "Status"]
-    : ["Kode Pemasok", "Nama Perusahaan", "Kontak Person", "Termin Pembayaran", "Status"];
+    ? ["Supplier Code", "Company Name", "Contact / WhatsApp", "Payment Terms", "Action"]
+    : ["Kode Pemasok", "Nama Perusahaan", "Kontak / WhatsApp", "Termin Pembayaran", "Aksi"];
 
   return (
     <div className="grid gap-5">
@@ -98,11 +109,12 @@ export default function PartnersPage() {
             <h2 className="text-base font-bold">{isEn ? "Register B2B Customer" : "Tambah Pelanggan B2B Baru"}</h2>
             <Badge tone="b">{role}</Badge>
           </div>
-          <form onSubmit={handleAddCustomer} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <form onSubmit={handleAddCustomer} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <input required placeholder="Kode (mis. CUST-01)" value={code} onChange={(e) => setCode(e.target.value)} className={INP} />
             <input required placeholder={isEn ? "Company Name" : "Nama Perusahaan"} value={name} onChange={(e) => setName(e.target.value)} className={INP} />
+            <input placeholder="No. WhatsApp (mis. 08123456789)" value={phone} onChange={(e) => setPhone(e.target.value)} className={INP} />
+            <input type="email" placeholder="Email Pelanggan (opsional)" value={email} onChange={(e) => setEmail(e.target.value)} className={INP} />
             <input type="number" placeholder="Limit Kredit (Rp)" value={limit} onChange={(e) => setLimit(e.target.value)} className={INP} />
-            <input type="number" placeholder="Termin (Hari)" value={terms} onChange={(e) => setTerms(e.target.value)} className={INP} />
             <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
               {isEn ? "Add Customer" : "Tambah Pelanggan"}
             </button>
@@ -128,6 +140,7 @@ export default function PartnersPage() {
                   <tr key={c.code}>
                     <td className={`${TD} font-mono font-bold`}>{c.code}</td>
                     <td className={TD}><b>{c.name}</b> <DemoTag show={c.demo} /></td>
+                    <td className={`${TD} text-xs text-[var(--mu)]`}>{c.phone || c.email || "-"}</td>
                     <td className={TD}>{rp(c.limit)}</td>
                     <td className={`${TD} font-semibold`}>{rp(outst)}</td>
                     <td className={`${TD} w-32`}>
@@ -136,13 +149,21 @@ export default function PartnersPage() {
                     </td>
                     <td className={TD}>Net {c.terms} {isEn ? "days" : "hari"}</td>
                     <td className={TD}><Badge tone={c.hold ? "r" : "g"}>{c.hold ? "CREDIT HOLD" : (isEn ? "ACTIVE" : "AKTIF")}</Badge></td>
-                    {isReal && canEdit && (
-                      <td className={TD}>
-                        <button onClick={() => handleDeleteCustomer(c.id)} className="rounded-md bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500/20">
-                          {isEn ? "Delete" : "Hapus"}
+                    <td className={TD}>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => openWhatsApp(c.phone, `Halo ${c.name}, kami dari ${tenant?.name || "DistribuCore"} ingin mengonfirmasi pesanan dan status akun B2B Anda.`)}
+                          className="rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-500/25 dark:text-emerald-300"
+                        >
+                          Chat WA
                         </button>
-                      </td>
-                    )}
+                        {isReal && canEdit && (
+                          <button onClick={() => handleDeleteCustomer(c.id)} className="rounded-md bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-800 hover:bg-rose-500/20 dark:text-rose-300">
+                            {isEn ? "Delete" : "Hapus"}
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -161,10 +182,11 @@ export default function PartnersPage() {
       {isReal && canEdit && (
         <Card className="p-5">
           <h2 className="text-base font-bold">{isEn ? "Register Supplier" : "Tambah Pemasok Baru (Supplier)"}</h2>
-          <form onSubmit={handleAddSupplier} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <form onSubmit={handleAddSupplier} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <input required placeholder="Kode (mis. SUPP-01)" value={sCode} onChange={(e) => setSCode(e.target.value)} className={INP} />
             <input required placeholder={isEn ? "Supplier Company" : "Nama Perusahaan Pemasok"} value={sName} onChange={(e) => setSName(e.target.value)} className={INP} />
             <input placeholder={isEn ? "Contact Person" : "Kontak Person"} value={sContact} onChange={(e) => setSContact(e.target.value)} className={INP} />
+            <input placeholder="No. WhatsApp Pemasok" value={sPhone} onChange={(e) => setSPhone(e.target.value)} className={INP} />
             <button type="submit" className={`${BTN} justify-center bg-[var(--bl)]! text-white!`}>
               {isEn ? "Add Supplier" : "Tambah Pemasok"}
             </button>
@@ -184,9 +206,16 @@ export default function PartnersPage() {
                   <tr key={s.id || s.code}>
                     <td className={`${TD} font-mono font-bold`}>{s.code}</td>
                     <td className={TD}><b>{s.company_name || s.name}</b></td>
-                    <td className={TD}>{s.contact_person || "-"}</td>
+                    <td className={TD}>{s.contact_person || "-"} {s.phone ? `· ${s.phone}` : ""}</td>
                     <td className={TD}>Net {s.payment_terms_days || 30} {isEn ? "days" : "hari"}</td>
-                    <td className={TD}><Badge tone="g">{isEn ? "ACTIVE" : "AKTIF"}</Badge></td>
+                    <td className={TD}>
+                      <button
+                        onClick={() => openWhatsApp(s.phone, `Halo ${s.company_name || s.name}, kami dari ${tenant?.name || "DistribuCore"} ingin menindaklanjuti pengadaan Purchase Order (PO).`)}
+                        className="rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-500/25 dark:text-emerald-300"
+                      >
+                        Chat WA
+                      </button>
+                    </td>
                   </tr>
                 )) : (
                   <tr>
@@ -199,9 +228,16 @@ export default function PartnersPage() {
                 <tr>
                   <td className={`${TD} font-mono font-bold`}>SUPP-SG</td>
                   <td className={TD}><b>PT Semen Gresik Tbk</b></td>
-                  <td className={TD}>Agus Hendrawan (Key Account Manager)</td>
+                  <td className={TD}>Agus Hendrawan · 08123000999</td>
                   <td className={TD}>Net 45 {isEn ? "days" : "hari"}</td>
-                  <td className={TD}><Badge tone="g">{isEn ? "STRATEGIC PARTNER" : "MITRA STRATEGIS"}</Badge></td>
+                  <td className={TD}>
+                    <button
+                      onClick={() => openWhatsApp("08123000999", "Halo PT Semen Gresik Tbk, kami ingin mengonfirmasi jadwal pengiriman PO-2026-001.")}
+                      className="rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-500/25 dark:text-emerald-300"
+                    >
+                      Chat WA
+                    </button>
+                  </td>
                 </tr>
               )}
             </tbody>
