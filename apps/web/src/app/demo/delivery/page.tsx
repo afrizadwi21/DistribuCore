@@ -10,7 +10,7 @@ export default function DeliveryPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
   const { dos, skus, act } = useDemo();
-  const sku = (code: string) => skus.find((s) => s.code === code)!;
+  const sku = (code: string) => skus.find((s) => s.code === code) || { name: code, uom: "UNIT" };
   const custName = (soId: string) => {
     const o = ORDERS.find((q) => q.id === soId);
     return o ? CUSTOMERS.find((c) => c.code === o.cust)?.name : "-";
@@ -60,6 +60,13 @@ export default function DeliveryPage() {
                   </tr>
                 );
               })}
+              {!dos.length && (
+                <tr>
+                  <td colSpan={6} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No delivery orders found for this tenant." : "Belum ada surat jalan (DO) untuk perusahaan ini."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

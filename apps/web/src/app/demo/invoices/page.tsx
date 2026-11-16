@@ -41,6 +41,13 @@ export default function InvoicesPage() {
                   </tr>
                 );
               })}
+              {!invoices.length && (
+                <tr>
+                  <td colSpan={8} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No invoices issued for this tenant yet." : "Belum ada faktur penagihan untuk perusahaan ini."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

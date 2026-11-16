@@ -41,6 +41,13 @@ export default function CatalogPage() {
                   <td className={`${TD} font-semibold`}>{rp(s.price)}</td>
                 </tr>
               ))}
+              {!skus.length && (
+                <tr>
+                  <td colSpan={6} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No products found in catalog for this tenant." : "Belum ada produk terdaftar di katalog perusahaan ini."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
