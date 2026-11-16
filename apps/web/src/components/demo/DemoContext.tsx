@@ -18,44 +18,37 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const base = "/api/proxy/v1";
-      const [prodRes, orderRes, doRes, invRes, custRes] = await Promise.all([
+      const [prodRes, custRes, stateRes] = await Promise.all([
         fetch(`${base}/catalog/products`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/catalog/products`, { headers })),
-        fetch(`${base}/sales/orders`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/sales/orders`, { headers })),
-        fetch(`${base}/fulfillment/delivery-orders`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/fulfillment/delivery-orders`, { headers })),
-        fetch(`${base}/billing/invoices`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/billing/invoices`, { headers })),
         fetch(`${base}/partners/customers`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/partners/customers`, { headers })),
+        fetch(`${base}/tenant/state`, { headers }).catch(() => fetch(`${serverUrl}/api/v1/tenant/state`, { headers })),
       ]);
 
-      const [prods, orders, dos, invoices, custs] = await Promise.all([
+      const [prods, custs, savedWrap] = await Promise.all([
         prodRes?.ok ? prodRes.json() : { data: [] },
-        orderRes?.ok ? orderRes.json() : { data: [] },
-        doRes?.ok ? doRes.json() : { data: [] },
-        invRes?.ok ? invRes.json() : { data: [] },
         custRes?.ok ? custRes.json() : { data: [] },
+        stateRes?.ok ? stateRes.json() : { data: {} },
       ]);
+      const saved = savedWrap?.data || {};
+      const savedSkus: any[] = Array.isArray(saved.skus) ? saved.skus : [];
 
-      const skus = Array.isArray(prods?.data) ? prods.data.map((p: any) => ({
-        id: p.id,
-        code: p.sku || p.code,
-        name: p.name,
-        uom: p.base_uom_code || p.uom_code || "UNIT",
-        onHand: Number(p.on_hand || p.quantity_on_hand || 0),
-        reserved: Number(p.reserved || 0),
-        safety: Number(p.safety_stock_quantity || 0),
-        reorder: Number(p.reorder_point_quantity || 0),
-        bin: p.bin_code || "WH-MAIN",
-        price: Number(p.base_price_cents ? p.base_price_cents / 100 : p.price || 75000),
-        demo: false,
-      })) : [];
-
-      const realOrders = Array.isArray(orders?.data) ? orders.data.map((o: any) => ({
-        id: o.order_number || o.id,
-        rawId: o.id,
-        cust: o.customer_code || o.customer_name || "CUST",
-        total: Number(o.total_amount_cents ? o.total_amount_cents / 100 : o.total || 0),
-        hold: o.status === "CREDIT_HOLD",
-        demo: false,
-      })) : [];
+      const skus = Array.isArray(prods?.data) ? prods.data.map((p: any) => {
+        const code = p.sku || p.code;
+        const prev = savedSkus.find((x) => x.code === code);
+        return {
+          id: p.id,
+          code,
+          name: p.name,
+          uom: p.base_uom_code || p.uom_code || "UNIT",
+          onHand: prev ? Number(prev.onHand || 0) : Number(p.on_hand || p.quantity_on_hand || 0),
+          reserved: prev ? Number(prev.reserved || 0) : Number(p.reserved || 0),
+          safety: Number(p.safety_stock_quantity || 0),
+          reorder: Number(p.reorder_point_quantity || 0),
+          bin: prev?.bin || p.bin_code || "WH-MAIN",
+          price: prev?.price ? Number(prev.price) : Number(p.base_price_cents ? p.base_price_cents / 100 : p.price || 75000),
+          demo: false,
+        };
+      }) : [];
 
       const realCustomers = Array.isArray(custs?.data) ? custs.data.map((c: any) => ({
         id: c.id,
@@ -71,10 +64,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         type: "set_real_data",
         data: {
           skus,
-          orders: realOrders,
           customers: realCustomers,
-          dos: Array.isArray(dos?.data) ? dos.data : [],
-          invoices: Array.isArray(invoices?.data) ? invoices.data : [],
+          orders: Array.isArray(saved.orders) ? saved.orders : [],
+          dos: Array.isArray(saved.dos) ? saved.dos : [],
+          invoices: Array.isArray(saved.invoices) ? saved.invoices : [],
+          po: saved.po?.no ? saved.po : { no: "-", supplier: "-", code: "-", contact: "-", terms: 0, issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 },
+          grns: Array.isArray(saved.grns) ? saved.grns : [],
           loading: false,
         },
       });
@@ -87,6 +82,22 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     act({ type: "reset_mode", isReal });
     if (isReal) fetchRealData();
   }, [isReal, token]);
+
+  useEffect(() => {
+    if (!isReal || !token || state.loading) return;
+    fetch("/api/proxy/v1/tenant/state", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        skus: state.skus,
+        orders: state.orders,
+        dos: state.dos,
+        invoices: state.invoices,
+        po: state.po,
+        grns: state.grns,
+      }),
+    }).catch(() => {});
+  }, [isReal, token, state.skus, state.orders, state.dos, state.invoices, state.po, state.grns, state.loading]);
 
   useEffect(() => {
     if (!state.toast) return;
