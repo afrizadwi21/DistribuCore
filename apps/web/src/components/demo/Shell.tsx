@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "@/hooks/useTheme";
 import { SunIcon, MoonIcon } from "@/components/landing/Icons";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { DIcon } from "./icons";
 import { getNavGroups } from "./nav";
 import { Tour } from "./Tour";
@@ -16,6 +17,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const { isDark, toggle } = useTheme();
   const { locale, setLocale } = useLanguage();
+  const { mode, user, tenant, logout } = useAuth();
   const isEn = locale === "en";
   const [tour, setTour] = useState<number | null>(null);
 
@@ -48,20 +50,34 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="mt-auto hidden pt-4 md:block">
           <div className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-2">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-[var(--bl)] text-[10px] font-black text-[var(--act)] shrink-0">
-              SBA
+              {tenant?.code || "SBA"}
             </span>
             <div className="min-w-0 flex-1 leading-tight">
-              <p className="truncate text-xs font-bold text-[var(--tx)]">{isEn ? "Demo Mode" : "Mode Demo"}</p>
-              <p className="truncate text-[10px] text-[var(--mu)]">{isEn ? "WH-CKR · Central Warehouse" : "WH-CKR · Gudang Pusat"}</p>
+              <p className="truncate text-xs font-bold text-[var(--tx)]">
+                {mode === "real" ? (user?.full_name || user?.email || "Admin Server") : (isEn ? "Demo Mode" : "Mode Demo")}
+              </p>
+              <p className="truncate text-[10px] text-[var(--mu)]">
+                {mode === "real" ? (isEn ? "Live Server Session" : "Sesi Server Nyata") : (isEn ? "WH-CKR · Central Warehouse" : "WH-CKR · Gudang Pusat")}
+              </p>
             </div>
           </div>
-          <Link
-            href="/"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
-          >
-            <DIcon name="exit" className="h-3.5 w-3.5" />
-            <span>{isEn ? "Exit Demo" : "Keluar Demo"}</span>
-          </Link>
+          {mode === "real" ? (
+            <button
+              onClick={logout}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
+            >
+              <DIcon name="exit" className="h-3.5 w-3.5" />
+              <span>{isEn ? "Logout Server" : "Keluar Sesi"}</span>
+            </button>
+          ) : (
+            <Link
+              href="/"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30 transition-all whitespace-nowrap"
+            >
+              <DIcon name="exit" className="h-3.5 w-3.5" />
+              <span>{isEn ? "Exit Demo" : "Keluar Demo"}</span>
+            </Link>
+          )}
         </div>
         <Link
           href="/"
@@ -75,7 +91,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <header className="flex flex-wrap items-center gap-2.5 border-b border-[var(--bd)] bg-[var(--card)] px-5 py-3">
           <span className="text-sm text-[var(--mu)]">PT Sumber Bangunan Abadi (SBA) / <b className="text-[var(--tx)]">{isEn ? "Cikarang Central Warehouse" : "Gudang Pusat Cikarang"}</b></span>
           <span className="flex-1" />
-          <Badge tone="a">{isEn ? "Demo mode · sample data" : "Mode demo · data contoh"}</Badge>
+          <Badge tone={mode === "real" ? "g" : "a"}>
+            {mode === "real" ? (isEn ? "Live Server · API" : "Server Nyata · API") : (isEn ? "Demo mode · sample data" : "Mode demo · data contoh")}
+          </Badge>
           <button className={BTN} onClick={open}><DIcon name="help" />{isEn ? "Tour Guide" : "Panduan"}</button>
           
           {/* Language Selector */}
