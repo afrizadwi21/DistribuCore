@@ -29,22 +29,32 @@ export function AtpWidget({ all = false }: { all?: boolean }) {
   const isEn = locale === "en";
   const { skus, act } = useDemo();
   const [open, setOpen] = useState(false);
-  const [code, setCode] = useState(skus[0].code);
+  const [code, setCode] = useState(skus[0]?.code || "");
   const [count, setCount] = useState("");
-  const sku = skus.find((s) => s.code === code)!;
-  const diff = count === "" ? null : Number(count) - sku.onHand;
+  const activeCode = code || (skus[0]?.code ?? "");
+  const sku = skus.find((s) => s.code === activeCode);
+  const diff = sku && count !== "" ? Number(count) - sku.onHand : null;
 
   const save = () => {
-    if (count === "" || Number(count) < 0) return;
-    act({ type: "adjust", code, count: Number(count) });
+    if (!sku || count === "" || Number(count) < 0) return;
+    act({ type: "adjust", code: sku.code, count: Number(count) });
     setCount("");
   };
+
+  const displayed = all ? skus : skus.slice(0, 2);
 
   return (
     <div data-tour="atp">
       <Panel title="Available-to-Promise" icon={<DIcon name="box" />}>
-        {(all ? skus : skus.slice(0, 2)).map((s) => <SkuMeter key={s.code} s={s} />)}
-        <div className="space-y-3 border-t border-[var(--bd)] p-4">
+        {displayed.length ? (
+          displayed.map((s) => <SkuMeter key={s.code} s={s} />)
+        ) : (
+          <p className="p-5 text-sm text-center text-[var(--mu)]">
+            {isEn ? "No products in warehouse yet. Register SKUs in Catalog." : "Belum ada produk di gudang. Daftarkan master SKU di Katalog."}
+          </p>
+        )}
+        {sku && (
+          <div className="space-y-3 border-t border-[var(--bd)] p-4">
           {open ? (
             <>
               <div className="rounded-lg bg-[var(--soft)] p-2.5 text-xs text-[var(--mu)] leading-relaxed">
@@ -90,6 +100,7 @@ export function AtpWidget({ all = false }: { all?: boolean }) {
             </Link>
           )}
         </div>
+        )}
       </Panel>
     </div>
   );

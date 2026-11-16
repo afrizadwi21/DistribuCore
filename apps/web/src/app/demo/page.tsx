@@ -25,12 +25,21 @@ export default function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead><tr>{headers.map((h) => <th key={h} className={TH}>{h}</th>)}</tr></thead>
-                <tbody>{skus.map((s) => (
-                  <tr key={s.code}>
-                    <td className={`${TD} font-bold`}>{s.code}</td><td className={TD}>{nf(s.onHand)} {s.uom}</td>
-                    <td className={TD}>{s.safety}</td><td className={TD}>{s.reorder}</td><td className={TD}><HealthBadge h={health(s)} /></td>
-                  </tr>
-                ))}</tbody>
+                <tbody>
+                  {skus.map((s) => (
+                    <tr key={s.code}>
+                      <td className={`${TD} font-bold`}>{s.code}</td><td className={TD}>{nf(s.onHand)} {s.uom}</td>
+                      <td className={TD}>{s.safety}</td><td className={TD}>{s.reorder}</td><td className={TD}><HealthBadge h={health(s)} /></td>
+                    </tr>
+                  ))}
+                  {!skus.length && (
+                    <tr>
+                      <td colSpan={5} className={`${TD} py-6 text-center text-[var(--mu)]`}>
+                        {isEn ? "No products registered in catalog yet." : "Belum ada produk yang terdaftar di katalog."}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </Panel>
