@@ -54,6 +54,8 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         id: c.id,
         code: c.code,
         name: c.company_name || c.name || c.code,
+        phone: c.phone || "",
+        email: c.email || "",
         limit: Number(c.credit_limit_cents ? c.credit_limit_cents / 100 : c.limit || 0),
         terms: Number(c.payment_terms_days || 30),
         hold: Boolean(c.is_credit_held ?? c.credit_hold),
