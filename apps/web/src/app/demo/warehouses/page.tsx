@@ -12,7 +12,7 @@ export default function WarehousesPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
   const { skus } = useDemo();
-  const { mode, user } = useAuth();
+  const { mode, tenant } = useAuth();
   const isReal = mode === "real";
 
   const branches = [
@@ -26,9 +26,9 @@ export default function WarehousesPage() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold">{user?.tenantName || "Tenant Distribution Hub"}</h3>
+              <h3 className="text-lg font-bold">{tenant?.name || "Tenant Distribution Hub"}</h3>
               <p className="font-mono text-xs text-[var(--mu)]">
-                {user?.tenantCode} · {isEn ? "Enterprise Distribution Network" : "Jaringan Distribusi Multi-Gudang"}
+                {tenant?.code || "TENANT"} · {isEn ? "Enterprise Distribution Network" : "Jaringan Distribusi Multi-Gudang"}
               </p>
             </div>
             <Badge tone="g">{isEn ? "REAL SERVER · ACTIVE" : "SERVER ASLI · AKTIF"}</Badge>

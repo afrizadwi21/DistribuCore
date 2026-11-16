@@ -28,7 +28,7 @@ export const initialState = (isReal = false): State => ({
   invoices: isReal ? [] : INVOICES.map((i) => ({ ...i })),
   orders: isReal ? [] : ORDERS.map((o) => ({ ...o })),
   customers: isReal ? [] : CUSTOMERS.map((c) => ({ ...c })),
-  po: isReal ? { no: "-", supplier: "-", issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 } : { ...PURCHASE_ORDER },
+  po: isReal ? { no: "-", supplier: "-", code: "-", contact: "-", terms: 0, issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 } : { ...PURCHASE_ORDER },
   grns: [],
   toast: "",
   loading: isReal,
