@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "./DemoContext";
 import { Bar } from "./ui";
 import { health, nf, overdue, pendingQty, rp } from "./calc";
@@ -16,32 +17,40 @@ const Cell = ({ label, children, note }: { label: string; children: React.ReactN
 );
 
 export function Kpis() {
+  const { mode } = useAuth();
+  const isReal = mode === "real";
   const { locale } = useLanguage();
   const isEn = locale === "en";
-  const { skus, dos, invoices } = useDemo();
+  const { skus, dos, invoices, orders = [] } = useDemo();
   const onHand = skus.reduce((a, s) => a + s.onHand, 0);
   const locked = skus.reduce((a, s) => a + s.reserved, 0);
-  const lockPct = Math.round((locked / onHand) * 100);
+  const lockPct = onHand > 0 ? Math.round((locked / onHand) * 100) : 0;
   const pend = pendingQty(dos);
   const healthy = skus.filter((s) => health(s) === "HEALTHY").length;
+
+  const realRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const realInvVal = skus.reduce((sum, s) => sum + s.onHand * s.price, 0);
+
+  const mtdRevenue = isReal ? realRevenue : 4_250_000_000;
+  const invValue = isReal ? realInvVal : 12_840_000_000;
 
   return (
     <div data-tour="kpis" className="grid gap-px overflow-hidden rounded-xl border border-[var(--bd)] bg-[var(--bd)] sm:grid-cols-2 lg:grid-cols-4">
       <Cell
         label={isEn ? "Month-to-date gross revenue" : "Pendapatan kotor bulan ini"}
-        note={<span className="text-emerald-700 dark:text-emerald-400">{isEn ? "+12.4% vs last month" : "+12,4% dibanding bulan lalu"}</span>}
+        note={<span className="text-emerald-700 dark:text-emerald-400">{isReal ? (isEn ? "Live sales orders" : "Total pesanan aktif") : (isEn ? "+12.4% vs last month" : "+12,4% dibanding bulan lalu")}</span>}
       >
-        {rp(4_250_000_000)}
+        {rp(mtdRevenue)}
       </Cell>
       <Cell
         label={isEn ? "Active inventory value" : "Nilai stok aktif"}
-        note={isEn ? `${healthy} of ${skus.length} SKUs healthy (above reorder)` : `${healthy} dari ${skus.length} SKU sehat (di atas titik pesan)`}
+        note={isEn ? `${healthy} of ${skus.length} SKUs healthy` : `${healthy} dari ${skus.length} SKU sehat`}
       >
-        {rp(12_840_000_000)}
+        {rp(invValue)}
       </Cell>
       <Cell
         label={isEn ? "Locked physical stock" : "Stok fisik yang terkunci"}
-        note={isEn ? `${nf(pend)} units awaiting delivery (DO picking/scheduled)` : `${nf(pend)} unit menunggu pengiriman (DO picking/dijadwalkan)`}
+        note={isEn ? `${nf(pend)} units awaiting delivery` : `${nf(pend)} unit menunggu pengiriman`}
       >
         {lockPct}%
         <span className="mt-2 block"><Bar parts={[{ pct: lockPct, color: "var(--am)" }]} /></span>
