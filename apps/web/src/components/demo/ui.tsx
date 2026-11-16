@@ -13,6 +13,7 @@ const TONES: Record<Tone, string> = {
 
 export const TH = "px-3.5 py-3 text-left text-xs font-semibold whitespace-nowrap text-[var(--mu)] border-b border-[var(--bd)]";
 export const TD = "px-3.5 py-3.5 text-sm whitespace-nowrap border-b border-[var(--bd)] tabular-nums";
+export const INP = "w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3 py-2 text-sm text-[var(--tx)] outline-none focus:border-[var(--bl)]";
 export const BTN = "inline-flex items-center justify-center gap-1.5 rounded-lg border border-[var(--bd)] bg-[var(--card)] px-3.5 py-2 text-sm font-semibold text-[var(--tx)] transition-colors hover:bg-[var(--soft)] disabled:opacity-50";
 export const BTN_PRIMARY = "inline-flex items-center justify-center gap-1.5 rounded-lg bg-[var(--bl)] px-3.5 py-2 text-sm font-semibold text-[var(--act)] transition-opacity hover:opacity-90 disabled:opacity-50";
 
