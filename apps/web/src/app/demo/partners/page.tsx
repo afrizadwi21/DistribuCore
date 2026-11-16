@@ -1,16 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { outstanding, rp } from "@/components/demo/calc";
-import { CUSTOMERS } from "@/components/demo/data";
 import { DIcon } from "@/components/demo/icons";
 import { Badge, Bar, DemoTag, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function PartnersPage() {
   const { locale } = useLanguage();
+  const { mode } = useAuth();
   const isEn = locale === "en";
-  const { invoices } = useDemo();
+  const { invoices, customers = [] } = useDemo();
+  const isReal = mode === "real";
 
   const custHeaders = isEn
     ? ["Code", "Company", "Credit Limit", "Outstanding", "Utilization", "Terms", "Status"]
@@ -33,9 +35,9 @@ export default function PartnersPage() {
               <tr>{custHeaders.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
-              {CUSTOMERS.map((c) => {
+              {customers.map((c) => {
                 const outst = outstanding(invoices, c.code);
-                const pct = Math.round((outst / c.limit) * 100);
+                const pct = c.limit > 0 ? Math.round((outst / c.limit) * 100) : 0;
                 const barColor = pct > 90 ? "var(--rd)" : pct > 60 ? "var(--am)" : "var(--gr)";
                 return (
                   <tr key={c.code}>
@@ -52,6 +54,13 @@ export default function PartnersPage() {
                   </tr>
                 );
               })}
+              {!customers.length && (
+                <tr>
+                  <td colSpan={7} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No customer accounts registered for this tenant yet." : "Belum ada pelanggan B2B terdaftar untuk perusahaan ini."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -64,13 +73,21 @@ export default function PartnersPage() {
               <tr>{suppHeaders.map((h) => <th key={h} className={TH}>{h}</th>)}</tr>
             </thead>
             <tbody>
-              <tr>
-                <td className={`${TD} font-mono font-bold`}>SUPP-SG</td>
-                <td className={TD}><b>PT Semen Gresik Tbk</b></td>
-                <td className={TD}>Agus Hendrawan (Key Account Manager)</td>
-                <td className={TD}>Net 45 {isEn ? "days" : "hari"}</td>
-                <td className={TD}><Badge tone="g">{isEn ? "STRATEGIC PARTNER" : "MITRA STRATEGIS"}</Badge></td>
-              </tr>
+              {isReal ? (
+                <tr>
+                  <td colSpan={5} className={`${TD} py-8 text-center text-[var(--mu)]`}>
+                    {isEn ? "No strategic suppliers registered yet." : "Belum ada pemasok terdaftar untuk perusahaan ini."}
+                  </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td className={`${TD} font-mono font-bold`}>SUPP-SG</td>
+                  <td className={TD}><b>PT Semen Gresik Tbk</b></td>
+                  <td className={TD}>Agus Hendrawan (Key Account Manager)</td>
+                  <td className={TD}>Net 45 {isEn ? "days" : "hari"}</td>
+                  <td className={TD}><Badge tone="g">{isEn ? "STRATEGIC PARTNER" : "MITRA STRATEGIS"}</Badge></td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
