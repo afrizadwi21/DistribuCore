@@ -8,10 +8,21 @@ import type { Action, State } from "./store";
 type Ctx = State & { act: React.Dispatch<Action>; refresh: () => void };
 const DemoContext = createContext<Ctx | null>(null);
 
+const DEMO_SKUS = new Set(["SMN-TR-50KG", "BSI-BT-10MM", "CAT-DLX-20L"]);
+const DEMO_CUSTS = new Set(["CUST-SBM", "CUST-WKM", "CUST-MBS", "CUST-CKN", "CUST-JM", "CUST-SM"]);
+
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const { mode, token, serverUrl } = useAuth();
-  const isReal = mode === "real";
-  const [state, act] = useReducer(reducer, isReal, initialState);
+  const isReal = mode === "real" || (typeof window !== "undefined" && localStorage.getItem("dc_auth_mode") === "real");
+  const [state, rawAct] = useReducer(reducer, isReal, initialState);
+  const shouldSaveRef = React.useRef(false);
+
+  const act: React.Dispatch<Action> = (action) => {
+    if (isReal && action.type !== "reset_mode" && action.type !== "clear" && action.type !== "notify") {
+      shouldSaveRef.current = true;
+    }
+    rawAct(action);
+  };
 
   const fetchRealData = async () => {
     if (!isReal || !token) return;
@@ -62,44 +73,51 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         demo: false,
       })) : [];
 
-      act({
+      const cleanOrders = Array.isArray(saved.orders) ? saved.orders.filter((o: any) => !o.demo && !DEMO_CUSTS.has(o.cust)) : [];
+      const cleanDos = Array.isArray(saved.dos) ? saved.dos.filter((d: any) => !DEMO_SKUS.has(d.sku)) : [];
+      const cleanInvs = Array.isArray(saved.invoices) ? saved.invoices.filter((i: any) => !i.demo && !DEMO_CUSTS.has(i.cust)) : [];
+      const validPo = saved.po?.no && saved.po.no !== "-" && saved.po.supplier !== "PT Semen Gresik Tbk";
+
+      rawAct({
         type: "set_real_data",
         data: {
           skus,
           customers: realCustomers,
-          orders: Array.isArray(saved.orders) ? saved.orders : [],
-          dos: Array.isArray(saved.dos) ? saved.dos : [],
-          invoices: Array.isArray(saved.invoices) ? saved.invoices : [],
-          po: saved.po?.no ? saved.po : { no: "-", supplier: "-", code: "-", contact: "-", terms: 0, issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 },
+          orders: cleanOrders,
+          dos: cleanDos,
+          invoices: cleanInvs,
+          po: validPo ? saved.po : { no: "-", supplier: "-", code: "-", contact: "-", terms: 0, issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 },
           grns: Array.isArray(saved.grns) ? saved.grns : [],
           loading: false,
         },
       });
     } catch {
-      act({ type: "set_real_data", data: { skus: [], orders: [], customers: [], dos: [], invoices: [], loading: false } });
+      rawAct({ type: "set_real_data", data: { skus: [], orders: [], customers: [], dos: [], invoices: [], loading: false } });
     }
   };
 
   useEffect(() => {
-    act({ type: "reset_mode", isReal });
+    shouldSaveRef.current = false;
+    rawAct({ type: "reset_mode", isReal });
     if (isReal) fetchRealData();
   }, [isReal, token]);
 
   useEffect(() => {
-    if (!isReal || !token || state.loading) return;
+    if (!isReal || !token || state.loading || !shouldSaveRef.current) return;
+    shouldSaveRef.current = false;
     fetch("/api/proxy/v1/tenant/state", {
       method: "PUT",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({
-        skus: state.skus,
-        orders: state.orders,
-        dos: state.dos,
-        invoices: state.invoices,
-        po: state.po,
+        skus: state.skus.filter((s) => !s.demo),
+        orders: state.orders.filter((o) => !o.demo && !DEMO_CUSTS.has(o.cust)),
+        dos: state.dos.filter((d) => !DEMO_SKUS.has(d.sku)),
+        invoices: state.invoices.filter((i) => !i.demo && !DEMO_CUSTS.has(i.cust)),
+        po: state.po.supplier === "PT Semen Gresik Tbk" ? { no: "-", supplier: "-", code: "-", contact: "-", terms: 0, issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 } : state.po,
         grns: state.grns,
       }),
     }).catch(() => {});
-  }, [isReal, token, state.skus, state.orders, state.dos, state.invoices, state.po, state.grns, state.loading]);
+  }, [isReal, token, state]);
 
   useEffect(() => {
     if (!state.toast) return;
