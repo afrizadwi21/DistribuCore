@@ -16,7 +16,7 @@ function SkuMeter({ s }: { s: Sku }) {
     <div><span className="text-xs" style={{ color: color ?? "var(--mu)" }}>{label}</span><br /><b className="text-sm">{nf(v)} {s.uom}</b></div>
   );
   return (
-    <div className="mx-4 my-3 rounded-lg border border-[var(--bd)] bg-[var(--soft)] p-3.5">
+    <div className="border-b border-[var(--bd)] px-4 py-3.5 last:border-b-0">
       <p className="text-sm"><b>{s.name}</b> <span className="font-mono text-xs text-[var(--mu)]">{s.code}</span></p>
       <div className="my-2.5"><Bar parts={[{ pct: (s.reserved / s.onHand) * 100, color: "var(--am)" }, { pct: (atp(s) / s.onHand) * 100, color: "var(--gr)" }]} /></div>
       <div className="grid grid-cols-3 gap-2">{cell("On-Hand", s.onHand)}{cell("Reserved", s.reserved, "var(--am)")}{cell("ATP", atp(s), "var(--gr)")}</div>

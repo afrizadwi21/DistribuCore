@@ -7,7 +7,7 @@
   --card: #ffffff;
   --bd: #e2e8f0;
   --tx: #0f172a;
-  --mu: #64748b;
+  --mu: #475569;
   --soft: #f1f5f9;
   --bl: #0f172a;
   --act: #ffffff;
@@ -41,6 +41,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), var(--font-sans), sans-serif;
   letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+p, dd {
+  text-wrap: pretty;
 }
 
 p {
