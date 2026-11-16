@@ -11,13 +11,11 @@ export function LoginSection() {
   const { t, locale } = useLanguage();
   const isEn = locale === "en";
   const router = useRouter();
-  const { login, serverUrl, setServerUrl } = useAuth();
+  const { login } = useAuth();
 
-  const [tenantCode, setTenantCode] = useState("SBA");
-  const [email, setEmail] = useState("admin@sba.co.id");
+  const [tenantCode, setTenantCode] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [targetApi, setTargetApi] = useState(serverUrl);
-  const [showApi, setShowApi] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -28,7 +26,7 @@ export function LoginSection() {
     setErrorMsg("");
     setSuccessMsg(isEn ? "Connecting to authentication server..." : "Menghubungkan ke server autentikasi...");
 
-    const res = await login(tenantCode, email, password, targetApi);
+    const res = await login(tenantCode, email, password);
     setBusy(false);
 
     if (res.success) {
@@ -75,23 +73,12 @@ export function LoginSection() {
         <div className="lg:col-span-6 rounded-2xl border border-[var(--bd)] bg-[var(--card)] p-7 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs sm:text-sm font-bold text-[var(--tx)]">{t("login_lbl_tenant")}</label>
-                <button type="button" onClick={() => setShowApi(!showApi)} className="text-[11px] font-semibold text-[var(--mu)] hover:text-[var(--tx)] underline">
-                  {showApi ? (isEn ? "Hide API URL" : "Sembunyikan API") : "API Server URL"}
-                </button>
-              </div>
-              <input value={tenantCode} onChange={(e) => setTenantCode(e.target.value)} required className="w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3.5 py-2 text-sm text-[var(--tx)] font-medium" />
+              <label className="block text-xs sm:text-sm font-bold text-[var(--tx)] mb-1.5">{t("login_lbl_tenant")}</label>
+              <input value={tenantCode} onChange={(e) => setTenantCode(e.target.value)} placeholder="DIST-Own01" required className="w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3.5 py-2 text-sm text-[var(--tx)] font-medium" />
             </div>
-            {showApi && (
-              <div>
-                <label className="block text-xs font-bold text-[var(--tx)] mb-1">Server API Endpoint</label>
-                <input value={targetApi} onChange={(e) => setTargetApi(e.target.value)} required className="w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3.5 py-2 font-mono text-xs text-[var(--tx)]" />
-              </div>
-            )}
             <div>
               <label className="block text-xs sm:text-sm font-bold text-[var(--tx)] mb-1.5">{t("login_lbl_email")}</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3.5 py-2 text-sm text-[var(--tx)] font-medium" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@perusahaan.com" required className="w-full rounded-lg border border-[var(--bd)] bg-[var(--soft)] px-3.5 py-2 text-sm text-[var(--tx)] font-medium" />
             </div>
             <div>
               <label className="block text-xs sm:text-sm font-bold text-[var(--tx)] mb-1.5">{t("login_lbl_password")}</label>
