@@ -3,7 +3,6 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { nf, outstanding, overdue, rp } from "@/components/demo/calc";
-import { CUSTOMERS } from "@/components/demo/data";
 import { DIcon } from "@/components/demo/icons";
 import { BTN, Card, Panel, TD, TH } from "@/components/demo/ui";
 

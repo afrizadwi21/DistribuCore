@@ -3,15 +3,14 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useDemo } from "@/components/demo/DemoContext";
 import { rp } from "@/components/demo/calc";
-import { CUSTOMERS } from "@/components/demo/data";
 import { DIcon } from "@/components/demo/icons";
 import { Badge, BTN, Card, DemoTag, Panel, TD, TH } from "@/components/demo/ui";
 
 export default function InvoicesPage() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
-  const { invoices, act } = useDemo();
-  const custName = (code: string) => CUSTOMERS.find((c) => c.code === code)?.name || code;
+  const { invoices, customers, act } = useDemo();
+  const custName = (code: string) => customers.find((c) => c.code === code)?.name || code;
 
   const headers = isEn
     ? ["Invoice #", "Customer", "Order", "Issued", "Due Date", "Total", "Balance Due", "Aging"]
