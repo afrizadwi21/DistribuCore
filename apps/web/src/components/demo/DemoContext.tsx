@@ -13,7 +13,7 @@ const DEMO_CUSTS = new Set(["CUST-SBM", "CUST-WKM", "CUST-MBS", "CUST-CKN", "CUS
 
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const { mode, token, serverUrl } = useAuth();
-  const isReal = mode === "real" || (typeof window !== "undefined" && localStorage.getItem("dc_auth_mode") === "real");
+  const isReal = mode === "real";
   const [state, rawAct] = useReducer(reducer, isReal, initialState);
   const shouldSaveRef = React.useRef(false);
 
