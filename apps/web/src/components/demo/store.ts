@@ -1,22 +1,37 @@
 import { CUSTOMERS, DELIVERIES, INVOICES, ORDERS, PURCHASE_ORDER, SKUS } from "./data";
-import type { DeliveryOrder, Invoice, Sku } from "./data";
+import type { Customer, DeliveryOrder, Invoice, Order, Sku } from "./data";
 import { atp, nf, rp } from "./calc";
 
 export type Grn = { no: string; qty: number };
 export type State = {
-  skus: Sku[]; dos: DeliveryOrder[]; invoices: Invoice[];
-  po: typeof PURCHASE_ORDER; grns: Grn[]; toast: string;
+  skus: Sku[];
+  dos: DeliveryOrder[];
+  invoices: Invoice[];
+  orders: Order[];
+  customers: Customer[];
+  po: typeof PURCHASE_ORDER;
+  grns: Grn[];
+  toast: string;
+  loading: boolean;
 };
 export type Action =
   | { type: "dispatch" | "pod" | "invoice"; id: string }
   | { type: "grn"; qty: number }
   | { type: "adjust"; code: string; count: number }
   | { type: "pay" | "clear" }
-  | { type: "notify"; message: string };
+  | { type: "notify"; message: string }
+  | { type: "set_real_data"; data: Partial<State> };
 
-export const initialState = (): State => ({
-  skus: SKUS.map((s) => ({ ...s })), dos: DELIVERIES.map((d) => ({ ...d })),
-  invoices: INVOICES.map((i) => ({ ...i })), po: { ...PURCHASE_ORDER }, grns: [], toast: "",
+export const initialState = (isReal = false): State => ({
+  skus: isReal ? [] : SKUS.map((s) => ({ ...s })),
+  dos: isReal ? [] : DELIVERIES.map((d) => ({ ...d })),
+  invoices: isReal ? [] : INVOICES.map((i) => ({ ...i })),
+  orders: isReal ? [] : ORDERS.map((o) => ({ ...o })),
+  customers: isReal ? [] : CUSTOMERS.map((c) => ({ ...c })),
+  po: isReal ? { no: "-", supplier: "-", issued: "-", eta: "-", sku: "-", qty: 0, received: 0, cost: 0 } : { ...PURCHASE_ORDER },
+  grns: [],
+  toast: "",
+  loading: isReal,
 });
 
 const pad = (n: number) => String(n).padStart(3, "0");
@@ -63,5 +78,6 @@ export function reducer(s: State, a: Action): State {
     }
     case "notify": return { ...s, toast: a.message };
     case "clear": return { ...s, toast: "" };
+    case "set_real_data": return { ...s, ...a.data, loading: false };
   }
 }
