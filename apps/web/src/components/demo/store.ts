@@ -50,12 +50,12 @@ export function reducer(s: State, a: Action): State {
       return { ...s, skus, dos: patchDo(s, a.id, (x) => ({ ...x, status: "pod" })), toast: `POD ${a.id} diverifikasi: ${k.code} fisik berkurang -${d.qty} di gudang, reservasi dilepas, siap difakturkan.` };
     }
     case "invoice": {
-      const o = d && ORDERS.find((x) => x.id === d.so);
+      const o = d && (s.orders.find((x) => x.id === d.so) || ORDERS.find((x) => x.id === d.so));
       const k = d && s.skus.find((x) => x.code === d.sku);
       if (!d || !o || !k) return s;
       const total = d.qty * k.price;
       const no = `INV-2026-${pad(s.invoices.length + 1)}`;
-      const inv: Invoice = { no, cust: o.cust, so: o.id, issued: "11 Nov 2026", due: "11 Des 2026", total, open: total, bucket: "Current", demo: true };
+      const inv: Invoice = { no, cust: o.cust, so: o.id, issued: "11 Nov 2026", due: "11 Des 2026", total, open: total, bucket: "Current", demo: false };
       return { ...s, invoices: [...s.invoices, inv], dos: patchDo(s, a.id, (x) => ({ ...x, invoiced: true })), toast: `Faktur ${no} berhasil diterbitkan (${rp(total)}): data masuk ke modul Piutang (AR).` };
     }
     case "grn": {
@@ -73,7 +73,7 @@ export function reducer(s: State, a: Action): State {
     case "pay": {
       const first = s.invoices.find((i) => i.open > 0);
       if (!first) return { ...s, toast: "Semua faktur sudah lunas" };
-      const c = CUSTOMERS.find((x) => x.code === first.cust)!;
+      const c = s.customers.find((x) => x.code === first.cust) || CUSTOMERS.find((x) => x.code === first.cust) || { name: first.cust, code: first.cust };
       return { ...s, invoices: s.invoices.map((i) => (i.no === first.no ? { ...i, open: 0, bucket: "Lunas" } : i)), toast: `Pembayaran ${rp(first.total)} dialokasikan lunas ke faktur tertua ${first.no} (${c.name}) dengan metode FIFO.` };
     }
     case "notify": return { ...s, toast: a.message };

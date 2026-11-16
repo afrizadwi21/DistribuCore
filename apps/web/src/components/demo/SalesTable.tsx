@@ -9,10 +9,8 @@ import { Badge, Bar, BTN, Card, DemoTag, TD, TH } from "./ui";
 import type { Tone } from "./ui";
 import { nf, orderTab, progress, rp } from "./calc";
 import type { OrderTab } from "./calc";
-import { CUSTOMERS, ORDERS } from "./data";
 import type { DoStatus } from "./data";
 
-const TABS: [OrderTab, string][] = [["all", "Semua Pesanan"], ["credit", "Menunggu Cek Kredit"], ["ready", "Siap Kirim"], ["partial", "Kirim Sebagian"], ["delivered", "Terkirim & Ditagih"]];
 export const DO_LABEL: Record<DoStatus, [string, Tone]> = { picking: ["Picking", "a"], planned: ["Dijadwalkan", "b"], transit: ["Dalam perjalanan", "b"], pod: ["Terkirim · POD", "g"] };
 
 export function SalesTable({ limit }: { limit?: number }) {
