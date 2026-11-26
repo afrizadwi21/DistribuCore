@@ -27,14 +27,19 @@ func Load() (*Config, error) {
 		jwtExpiry = 24
 	}
 
+	port := getEnv("PORT", "")
+	if port == "" {
+		port = getEnv("APP_PORT", "8080")
+	}
+
 	cfg := &Config{
 		AppEnv:       getEnv("APP_ENV", "development"),
-		Port:         getEnv("APP_PORT", "8080"),
+		Port:         port,
 		DatabaseURL:  getEnv("DATABASE_URL", "postgres://distribucore_user:distribucore_secret@localhost:5432/distribucore_db?sslmode=disable"),
 		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379/0"),
 		JWTSecret:    getEnv("JWT_SECRET", "distribucore-dev-secret-key-must-be-changed-in-production"),
 		JWTExpiryHrs: jwtExpiry,
-		AllowedCORS:  getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001"),
+		AllowedCORS:  getEnv("CORS_ALLOWED_ORIGINS", "*"),
 	}
 
 	return cfg, nil
